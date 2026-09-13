@@ -31,47 +31,47 @@ describe('shouldAdvance', () => {
   const at = (sessions: number): ProfileState => ({ ...initialState('1.1'), sessionsCompleted: sessions });
 
   it('needs at least three complete sessions at the substep', () => {
-    expect(shouldAdvance(at(2), goodLogs(2), content)).toBe(false);
-    expect(shouldAdvance(at(3), goodLogs(3), content)).toBe(true);
+    expect(shouldAdvance(at(2), goodLogs(2))).toBe(false);
+    expect(shouldAdvance(at(3), goodLogs(3))).toBe(true);
     const oneIncomplete = goodLogs(3).map((l, i) => (i === 0 ? { ...l, complete: false } : l));
-    expect(shouldAdvance(at(3), oneIncomplete, content)).toBe(false);
+    expect(shouldAdvance(at(3), oneIncomplete)).toBe(false);
   });
 
   it('ignores sessions from before the child entered the substep', () => {
     const state = { ...at(6), substepEnteredAt: 4 };
-    expect(shouldAdvance(state, goodLogs(6), content)).toBe(false);
+    expect(shouldAdvance(state, goodLogs(6))).toBe(false);
   });
 
   it('requires 90% on current items and 85% on review over the last three sessions', () => {
     const weakCurrent = [...goodLogs(2), log(3, [...Array(8).fill(0).map(() => resp(true)), resp(false), resp(false), resp(false), resp(false)])];
-    expect(shouldAdvance(at(3), weakCurrent, content)).toBe(false);
+    expect(shouldAdvance(at(3), weakCurrent)).toBe(false);
     const weakReview = [...goodLogs(2), log(3, [...Array(10).fill(0).map(() => resp(true)), ...Array(4).fill(0).map(() => resp(false, { isReview: true }))])];
-    expect(shouldAdvance(at(3), weakReview, content)).toBe(false);
+    expect(shouldAdvance(at(3), weakReview)).toBe(false);
   });
 
   it('holds the child when the latest read-aloud at this substep failed', () => {
     const logs = [...goodLogs(2), log(3, [...Array(10).fill(0).map(() => resp(true)), resp(false, { activity: 'read-aloud', parentMarked: true }), resp(false, { activity: 'read-aloud', parentMarked: true })], { readAloudDone: true })];
-    expect(shouldAdvance(at(3), logs, content)).toBe(false);
+    expect(shouldAdvance(at(3), logs)).toBe(false);
   });
 
   it('advances when the latest read-aloud passed', () => {
     const logs = [...goodLogs(2), log(3, [...Array(10).fill(0).map(() => resp(true)), ...Array(5).fill(0).map(() => resp(true, { activity: 'read-aloud', parentMarked: true }))], { readAloudDone: true })];
-    expect(shouldAdvance(at(3), logs, content)).toBe(true);
+    expect(shouldAdvance(at(3), logs)).toBe(true);
   });
 
   it('does not use parent-marked responses in the solo accuracy', () => {
     const logs = [...goodLogs(2), log(3, [...Array(10).fill(0).map(() => resp(true)), ...Array(5).fill(0).map(() => resp(true, { activity: 'read-aloud', parentMarked: true })), resp(false, { parentMarked: true, activity: 'read-aloud' })], { readAloudDone: true })];
     // read-aloud 5/6 = 0.83 < 0.85 -> hold; solo accuracy would be fine
-    expect(shouldAdvance(at(3), logs, content)).toBe(false);
+    expect(shouldAdvance(at(3), logs)).toBe(false);
   });
 
   it('allows advancing with no read-aloud only if none happened in the last five sessions', () => {
     const state = { ...at(8), substepEnteredAt: 5 };
     const earlierRA = log(4, [resp(true, { activity: 'read-aloud', parentMarked: true })], { substep: '1.0', readAloudDone: true });
     const logs = [log(1, []), log(2, []), log(3, []), earlierRA, ...goodLogs(4, 5)];
-    expect(shouldAdvance(state, logs, content)).toBe(false);
+    expect(shouldAdvance(state, logs)).toBe(false);
     const older = [earlierRA, log(2, []), log(3, []), log(4, []), ...goodLogs(4, 5)].map((l, i) => ({ ...l, sessionNumber: i + 1 }));
-    expect(shouldAdvance({ ...state, substepEnteredAt: 4 }, older, content)).toBe(true);
+    expect(shouldAdvance({ ...state, substepEnteredAt: 4 }, older)).toBe(true);
   });
 });
 
@@ -106,10 +106,14 @@ describe('finishSession', () => {
     expect(out.state.lessonPending).toBe(true);
   });
 
+  /** n reverse-drill answers on card "b", the only card in group 1 of substep 1.2. */
+  const reverseB = (n: number, correct = true) =>
+    Array.from({ length: n }, () => resp(correct, { itemKey: cardKey('b'), activity: 'sound-reverse' }));
+  const atGroup0 = (): ProfileState => ({ ...initialState('1.2'), sessionsCompleted: 5, substepEnteredAt: 5 });
+
   it('moves to the next card group when reverse-drill accuracy on the group is high, before advancing the substep', () => {
-    const state = { ...initialState('1.2'), sessionsCompleted: 5, substepEnteredAt: 5 };
-    const l = log(6, [resp(true, { itemKey: cardKey('b'), activity: 'sound-reverse' }), resp(true, { itemKey: cardKey('b'), activity: 'sound-reverse' })], { substep: '1.2' });
-    const out = finishSession(state, l, [], content);
+    const l = log(6, reverseB(3), { substep: '1.2' });
+    const out = finishSession(atGroup0(), l, [], content);
     expect(out.groupAdvanced).toBe(true);
     expect(out.state.currentGroup).toBe(1);
     expect(out.state.lessonPending).toBe(true);
@@ -117,9 +121,22 @@ describe('finishSession', () => {
   });
 
   it('does not move groups on a weak reverse drill', () => {
-    const state = { ...initialState('1.2'), sessionsCompleted: 5, substepEnteredAt: 5 };
-    const l = log(6, [resp(true, { itemKey: cardKey('b'), activity: 'sound-reverse' }), resp(false, { itemKey: cardKey('b'), activity: 'sound-reverse' })], { substep: '1.2' });
-    expect(finishSession(state, l, [], content).state.currentGroup).toBe(0);
+    const l = log(6, [...reverseB(2), ...reverseB(1, false)], { substep: '1.2' });
+    expect(finishSession(atGroup0(), l, [], content).state.currentGroup).toBe(0);
+  });
+
+  it('does not move groups when the session was stopped early, however good the group drill was', () => {
+    const l = log(6, reverseB(4), { substep: '1.2', complete: false });
+    const out = finishSession(atGroup0(), l, [], content);
+    expect(out.groupAdvanced).toBe(false);
+    expect(out.state.currentGroup).toBe(0);
+  });
+
+  it('does not move groups on fewer than three reverse answers for the group', () => {
+    const l = log(6, reverseB(2), { substep: '1.2' });
+    const out = finishSession(atGroup0(), l, [], content);
+    expect(out.groupAdvanced).toBe(false);
+    expect(out.state.currentGroup).toBe(0);
   });
 
   it('never advances past the last substep', () => {

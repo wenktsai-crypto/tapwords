@@ -125,6 +125,24 @@ describe('buildSession with a substep whose word bank is smaller than word-work 
   });
 });
 
+describe('word dictation nonsense share', () => {
+  it('always picks at least one nonsense word among the current dictation words, whatever the seed', () => {
+    for (let seed = 1; seed <= 12; seed++) {
+      const plan = buildSession(CONTENT, initialState('1.1'), seeded(seed));
+      const current = plan.spelling.flatMap((s) => (s.type === 'word' && !s.isReview ? [s.word] : []));
+      expect(current.length, `seed ${seed}`).toBeGreaterThanOrEqual(COUNTS.spellWordCurrent);
+      expect(current.filter((w) => w.kind === 'nonsense').length, `seed ${seed}`).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('still fills the dictation list when the current bank has no nonsense words at all', () => {
+    const noNonsense: Substep = { ...CONTENT.substeps[0], id: '1.2', groups: [{ cards: ['b'], lesson: [] }], words: [cvc('bat'), cvc('bad'), cvc('bag'), cvc('bid'), cvc('bit')] };
+    const content: Content = { cards: CARDS, substeps: [CONTENT.substeps[0], noNonsense] };
+    const plan = buildSession(content, { ...initialState('1.2'), sessionsCompleted: 5, substepEnteredAt: 5 }, seeded(4));
+    expect(plan.spelling.filter((s) => s.type === 'word').length).toBe(COUNTS.spellWord);
+  });
+});
+
 describe('findChoices', () => {
   const pool: Word[] = [cvc('map'), cvc('mat'), cvc('mad'), cvc('sit'), cvc('log')];
   it('prefers words that differ by one sound', () => {

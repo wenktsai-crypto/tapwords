@@ -11,6 +11,7 @@ export const ADVANCE = {
   readAloud: 0.85,
   readAloudGrace: 5,
   groupReverse: 0.8,
+  groupReverseMin: 3,
 };
 
 export function accuracy(responses: ScoredResponse[]): number | null {
@@ -18,7 +19,11 @@ export function accuracy(responses: ScoredResponse[]): number | null {
   return responses.filter((r) => r.correct).length / responses.length;
 }
 
-export function shouldAdvance(state: ProfileState, logs: SessionLog[], content: Content): boolean {
+/**
+ * `logs` must be in ascending session order — the read-aloud grace check reads the tail of the
+ * list as "the last few sessions". The runner's store returns logs already sorted that way.
+ */
+export function shouldAdvance(state: ProfileState, logs: SessionLog[]): boolean {
   const here = logs.filter((l) => l.substep === state.currentSubstep && l.complete && l.sessionNumber > state.substepEnteredAt);
   if (here.length < ADVANCE.minSessions) return false;
   if (state.sessionsCompleted - state.substepEnteredAt < ADVANCE.minSessions) return false;
@@ -60,15 +65,19 @@ export function finishSession(state: ProfileState, log: SessionLog, previousLogs
   const groupIndex = Math.min(state.currentGroup, sub.groups.length - 1);
   if (groupIndex < sub.groups.length - 1) {
     const groupCards = new Set(sub.groups[groupIndex].cards.map(cardKey));
-    const acc = accuracy(log.responses.filter((r) => r.activity === 'sound-reverse' && groupCards.has(r.itemKey)));
-    if (acc !== null && acc >= ADVANCE.groupReverse) {
+    // Only a finished session with a real sample of the group's cards can move the child on: a
+    // session stopped early, or one that happened to show this group's cards once or twice, is
+    // not evidence that the group is learned.
+    const groupAnswers = log.responses.filter((r) => r.activity === 'sound-reverse' && groupCards.has(r.itemKey));
+    const acc = accuracy(groupAnswers);
+    if (log.complete && groupAnswers.length >= ADVANCE.groupReverseMin && acc !== null && acc >= ADVANCE.groupReverse) {
       return { state: { ...next, currentGroup: groupIndex + 1, lessonPending: true }, advancedTo: null, groupAdvanced: true };
     }
     return { state: next, advancedTo: null, groupAdvanced: false };
   }
 
   const idx = substepIndex(content, sub.id);
-  if (idx < content.substeps.length - 1 && shouldAdvance(next, [...previousLogs, log], content)) {
+  if (idx < content.substeps.length - 1 && shouldAdvance(next, [...previousLogs, log])) {
     const to = content.substeps[idx + 1].id;
     return { state: { ...next, currentSubstep: to, currentGroup: 0, substepEnteredAt: n, lessonPending: true }, advancedTo: to, groupAdvanced: false };
   }

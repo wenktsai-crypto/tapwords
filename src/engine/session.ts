@@ -42,6 +42,7 @@ export const COUNTS = {
   spellSoundCurrent: 2,
   spellWord: 5,
   spellWordCurrent: 4,
+  spellWordNonsense: 1,
   spellSentence: 2,
   readAloudWords: 8,
   readAloudCurrent: 6,
@@ -113,7 +114,10 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const soundCurrent = topUp(soundCur, currentCards, COUNTS.spellSound - soundRev.length).map((c) => ({ c, isReview: false }));
   const soundReview = soundRev.map((c) => ({ c, isReview: true }));
   const spellSounds: SpellingItem[] = [...soundCurrent, ...soundReview].map(({ c, isReview }) => ({ type: 'sound', card: c, isReview, choices: shuffle([c, ...distractors([c], 3)], rng) }));
-  const spellPick = sample(currentWords, COUNTS.spellWordCurrent, rng);
+  // Spec 4.2: at least a quarter of word dictation is nonsense, so reserve a nonsense slot
+  // before the rest of the current picks are drawn (when the bank has any nonsense at all).
+  const spellNonsense = sample(curNonsense, COUNTS.spellWordNonsense, rng);
+  const spellPick = [...spellNonsense, ...sample(currentWords.filter((w) => !spellNonsense.includes(w)), COUNTS.spellWordCurrent - spellNonsense.length, rng)];
   const spellRev = pickReview(earlierWords, strengths, COUNTS.spellWord - spellPick.length, n, rng).map((w) => ({ ...w, isReview: true }));
   const spellCur = topUp(spellPick, currentWords, COUNTS.spellWord - spellRev.length).map((w) => ({ ...w, isReview: false }));
   const spellWords: SpellingItem[] = [...spellCur, ...spellRev].map((w) => ({

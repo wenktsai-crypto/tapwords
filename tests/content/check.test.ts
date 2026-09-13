@@ -4,7 +4,8 @@ import { CARDS } from '../../src/content/cards';
 import { cvc, cvcNonsense, word } from '../../src/content/build';
 import type { Content, Substep } from '../../src/content/types';
 
-const tiny = { real: 1, nonsense: 1, sentences: 1, stories: 1 };
+const tiny = { real: 1, nonsense: 1, sentences: 1, stories: 1, questions: 1 };
+const aQuestion = { prompt: 'q', choices: ['a', 'b', 'c'] as [string, string, string], answer: 0 as const };
 
 function sub(over: Partial<Substep>): Substep {
   return {
@@ -52,7 +53,7 @@ describe('checkContent', () => {
   });
 
   it('rejects ff before the doubling rule is taught', () => {
-    const s = sub({ groups: [{ cards: ['o', 'f'], lesson: [] }], words: [word('off', 'o,ff:f'), cvcNonsense('fo')], sentences: ['off'], stories: [{ title: 't', sentences: ['off'], questions: [] }] });
+    const s = sub({ groups: [{ cards: ['o', 'f'], lesson: [] }], words: [word('off', 'o,ff:f'), cvcNonsense('fo')], sentences: ['off'], stories: [{ title: 't', sentences: ['off'], questions: [aQuestion] }] });
     expect(checkContent(content(s), tiny).some((e) => e.includes('doubling'))).toBe(true);
     const ok = { ...s, concepts: ['doubling'] };
     expect(checkContent(content(ok), tiny)).toEqual([]);
@@ -71,6 +72,55 @@ describe('checkContent', () => {
   it('allows a later substep to use earlier words in sentences', () => {
     const s2 = sub({ id: '1.2', groups: [{ cards: ['i'], lesson: [] }], words: [cvc('sit'), cvcNonsense('sip')], sentences: ['The map.'] });
     expect(checkContent(content(sub({}), s2), tiny)).toEqual([]);
+  });
+
+  it('rejects a word part that names a card that does not exist', () => {
+    const s = sub({ words: [word('map', 'm,a,p:zz'), cvcNonsense('mip')] });
+    expect(checkContent(content(s), tiny).some((e) => e.includes('unknown card "zz"'))).toBe(true);
+  });
+
+  it('rejects a part whose grapheme is neither the card\'s grapheme nor a spelling rule', () => {
+    const s = sub({ groups: [{ cards: ['m', 'a', 'p', 'q'], lesson: [{ try: 'map' }] }], words: [word('maq', 'm,a,q:p'), cvcNonsense('mip')], sentences: ['maq'], stories: [{ title: 't', sentences: ['maq'], questions: [aQuestion] }] });
+    expect(checkContent(content(s), tiny).some((e) => e.includes('part "q" does not match card "p"'))).toBe(true);
+  });
+
+  it('rejects a group-1 lesson that shows a card taught in group 2, and accepts it in group 2', () => {
+    const early = sub({
+      groups: [
+        { cards: ['m', 'a', 'p'], lesson: [{ show: ['m', 'a', 'p', 's'] }] },
+        { cards: ['s', 't'], lesson: [{ try: 'map' }] },
+      ],
+    });
+    expect(checkContent(content(early), tiny).some((e) => e.includes('shows "s"'))).toBe(true);
+    const later = sub({
+      groups: [
+        { cards: ['m', 'a', 'p'], lesson: [] },
+        { cards: ['s', 't'], lesson: [{ show: ['m', 'a', 'p', 's'] }, { try: 'map' }] },
+      ],
+    });
+    expect(checkContent(content(later), tiny)).toEqual([]);
+  });
+
+  it('rejects a group-1 lesson that taps a word needing a group-2 card', () => {
+    const s = sub({
+      groups: [
+        { cards: ['m', 'a', 'p'], lesson: [{ tap: 'tam' }] },
+        { cards: ['s', 't'], lesson: [] },
+      ],
+      words: [cvc('map'), word('tam', 't,a,m'), cvcNonsense('mip')],
+    });
+    expect(checkContent(content(s), tiny).some((e) => e.includes('lesson word "tam"') && e.includes('"t"'))).toBe(true);
+  });
+
+  it('requires every story to have at least one question', () => {
+    const s = sub({ stories: [{ title: 'Map', sentences: ['The map.'], questions: [] }] });
+    expect(checkContent(content(s), tiny).some((e) => e.includes('question'))).toBe(true);
+  });
+
+  it('rejects the same word text appearing in two substeps, naming both', () => {
+    const s2 = sub({ id: '1.2', groups: [{ cards: ['i'], lesson: [] }], words: [cvc('map'), cvcNonsense('sip')], sentences: ['The map.'] });
+    const errors = checkContent(content(sub({}), s2), tiny);
+    expect(errors.some((e) => e.includes('"map"') && e.includes('1.1') && e.includes('1.2'))).toBe(true);
   });
 
   it('enforces minimum counts', () => {
