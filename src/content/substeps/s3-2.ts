@@ -52,7 +52,7 @@ export const SUBSTEP_3_2: Substep = {
     word('windmill', 'w,i,n,d,m,i,ll:l', { syllables: [4] }),
     word('complex', 'c,o,m,p,l,e,x', { syllables: [3] }),
     word('extend', 'e,x,t,e,n,d', { syllables: [2] }),
-    word('program', 'p,r,o,g,r,am', { syllables: [4] }),
+
     word('husband', 'h,u,s,b,a,n,d', { syllables: [3] }),
 
     // Nonsense: same two-closed-syllable shape, always with a blend
