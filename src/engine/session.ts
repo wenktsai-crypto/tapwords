@@ -119,7 +119,8 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const spellNonsense = sample(curNonsense, COUNTS.spellWordNonsense, rng);
   const spellPick = [...spellNonsense, ...sample(currentWords.filter((w) => !spellNonsense.includes(w)), COUNTS.spellWordCurrent - spellNonsense.length, rng)];
   const spellRev = pickReview(earlierWords, strengths, COUNTS.spellWord - spellPick.length, n, rng).map((w) => ({ ...w, isReview: true }));
-  const spellCur = topUp(spellPick, currentWords, COUNTS.spellWord - spellRev.length).map((w) => ({ ...w, isReview: false }));
+  // Shuffled so the reserved nonsense word is not always the first thing dictated.
+  const spellCur = shuffle(topUp(spellPick, currentWords, COUNTS.spellWord - spellRev.length), rng).map((w) => ({ ...w, isReview: false }));
   const spellWords: SpellingItem[] = [...spellCur, ...spellRev].map((w) => ({
     type: 'word',
     word: w.word,

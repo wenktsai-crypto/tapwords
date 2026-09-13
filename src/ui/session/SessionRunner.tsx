@@ -117,9 +117,14 @@ export function SessionRunner({ profile, onExit, saveTimeoutMs = 10000 }: Props)
     const log = logRef.current;
     try {
       if (!logSavedRef.current) {
-        const previous = await withTimeout(store.listLogs(profile.id));
+        const stored = await withTimeout(store.listLogs(profile.id));
+        // An earlier attempt can time out from the screen's point of view while the write
+        // actually lands. If this session's log is already there, neither append it again
+        // nor let finishSession count the same session twice.
+        const alreadySaved = stored.some((l) => l.sessionNumber === plan.sessionNumber);
+        const previous = alreadySaved ? stored.filter((l) => l.sessionNumber !== plan.sessionNumber) : stored;
         outRef.current = finishSession(profile.state, log, previous, content);
-        await withTimeout(store.appendLog(profile.id, log));
+        if (!alreadySaved) await withTimeout(store.appendLog(profile.id, log));
         logSavedRef.current = true;
       }
       await withTimeout(store.saveProfile({ ...profile, state: outRef.current!.state }));

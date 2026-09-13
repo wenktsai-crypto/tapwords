@@ -34,6 +34,19 @@ class StuckStore extends MemoryStore {
   }
 }
 
+/** A store whose first `appendLog` takes far longer than the runner will wait, but does write
+ * in the end — the case where a save "fails" from the screen's point of view yet really landed. */
+class SlowAppendStore extends MemoryStore {
+  private slowed = false;
+  async appendLog(profileId: string, log: SessionLog) {
+    if (!this.slowed) {
+      this.slowed = true;
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    return super.appendLog(profileId, log);
+  }
+}
+
 describe('SessionRunner', () => {
   it('keeps the responses from the part in progress when the child stops early', async () => {
     const user = userEvent.setup();
@@ -54,6 +67,24 @@ describe('SessionRunner', () => {
     expect(logs[0].complete).toBe(false);
     expect(logs[0].responses.filter((r) => r.activity === 'sound-reverse')).toHaveLength(1);
     expect(logs[0].responses[0]).toMatchObject({ activity: 'sound-reverse', correct: true });
+  });
+
+  it('does not save the session twice when a timed-out save actually landed', async () => {
+    const user = userEvent.setup();
+    const store = new SlowAppendStore();
+    const p = profile();
+    await store.saveProfile(p);
+    renderWithServices(<SessionRunner profile={p} onExit={vi.fn()} saveTimeoutMs={20} />, { store });
+
+    await user.click(await screen.findByRole('button', { name: /stop for now/i }));
+    // The screen gives up after 20ms; the write itself lands at about 200ms.
+    const tryAgain = await screen.findByRole('button', { name: /try again/i });
+    await waitFor(async () => expect((await store.listLogs('p1')).length).toBe(1), { timeout: 2000 });
+    await user.click(tryAgain);
+
+    expect(await screen.findByText(/nice work today/i)).toBeInTheDocument();
+    expect((await store.listLogs('p1')).length).toBe(1);
+    expect((await store.listProfiles())[0].state.sessionsCompleted).toBe(1);
   });
 
   it('shows the retry screen when a save hangs past the timeout', async () => {
@@ -118,10 +149,12 @@ describe('SessionRunner', () => {
       for (let k = 1; k <= n; k++) await click(`Sound ${k}`);
       await click('Blend');
     };
+    // Tray pieces are labelled by their text, or "<text> <n>" when the text repeats in the tray.
     const buildFrom = async (pieces: string[]) => {
       const tray = await screen.findByTestId('tray');
       for (const g of pieces) {
-        const buttons = within(tray).getAllByRole('button', { name: g }).filter((b) => !b.className.includes('tile-dim'));
+        const label = new RegExp(`^${g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\d+)?$`);
+        const buttons = within(tray).getAllByRole('button', { name: label }).filter((b) => !b.className.includes('tile-dim'));
         await user.click(buttons[0]);
       }
       await click(/^done$/i);
