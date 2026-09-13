@@ -46,7 +46,7 @@ export const SUBSTEP_2_1: Substep = {
     // nonsense, same eight patterns
     nonsense('zang', 'z,ang'), nonsense('quang', 'qu,ang'),
     nonsense('ning', 'n,ing'), nonsense('shink', 'sh,ink'),
-    nonsense('rong', 'r,ong'),
+    nonsense('zong', 'z,ong'),
     nonsense('wung', 'w,ung'), nonsense('thung', 'th,ung'),
     nonsense('vank', 'v,ank'),
     nonsense('yink', 'y,ink'),
