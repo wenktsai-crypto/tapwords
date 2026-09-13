@@ -88,7 +88,7 @@ export function ReadAloudPart({ words, sentences, substep, onComplete, onProgres
 
   if (phase === 'ask') {
     return (
-      <div className="stage" data-part="read-aloud-ask">
+      <div className="stage" data-part="read-aloud-ask" data-testid="part">
         <Caption />
         <div className="row">
           <BigButton onClick={startReading}>Yes</BigButton>
@@ -100,7 +100,7 @@ export function ReadAloudPart({ words, sentences, substep, onComplete, onProgres
 
   const line = lines[i];
   return (
-    <div className="stage" data-part="read-aloud">
+    <div className="stage" data-part="read-aloud" data-testid="part">
       <Caption />
       <p className={line.text.includes(' ') ? 'bigtext' : 'bigword'}>{line.text}</p>
       <div className="row">

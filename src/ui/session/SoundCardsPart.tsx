@@ -110,7 +110,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete, onProgr
   if (phase === 'forward') {
     const card = getCard(content, forwardCards[i]);
     return (
-      <div className="stage" data-part="sound-forward">
+      <div className="stage" data-part="sound-forward" data-testid="part">
         <Caption />
         <Tile grapheme={card.grapheme} type={card.type} size="large" />
         <p className="caption">as in {card.keyword}</p>
@@ -125,7 +125,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete, onProgr
 
   if (finished || !item) return null;
   return (
-    <div className="stage" data-part="sound-reverse">
+    <div className="stage" data-part="sound-reverse" data-testid="part" data-answer={item.target}>
       <Caption />
       <div className="row">
         {item.choices.map((c) => {

@@ -107,7 +107,7 @@ export function StoryPart({ story, substep, onComplete, onProgress }: Props) {
 
   if (phase === 'title') {
     return (
-      <div className="stage" data-part="story-title">
+      <div className="stage" data-part="story-title" data-testid="part">
         <Caption />
         <h2 className="bigtext">{story.title}</h2>
         <BigButton onClick={() => setPhase('read')}>Start</BigButton>
@@ -117,7 +117,7 @@ export function StoryPart({ story, substep, onComplete, onProgress }: Props) {
 
   if (phase === 'read') {
     return (
-      <div className="stage" data-part="story">
+      <div className="stage" data-part="story" data-testid="part">
         <p className="bigtext">{story.sentences[i]}</p>
         <div className="row">
           <BigButton variant="quiet" onClick={() => audio.speak(story.sentences[i])}>Hear it</BigButton>
@@ -130,7 +130,7 @@ export function StoryPart({ story, substep, onComplete, onProgress }: Props) {
 
   if (!q) return null;
   return (
-    <div className="stage" data-part="story-question">
+    <div className="stage" data-part="story-question" data-testid="part" data-answer={q.choices[q.answer]}>
       <Caption />
       <div className="row">
         {q.choices.map((c, k) => <BigButton key={k} variant={answered !== null && k === q.answer ? 'primary' : 'quiet'} onClick={() => answer(k)}>{c}</BigButton>)}
