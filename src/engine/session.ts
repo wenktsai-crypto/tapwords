@@ -1,4 +1,4 @@
-import type { Content, LessonStep, Story, Word } from '../content/types';
+import type { Content, LessonStep, Question, Story, Word } from '../content/types';
 import type { ProfileState } from './types';
 import { cardKey, wordKey } from './types';
 import { availableCards, availableWords, getSubstep, substepIndex } from './availability';
@@ -49,6 +49,12 @@ export const COUNTS = {
   readAloudCurrent: 6,
   readAloudSentences: 3,
 };
+
+export function shuffleQuestion(q: Question, rng: Rng): Question {
+  const order = shuffle([0, 1, 2], rng);
+  const choices = order.map((i) => q.choices[i]) as [string, string, string];
+  return { ...q, choices, answer: order.indexOf(q.answer) as 0 | 1 | 2 };
+}
 
 export function findChoices(target: Word, pool: Word[], rng: Rng): string[] {
   const others = pool.filter((w) => w.text !== target.text);
@@ -186,7 +192,8 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
 
   // 6. story
   const stories = usableStories(content, sub.id, groupIndex);
-  const story = stories.length > 0 ? stories[(n - 1) % stories.length].story : sub.stories[(n - 1) % sub.stories.length];
+  const chosen = stories.length > 0 ? stories[(n - 1) % stories.length].story : sub.stories[(n - 1) % sub.stories.length];
+  const story = { ...chosen, questions: chosen.questions.map((q) => shuffleQuestion(q, rng)) };
 
   return {
     sessionNumber: n,

@@ -3,7 +3,7 @@ import { CARDS } from '../../src/content/cards';
 import { CONTENT } from '../../src/content';
 import { cvc, cvcNonsense } from '../../src/content/build';
 import type { Content, Substep, Word } from '../../src/content/types';
-import { buildSession, findChoices, COUNTS, usableSentences, usableStories } from '../../src/engine/session';
+import { buildSession, findChoices, COUNTS, usableSentences, usableStories, shuffleQuestion } from '../../src/engine/session';
 import { initialState } from '../../src/engine/types';
 import { seeded } from '../../src/engine/rng';
 
@@ -211,5 +211,33 @@ describe('sentence and story availability by group', () => {
       ...plan.story.sentences,
     ];
     for (const t of texts) expect(t, t).not.toMatch(/bed/);
+  });
+});
+
+describe('story question shuffling', () => {
+  const q = { prompt: 'p', choices: ['right', 'wrong1', 'wrong2'] as [string, string, string], answer: 0 as const };
+
+  it('keeps the correct text at the remapped answer index and keeps all three choices', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const s = shuffleQuestion(q, seeded(seed));
+      expect(s.choices[s.answer]).toBe('right');
+      expect([...s.choices].sort()).toEqual(['right', 'wrong1', 'wrong2']);
+      expect(s.prompt).toBe('p');
+    }
+  });
+
+  it('does not always leave the answer first', () => {
+    const positions = new Set<number>();
+    for (let seed = 1; seed <= 20; seed++) positions.add(shuffleQuestion(q, seeded(seed)).answer);
+    expect(positions.size).toBeGreaterThan(1);
+  });
+
+  it('shuffles the questions of the session story without changing its title or sentences', () => {
+    const plan = buildSession(CONTENT, initialState('1.1'), seeded(7));
+    const original = CONTENT.substeps[0].stories.find((s) => s.title === plan.story.title)!;
+    expect(plan.story.sentences).toEqual(original.sentences);
+    plan.story.questions.forEach((sq, i) => {
+      expect(sq.choices[sq.answer]).toBe(original.questions[i].choices[original.questions[i].answer]);
+    });
   });
 });
