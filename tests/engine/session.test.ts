@@ -100,9 +100,28 @@ describe('buildSession with an earlier substep to review', () => {
     expect(plan.forwardCards.length).toBe(2 + COUNTS.forwardReview);
   });
 
-  it('takes fewer current items when the substep has few words', () => {
-    // only 6 real + 4 nonsense current words: word-work can still fill 12 with review
+});
+
+describe('buildSession with a substep whose word bank is smaller than word-work capacity', () => {
+  const small: Substep = {
+    id: '1.2', title: 'Small bank', parentSummary: '', concepts: [], sightWords: [],
+    groups: [{ cards: ['b', 'u'], lesson: [] }],
+    words: [cvc('bat'), cvc('bud'), cvc('bag'), cvcNonsense('bip'), cvcNonsense('bup')],
+    sentences: CONTENT.substeps[0].sentences,
+    stories: CONTENT.substeps[0].stories,
+  };
+  const content: Content = { cards: CARDS, substeps: [CONTENT.substeps[0], small] };
+  const plan = buildSession(content, { ...initialState('1.2'), sessionsCompleted: 5, substepEnteredAt: 5 }, seeded(1));
+
+  it('still fills all 12 word-work items by pulling more review when the current bank is too small', () => {
     expect(plan.wordWork.length).toBe(COUNTS.wordWork);
+    const currentItems = plan.wordWork.filter((w) => !w.isReview);
+    const currentTexts = currentItems.map((w) => w.word.text);
+    // every current word in the 5-word bank appears at most once
+    expect(new Set(currentTexts).size).toBe(currentTexts.length);
+    expect(currentTexts.length).toBeLessThanOrEqual(small.words.length);
+    // review items fill whatever the current bank could not
+    expect(plan.wordWork.filter((w) => w.isReview).length).toBe(COUNTS.wordWork - currentTexts.length);
   });
 });
 

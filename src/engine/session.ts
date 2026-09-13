@@ -98,8 +98,9 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const curReal = currentWords.filter((w) => w.word.kind === 'real');
   const pickedNonsense = sample(curNonsense, COUNTS.minNonsense, rng);
   const pickedReal = sample(curReal, COUNTS.wordWorkCurrent - pickedNonsense.length, rng);
-  const review = pickReview(earlierWords, strengths, COUNTS.wordWork - COUNTS.wordWorkCurrent, n, rng).map((w) => ({ ...w, isReview: true }));
-  const current = topUp([...pickedNonsense, ...pickedReal], currentWords, COUNTS.wordWork - review.length).map((w) => ({ ...w, isReview: false }));
+  const picked = [...pickedNonsense, ...pickedReal];
+  const review = pickReview(earlierWords, strengths, COUNTS.wordWork - picked.length, n, rng).map((w) => ({ ...w, isReview: true }));
+  const current = topUp(picked, currentWords, COUNTS.wordWork - review.length).map((w) => ({ ...w, isReview: false }));
   const types: WordWorkItem['type'][] = ['tap', 'find', 'build'];
   const wordWork: WordWorkItem[] = shuffle([...current, ...review], rng).map((w, i) => {
     const type = types[i % 3];
