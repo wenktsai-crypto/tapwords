@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SoundCardsPart } from '../../src/ui/session/SoundCardsPart';
 import { FakeAudio } from '../../src/audio/fake';
@@ -43,5 +43,42 @@ describe('SoundCardsPart', () => {
     const onComplete = vi.fn();
     renderWithServices(<SoundCardsPart forwardCards={[]} reverseItems={[]} onComplete={onComplete} />);
     await waitFor(() => expect(onComplete).toHaveBeenCalledWith([]));
+  });
+
+  it('does not double-record when the last reverse item is tapped twice quickly', async () => {
+    const onComplete = vi.fn();
+    const audio = new FakeAudio();
+    const single = [{ target: 'm', choices: ['m', 'a', 'p'], isReview: false }];
+    renderWithServices(<SoundCardsPart forwardCards={[]} reverseItems={single} onComplete={onComplete} />, { audio });
+
+    await waitFor(() => expect(audio.played.at(-1)).toBe('m'));
+    const tile = screen.getByRole('button', { name: 'm' });
+    fireEvent.click(tile);
+    fireEvent.click(tile);
+
+    await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
+    expect(onComplete.mock.calls[0][0]).toEqual([
+      { itemKey: 'card:m', activity: 'sound-reverse', correct: true, isReview: false, parentMarked: false },
+    ]);
+  });
+
+  it('does not double-record a miss when the wrong tile is tapped twice quickly', async () => {
+    const onComplete = vi.fn();
+    const audio = new FakeAudio();
+    const single = [{ target: 'm', choices: ['m', 'a', 'p'], isReview: false }];
+    renderWithServices(<SoundCardsPart forwardCards={[]} reverseItems={single} onComplete={onComplete} />, { audio });
+
+    await waitFor(() => expect(audio.played.at(-1)).toBe('m'));
+    const tile = screen.getByRole('button', { name: 'p' });
+    fireEvent.click(tile);
+    fireEvent.click(tile);
+
+    const next = await screen.findByRole('button', { name: /next/i });
+    fireEvent.click(next);
+
+    await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
+    expect(onComplete.mock.calls[0][0]).toEqual([
+      { itemKey: 'card:m', activity: 'sound-reverse', correct: false, isReview: false, parentMarked: false },
+    ]);
   });
 });

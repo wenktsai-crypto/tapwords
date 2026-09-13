@@ -21,10 +21,18 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
   const [responses, setResponses] = useState<ScoredResponse[]>([]);
   const [missed, setMissed] = useState(false);
   const missedRef = useRef(false);
+  const [finished, setFinished] = useState(false);
+  const finishedRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
   const item = phase === 'reverse' ? reverseItems[i] : undefined;
+
+  const finish = (rs: ScoredResponse[]) => {
+    finishedRef.current = true;
+    setFinished(true);
+    onCompleteRef.current(rs);
+  };
 
   useEffect(() => {
     if (phase === 'forward' && i === 0) say('Say the sound for each card. Tap "Hear it" to check.');
@@ -33,7 +41,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
   useEffect(() => {
     if (phase !== 'reverse') return;
     if (!item) {
-      onCompleteRef.current(responses);
+      if (!finishedRef.current) finish(responses);
       return;
     }
     let cancelled = false;
@@ -48,6 +56,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
   }, [phase, i]);
 
   const nextForward = () => {
+    if (finishedRef.current) return;
     if (i + 1 < forwardCards.length) setI(i + 1);
     else {
       setPhase('reverse');
@@ -56,14 +65,15 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
   };
 
   const nextReverse = (rs: ScoredResponse[]) => {
+    if (finishedRef.current) return;
     missedRef.current = false;
     setMissed(false);
     if (i + 1 < reverseItems.length) setI(i + 1);
-    else onCompleteRef.current(rs);
+    else finish(rs);
   };
 
   const answer = async (choice: string) => {
-    if (!item || missedRef.current) return;
+    if (!item || missedRef.current || finishedRef.current) return;
     missedRef.current = true;
     const correct = choice === item.target;
     const rs = [...responses, { itemKey: cardKey(item.target), activity: 'sound-reverse' as const, correct, isReview: item.isReview, parentMarked: false }];
@@ -91,7 +101,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
     );
   }
 
-  if (!item) return null;
+  if (finished || !item) return null;
   return (
     <div className="stage" data-part="sound-reverse">
       <Caption />
