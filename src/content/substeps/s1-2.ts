@@ -5,12 +5,12 @@ export const SUBSTEP_1_2: Substep = {
   id: '1.2',
   title: 'New sounds, a few at a time',
   parentSummary:
-    'Your child learns the rest of the single consonants, b, h, j, c, k, v, w, x, y and z, plus the two remaining short vowels, u as in up and e as in Ed. They also meet the first letter pairs that make one sound, sh, ck, ch, th, qu and wh, so a word like "bug" is three taps and "chip" is three taps too.',
+    'Your child learns the rest of the single consonants, b, h, j, c, k, v, w, x, y and z, plus the two remaining short vowels, u as in up and e as in Ed. They also meet the first letter pairs that are tapped as a single sound, sh, ck, ch, th, qu and wh, so a word like "bug" is three taps and "chip" is three taps too.',
   groups: [
     {
       cards: ['b', 'sh', 'u'],
       lesson: [
-        { say: 'Three new cards today. B says buh, s and h together say shh, and u is the short vowel you hear in up.' },
+        { say: 'Three new cards today. B is the first sound in bat, s and h together are the first sound in ship, and u is the short vowel in up.' },
         { show: ['b', 'sh', 'u'] },
         { say: 'The letters s and h stand side by side and make one sound, so they get one tap, not two.' },
         { tap: 'bug' },
@@ -23,11 +23,11 @@ export const SUBSTEP_1_2: Substep = {
     {
       cards: ['h', 'j', 'c', 'k', 'ck'],
       lesson: [
-        { say: 'Five new cards. H says huh, j says juh, and c, k and ck all say the same sound, kuh.' },
+        { say: 'Five new cards. H is the first sound in hat, j is the first sound in jug, and c, k and ck all make the same sound, the one at the start of cat.' },
         { show: ['h', 'j', 'c', 'k', 'ck'] },
         { say: 'We use ck at the end of a short word, right after the vowel, and it gets one tap.' },
         { tap: 'duck' },
-        { say: 'Your turn. Listen for the kuh sound at the end.' },
+        { say: 'Your turn. Listen for the sound you hear at the end of duck.' },
         { try: 'hat' },
         { try: 'jog' },
         { try: 'kick' },
@@ -36,7 +36,7 @@ export const SUBSTEP_1_2: Substep = {
     {
       cards: ['e', 'v', 'w'],
       lesson: [
-        { say: 'Three new cards. E is the short vowel in Ed, v says vvv, and w says wuh.' },
+        { say: 'Three new cards. E is the short vowel in Ed, v is the first sound in vet, and w is the first sound in wig.' },
         { show: ['e', 'v', 'w'] },
         { say: 'Short e is easy to mix up with short i, so listen hard for the sound in the middle of bed.' },
         { tap: 'wet' },
@@ -49,11 +49,11 @@ export const SUBSTEP_1_2: Substep = {
     {
       cards: ['x', 'y', 'z'],
       lesson: [
-        { say: 'Three new cards. X says ks, y says yuh at the start of a word, and z says zzz.' },
+        { say: 'Three new cards. X is the last sound in fox, y is the first sound in yak, and z is the first sound in zip.' },
         { show: ['x', 'y', 'z'] },
         { say: 'X is the odd one out. One letter, two sounds squashed together, and still just one tap.' },
         { tap: 'fox' },
-        { say: 'Your turn. Keep the ks sound as one tap at the end.' },
+        { say: 'Your turn. The x at the end is still just one tap.' },
         { try: 'six' },
         { try: 'yes' },
         { try: 'zip' },
@@ -62,9 +62,9 @@ export const SUBSTEP_1_2: Substep = {
     {
       cards: ['ch', 'th', 'qu', 'wh'],
       lesson: [
-        { say: 'Four new pairs today: ch, th, qu and wh. Each pair makes one sound.' },
+        { say: 'Four new pairs today: ch, th, qu and wh. Each pair gets one tap.' },
         { show: ['ch', 'th', 'qu', 'wh'] },
-        { say: 'Two letters, one sound, one tap. The letter q always brings u along, and together they say kw.' },
+        { say: 'Two letters, one tap. The letter q always brings u along, and together they make the first sound in queen.' },
         { tap: 'chip' },
         { say: 'Your turn. Tap the pair once, then finish the word.' },
         { try: 'thin' },
@@ -83,7 +83,7 @@ export const SUBSTEP_1_2: Substep = {
     word('up', 'u,p'), word('us', 'u,s'),
     word('ship', 'sh,i,p'), word('shop', 'sh,o,p'),
     word('fish', 'f,i,sh'), word('dish', 'd,i,sh'),
-    cvcNonsense('bup'), nonsense('shob', 'sh,o,b'), cvcNonsense('lub'), cvcNonsense('mup'),
+    cvcNonsense('bup'), nonsense('shob', 'sh,o,b'), cvcNonsense('lup'), cvcNonsense('mup'),
 
     // Group 2: h, j, c, k, ck
     cvc('hat'), cvc('hit'), cvc('hop'), cvc('hug'), cvc('hut'),
@@ -91,7 +91,7 @@ export const SUBSTEP_1_2: Substep = {
     cvc('cat'), cvc('cup'), cvc('cut'),
     cvc('kid'), cvc('kit'),
     word('kick', 'k,i,ck'), word('sock', 's,o,ck'), word('rock', 'r,o,ck'), word('duck', 'd,u,ck'),
-    cvcNonsense('jop'), cvcNonsense('kib'), cvcNonsense('cug'), nonsense('gick', 'g,i,ck'),
+    cvcNonsense('jop'), cvcNonsense('kib'), cvcNonsense('cug'), nonsense('gock', 'g,o,ck'),
 
     // Group 3: e, v, w
     cvc('bed'), cvc('red'), cvc('web'), cvc('wet'),
@@ -121,12 +121,16 @@ export const SUBSTEP_1_2: Substep = {
     'The big fish is in the dish.',
     'A bug in the mud has fun.',
     'The sun is up on the ship.',
-    'The kid has a duck in a sock.',
+    'You and I nap in the sun.',
+    'The kid has a duck in his sock.',
     'Hop up and hug the cat.',
+    'Hop to the rock and hop to the log.',
     'The red hen is wet.',
-    'The vet has a wig on his leg.',
+    'The wet vet has a red wig.',
+    'I wish I was a big fish.',
     'Fix the box and zip it up.',
-    'This thin chip is in the bath.',
+    'The ox is as big as a rock.',
+    'The thin chip is in the dish.',
   ],
   stories: [
     {
@@ -149,7 +153,7 @@ export const SUBSTEP_1_2: Substep = {
       sentences: [
         'Chip is a duck with a red hat.',
         'Chip has a hut at the fish shop.',
-        'This shop has much fish in it.',
+        'This shop has fish in it.',
         'A thin cat sat on the hut.',
         'Chip was not mad at the cat.',
         'Chip and the cat chat in the sun.',
