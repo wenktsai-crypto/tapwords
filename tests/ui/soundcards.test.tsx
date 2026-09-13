@@ -81,4 +81,12 @@ describe('SoundCardsPart', () => {
       { itemKey: 'card:m', activity: 'sound-reverse', correct: false, isReview: false, parentMarked: false },
     ]);
   });
+
+  it('shows a silent-e vowel card as the a_e pattern, not a bare letter', () => {
+    const { container } = renderWithServices(
+      <SoundCardsPart forwardCards={['a_e']} reverseItems={[]} onComplete={() => {}} />,
+    );
+    expect(container.querySelector('.tile')?.textContent).toBe('a_e');
+    expect(screen.getByText(/as in cake/i)).toBeInTheDocument();
+  });
 });

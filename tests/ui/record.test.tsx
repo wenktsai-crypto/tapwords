@@ -50,4 +50,10 @@ describe('RecordScreen', () => {
     await user.click(await screen.findByRole('button', { name: /back/i }));
     expect(onBack).toHaveBeenCalled();
   });
+
+  it('offers a recording slot for each sound, and none for the silent e', async () => {
+    renderWithServices(<RecordScreen onBack={() => {}} />);
+    expect(await screen.findByTestId('card-row-a_e')).toBeInTheDocument();
+    expect(screen.queryByTestId('card-row-e_silent')).toBeNull();
+  });
 });

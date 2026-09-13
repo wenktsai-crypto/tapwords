@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useServices } from '../services';
-import { cardTypeFor } from '../tiles';
+import { cardDisplay } from '../../content/parts';
 import { Tile } from '../components/Tile';
 import { BigButton } from '../components/BigButton';
 
@@ -55,11 +55,11 @@ export function RecordScreen({ onBack }: Props) {
         {!recorder.supported() && <p className="caption">This browser can't record. The computer voice will be used instead.</p>}
         {note && <p className="caption">{note}</p>}
         <ul className="cardlist">
-          {content.cards.map((c) => {
+          {content.cards.filter((c) => c.type !== 'silent').map((c) => {
             const isActive = active === c.id;
             return (
               <li key={c.id} className="cardrow" data-testid={`card-row-${c.id}`}>
-                <Tile grapheme={c.grapheme} type={cardTypeFor(content.cards, c.grapheme)} />
+                <Tile grapheme={cardDisplay(c)} type={c.type} />
                 <span className="cardrow-keyword">{c.keyword}</span>
                 <span className="cardrow-status">{recorded.has(c.id) ? 'Recorded' : 'Not recorded'}</span>
                 <div className="row">

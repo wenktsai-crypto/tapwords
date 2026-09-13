@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReverseItem } from '../../engine/session';
 import { cardKey, type ScoredResponse } from '../../engine/types';
 import { getCard } from '../../engine/availability';
+import { cardDisplay } from '../../content/parts';
 import { useServices } from '../services';
 import { Caption, useSay } from '../speech';
 import { Tile } from '../components/Tile';
@@ -112,7 +113,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete, onProgr
     return (
       <div className="stage" data-part="sound-forward" data-testid="part">
         <Caption />
-        <Tile grapheme={card.grapheme} type={card.type} size="large" />
+        <Tile grapheme={cardDisplay(card)} type={card.type} size="large" />
         <p className="caption">as in {card.keyword}</p>
         <div className="row">
           <BigButton variant="quiet" onClick={() => audio.playCard(card.id)}>Hear it</BigButton>
@@ -130,7 +131,7 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete, onProgr
       <div className="row">
         {item.choices.map((c) => {
           const card = getCard(content, c);
-          return <Tile key={c} grapheme={card.grapheme} type={card.type} size="large" selected={missed && c === item.target} dim={missed && c !== item.target} onClick={() => answer(c)} />;
+          return <Tile key={c} grapheme={cardDisplay(card)} type={card.type} size="large" selected={missed && c === item.target} dim={missed && c !== item.target} onClick={() => answer(c)} />;
         })}
       </div>
       <div className="row">
