@@ -14,9 +14,10 @@ export function MissReview({ word, onDone }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    say("Let's look at that one.").then(() => {
+    const advance = () => {
       if (!cancelled) setPhase('demo');
-    });
+    };
+    say("Let's look at that one.").then(advance, advance);
     return () => {
       cancelled = true;
     };

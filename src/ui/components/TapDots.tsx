@@ -18,11 +18,28 @@ export function TapDots({ word, mode, onResult }: Props) {
   const [blending, setBlending] = useState(false);
   const onResultRef = useRef(onResult);
   onResultRef.current = onResult;
+  // Mirrors of the state above, read synchronously so rapid taps that land
+  // before React commits a re-render (e.g. touch ghost clicks) can't read a
+  // stale value and double-count or drop a tap.
+  const tappedRef = useRef(0);
+  const wrongRef = useRef(false);
+  const blendingRef = useRef(false);
+  const mounted = useRef(true);
+
+  useEffect(
+    () => () => {
+      mounted.current = false;
+    },
+    [],
+  );
 
   useEffect(() => {
     setTapped(0);
     setWrong(false);
     setBlending(false);
+    tappedRef.current = 0;
+    wrongRef.current = false;
+    blendingRef.current = false;
     if (mode !== 'demo') return;
     let cancelled = false;
     (async () => {
@@ -43,17 +60,24 @@ export function TapDots({ word, mode, onResult }: Props) {
   }, [word, mode, audio, timing.demoDelayMs]);
 
   const tapDot = async (i: number) => {
-    if (mode !== 'try' || tapped >= word.parts.length) return;
-    if (i !== tapped) setWrong(true);
-    setTapped(tapped + 1);
+    if (mode !== 'try' || tappedRef.current >= word.parts.length) return;
+    const next = tappedRef.current + 1;
+    if (i !== tappedRef.current) {
+      wrongRef.current = true;
+      setWrong(true);
+    }
+    tappedRef.current = next;
+    setTapped(next);
     await audio.playCard(word.parts[i].card);
   };
 
   const blend = async () => {
-    if (blending) return;
+    if (blendingRef.current) return;
+    blendingRef.current = true;
     setBlending(true);
     await audio.speak(word.text);
-    onResultRef.current(!wrong);
+    if (!mounted.current) return;
+    onResultRef.current(!wrongRef.current);
   };
 
   const done = tapped >= word.parts.length;

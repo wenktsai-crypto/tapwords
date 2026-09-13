@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TapDots } from '../../src/ui/components/TapDots';
 import { MissReview } from '../../src/ui/components/MissReview';
@@ -43,6 +43,36 @@ describe('TapDots', () => {
     expect(audio.played).toEqual(['s', 'i', 't']);
     expect(audio.spoken).toContain('sit');
   });
+
+  it('an extra tap once all sounds are tapped does not double-count', async () => {
+    const user = userEvent.setup();
+    const onResult = vi.fn();
+    const audio = new FakeAudio();
+    renderWithServices(<TapDots word={cvc('map')} mode="try" onResult={onResult} />, { audio });
+    await user.click(screen.getByRole('button', { name: 'Sound 1' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    // a ghost/rapid extra tap on the last dot, fired synchronously with no await
+    fireEvent.click(screen.getByRole('button', { name: 'Sound 3' }));
+    expect(audio.played.length).toBe(3);
+    expect(await screen.findByRole('button', { name: 'Blend' })).toBeInTheDocument();
+  });
+
+  it('clicking Blend twice in quick succession reports the result only once', async () => {
+    const user = userEvent.setup();
+    const onResult = vi.fn();
+    const audio = new FakeAudio();
+    renderWithServices(<TapDots word={cvc('map')} mode="try" onResult={onResult} />, { audio });
+    await user.click(screen.getByRole('button', { name: 'Sound 1' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    const blendButton = await screen.findByRole('button', { name: 'Blend' });
+    // two synchronous clicks, no await between them
+    fireEvent.click(blendButton);
+    fireEvent.click(blendButton);
+    await waitFor(() => expect(onResult).toHaveBeenCalledTimes(1));
+    expect(onResult).toHaveBeenCalledWith(true);
+  });
 });
 
 describe('MissReview', () => {
@@ -59,5 +89,30 @@ describe('MissReview', () => {
     await user.click(await screen.findByRole('button', { name: 'Blend' }));
     await waitFor(() => expect(onDone).toHaveBeenCalled());
     expect(audio.played.slice(0, 3)).toEqual(['l', 'o', 'g']);
+  });
+
+  it('still reaches the demo and finishes even if the intro speech rejects', async () => {
+    const user = userEvent.setup();
+    const onDone = vi.fn();
+    class FlakyAudio extends FakeAudio {
+      private failedOnce = false;
+      async speak(text: string) {
+        if (!this.failedOnce) {
+          this.failedOnce = true;
+          throw new Error('speech synthesis unavailable');
+        }
+        return super.speak(text);
+      }
+    }
+    const audio = new FlakyAudio();
+    renderWithServices(<MissReview word={cvc('log')} onDone={onDone} />, { audio });
+    expect(await screen.findByText(/let's look at that one/i)).toBeInTheDocument();
+    // the intro speech rejected, but the demo still runs and hands off to the try
+    await waitFor(() => expect(audio.played).toEqual(['l', 'o', 'g']));
+    await user.click(await screen.findByRole('button', { name: 'Sound 1' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    await user.click(await screen.findByRole('button', { name: 'Blend' }));
+    await waitFor(() => expect(onDone).toHaveBeenCalled());
   });
 });
