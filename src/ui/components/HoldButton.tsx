@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -20,6 +20,7 @@ export function HoldButton({ children, onHold, ms = 1500 }: Props) {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
   };
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   return (
     <button
       type="button"
