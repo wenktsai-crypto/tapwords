@@ -82,13 +82,13 @@ export const SUBSTEP_3_4: Substep = {
       title: 'The Uncommon Basketball',
       sentences: [
         'Sam has a fantastic basketball.',
-        'Sam and Dan sit in Manhattan.',
+        'Sam and Dan sit in the sun in Manhattan.',
         'Sam does not know where the basketball is.',
         'Dan does not know where it is.',
         'They know the basketball is uncommon.',
         'Pam has the basketball in the shed.',
-        'Sam and Dan have fun with the basketball.',
-        'They have fun in the sun.',
+        'Sam and Dan run to the shed.',
+        'They have fun with the basketball in the shed.',
       ],
       questions: [
         { prompt: 'Where is the basketball?', choices: ['in the shed', 'in Manhattan', 'in the sun'], answer: 0 },
