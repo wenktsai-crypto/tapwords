@@ -102,11 +102,11 @@ export const SUBSTEP_3_1: Substep = {
         'The muffin is on a red mat.',
         'The mat is in the cabin.',
         'Now the muffin is not on the mat.',
-        'The rabbit is not sad.',
+        'The kitten has the muffin now.',
       ],
       questions: [
         { prompt: 'Where is the rabbit?', choices: ['in a cabin', 'on a mat', 'in the sun'], answer: 0 },
-        { prompt: 'What did the rabbit have?', choices: ['a muffin', 'a mat', 'a cabin'], answer: 0 },
+        { prompt: 'Who has the muffin at the end?', choices: ['the kitten', 'the rabbit', 'the mat'], answer: 0 },
       ],
     },
     {
@@ -117,11 +117,10 @@ export const SUBSTEP_3_1: Substep = {
         'The wagon has a basket on it.',
         'The basket has a muffin in it.',
         'The robin has the muffin now.',
-        'The muffin is not in the basket.',
         'The robin has a nap in the sun.',
       ],
       questions: [
-        { prompt: 'What did the wagon have on it?', choices: ['a basket', 'a muffin', 'a robin'], answer: 0 },
+        { prompt: 'What is in the basket at the start?', choices: ['a muffin', 'a robin', 'a wagon'], answer: 0 },
         { prompt: 'Where did the muffin end up?', choices: ['with the robin', 'in the basket', 'on the wagon'], answer: 0 },
       ],
     },
