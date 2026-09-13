@@ -17,4 +17,8 @@ export interface Store {
   getClip(cardId: string): Promise<Blob | undefined>;
   saveClip(cardId: string, blob: Blob): Promise<void>;
   listClipIds(): Promise<string[]>;
+  /** Replace every log for a profile (used by restore). */
+  setLogs(profileId: string, logs: SessionLog[]): Promise<void>;
+  /** Remove every profile, log and clip on this device. */
+  clearAll(): Promise<void>;
 }

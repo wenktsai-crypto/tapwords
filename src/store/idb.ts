@@ -1,4 +1,4 @@
-import { createStore, del, get, keys, set, type UseStore } from 'idb-keyval';
+import { clear, createStore, del, get, keys, set, type UseStore } from 'idb-keyval';
 import type { SessionLog } from '../engine/types';
 import type { Profile, Store } from './types';
 
@@ -44,5 +44,15 @@ export class IdbStore implements Store {
   async saveClip(cardId: string, blob: Blob) { await set(clipKey(cardId), blob, this.db); }
   async listClipIds() {
     return (await keys<string>(this.db)).filter((k) => k.startsWith('clip:')).map((k) => k.slice(5));
+  }
+  async setLogs(profileId: string, logs: SessionLog[]) {
+    return this.serial(async () => {
+      await set(logsKey(profileId), [...logs], this.db);
+    });
+  }
+  async clearAll() {
+    return this.serial(async () => {
+      await clear(this.db);
+    });
   }
 }
