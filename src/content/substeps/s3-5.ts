@@ -48,7 +48,7 @@ export const SUBSTEP_3_5: Substep = {
     word('packed', 'p,a,ck,ed', { concepts: ['suffix-ed'], syllables: [3] }),
     word('shifted', 'sh,i,f,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
     // a two-syllable base plus ed
-    word('inspected', 'i,n,s,p,e,c,t,ed', { concepts: ['suffix-ed'], syllables: [2, 6] }),
+    word('inspected', 'i,n,s,p,e,c,t,ed', { concepts: ['suffix-ed'], syllables: [2, 7] }),
 
     // -ing on one-syllable closed-syllable bases
     word('fishing', 'f,i,sh,ing', { concepts: ['suffix-ing'], syllables: [3] }),
