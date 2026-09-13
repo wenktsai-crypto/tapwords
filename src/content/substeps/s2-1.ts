@@ -35,7 +35,7 @@ export const SUBSTEP_2_1: Substep = {
     // ung
     word('hung', 'h,ung'), word('lung', 'l,ung'), word('sung', 's,ung'),
     // ank
-    word('bank', 'b,ank'), word('tank', 't,ank'), word('thank', 'th,ank'),
+    word('bank', 'b,ank'), word('tank', 't,ank'), word('thank', 'th,ank'), word('sank', 's,ank'),
     // ink
     word('pink', 'p,ink'), word('sink', 's,ink'), word('wink', 'w,ink'), word('think', 'th,ink'),
     // onk
@@ -61,7 +61,7 @@ export const SUBSTEP_2_1: Substep = {
     'Sam and Pam sing in the sun.',
     'The kid can dunk a doll in the tub.',
     'There is a pink bank on the bed.',
-    'Their duck can honk at the sun.',
+    'The man can honk at their duck.',
   ],
   stories: [
     {
@@ -71,29 +71,28 @@ export const SUBSTEP_2_1: Substep = {
         'A red hen sat with the king.',
         'He can sing a long song.',
         'The king can wink at the hen.',
-        'A duck can honk at the king.',
-        'They sing and wink in the sun.',
+        'The man can honk at the duck.',
         'The king is not sad.',
       ],
       questions: [
-        { prompt: 'What did the king sing?', choices: ['a long song', 'a big bed', 'the sun'], answer: 0 },
-        { prompt: 'Who winked?', choices: ['the king', 'the hen', 'the duck'], answer: 0 },
+        { prompt: 'What did the king sing?', choices: ['a long song', 'a big bed', 'a red hen'], answer: 0 },
+        { prompt: 'Who can wink?', choices: ['the king', 'the hen', 'the man'], answer: 0 },
       ],
     },
     {
-      title: 'Sam and the Pink Bank',
+      title: 'The Pink Sock in the Tank',
       sentences: [
-        'Sam has a pink bank.',
-        'The bank can bonk.',
-        'Sam has junk in a box.',
-        'Sam can dunk the junk in the bank.',
-        'The bank can bonk and bonk.',
-        'A duck has fun with the junk.',
-        'Pam has fun with the bank.',
+        'Sam has a pink sock.',
+        'Sam has a big tank.',
+        'The sock can sink in the tank.',
+        'The pink sock sank in the tank.',
+        'Pam has fun with the sock.',
+        'Sam and Pam sit at the tank.',
+        'Pam is not sad.',
       ],
       questions: [
-        { prompt: 'What can bonk?', choices: ['the bank', 'the junk', 'the box'], answer: 0 },
-        { prompt: 'Who has fun with the bank?', choices: ['Pam', 'Sam', 'a duck'], answer: 0 },
+        { prompt: 'What sank in the tank?', choices: ['the pink sock', 'the big tank', 'Pam'], answer: 0 },
+        { prompt: 'Who has fun with the sock?', choices: ['Pam', 'Sam', 'the tank'], answer: 0 },
       ],
     },
   ],
