@@ -52,7 +52,7 @@ export const SUBSTEP_2_5: Substep = {
     word('shrub', 'sh,r,u,b'),
     word('shrug', 'sh,r,u,g'),
     // thr
-    word('thrift', 'th,r,i,f,t'),
+
     word('thrust', 'th,r,u,s,t'),
     word('thrash', 'th,r,a,sh'),
     word('throb', 'th,r,o,b'),
