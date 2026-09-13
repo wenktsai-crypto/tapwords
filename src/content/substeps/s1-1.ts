@@ -51,15 +51,28 @@ export const SUBSTEP_1_1: Substep = {
   stories: [
     {
       title: 'Rat on a Log',
-      sentences: ['A rat sat on a log.', 'The rat is fat.', 'The log is in the fog.', 'The rat is not sad.', 'The rat sat and sat.'],
+      sentences: [
+        'A rat is on a log.',
+        'The rat is fat.',
+        'The log is in the fog.',
+        'A fig is in the fog.',
+        'The fig is on the log.',
+        'The fat rat is on the fig.',
+      ],
       questions: [
-        { prompt: 'Where did the rat sit?', choices: ['on a log', 'on a mat', 'on a lid'], answer: 0 },
-        { prompt: 'What is the rat like?', choices: ['fat', 'sad', 'mad'], answer: 0 },
+        { prompt: 'Where is the rat at the start of the story?', choices: ['on a log', 'on a mat', 'on a lid'], answer: 0 },
+        { prompt: 'What is on the log at the end?', choices: ['a fig', 'a mat', 'a mop'], answer: 0 },
       ],
     },
     {
       title: 'The Lad and the Map',
-      sentences: ['The lad sat on the mat.', 'A map is on the lid.', 'The lad is not mad.', 'The lad is sad.', 'The lad sat and sat.'],
+      sentences: [
+        'The lad is on the mat.',
+        'The lad is sad.',
+        'The map is not on the mat.',
+        'The map is on the lid.',
+        'The lad is at the map.',
+      ],
       questions: [{ prompt: 'Where is the map?', choices: ['on the lid', 'on the log', 'on the rat'], answer: 0 }],
     },
   ],
