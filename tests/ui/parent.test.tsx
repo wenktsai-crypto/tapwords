@@ -123,4 +123,20 @@ describe('ParentArea', () => {
 
     expect(await screen.findByText('100%')).toBeInTheDocument();
   });
+
+  it('can move the child by running the placement check', async () => {
+    const user = userEvent.setup();
+    const store = new MemoryStore();
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: { ...initialState('1.1'), sessionsCompleted: 4 } };
+    await store.saveProfile(profile);
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
+    await user.click(await screen.findByRole('button', { name: /placement check/i }));
+    await user.click(screen.getByRole('button', { name: /begin/i }));
+    for (let i = 0; i < 8; i++) await user.click(screen.getByRole('button', { name: /got it/i }));
+    await user.selectOptions(await screen.findByLabelText(/start at/i), '1.2');
+    await user.click(screen.getByRole('button', { name: /use this/i }));
+    await waitFor(async () => expect((await store.listProfiles())[0].state.currentSubstep).toBe('1.2'));
+    expect((await store.listProfiles())[0].state.substepEnteredAt).toBe(4);
+    expect(await screen.findByText(/grown-up area/i)).toBeInTheDocument();
+  });
 });

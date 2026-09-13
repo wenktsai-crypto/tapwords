@@ -84,4 +84,18 @@ describe('Home', () => {
       vi.useRealTimers();
     }
   });
+
+  it('can create a child from the placement check', async () => {
+    const user = userEvent.setup();
+    const store = new MemoryStore();
+    renderWithServices(<Home onStart={() => {}} onParent={() => {}} />, { store });
+    await user.click(await screen.findByRole('button', { name: /add a child/i }));
+    await user.type(screen.getByLabelText(/name/i), 'Ava');
+    await user.click(screen.getByRole('button', { name: /find the starting point/i }));
+    await user.click(screen.getByRole('button', { name: /begin/i }));
+    for (let i = 0; i < 8; i++) await user.click(screen.getByRole('button', { name: /missed it/i }));
+    await user.click(await screen.findByRole('button', { name: /use this/i }));
+    expect(await screen.findByRole('button', { name: /^Ava$/ })).toBeInTheDocument();
+    expect((await store.listProfiles())[0].state.currentSubstep).toBe('1.1');
+  });
 });
