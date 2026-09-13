@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import type { Profile } from '../../store/types';
+import { CorruptDataError, type Profile } from '../../store/types';
 import { initialState } from '../../engine/types';
 import { useServices } from '../services';
 import { BigButton } from '../components/BigButton';
 import { HoldButton } from '../components/HoldButton';
 import { PlacementScreen } from './PlacementScreen';
+import { BackupPanel } from './BackupPanel';
 
 export const COLORS = ['sky', 'moss', 'sand', 'plum'];
 
@@ -24,12 +25,17 @@ export function Home({ onStart, onParent }: Props) {
   const [color, setColor] = useState(COLORS[0]);
   const [start, setStart] = useState(content.substeps[0].id);
   const [error, setError] = useState<string | null>(null);
+  const [corrupt, setCorrupt] = useState(false);
 
   // Storage can be unavailable (a locked-down browser, a full disk). Say so in plain words
   // and let the grown-up try again, rather than sitting on "Loading..." for ever.
   const load = () => {
     setError(null);
-    store.listProfiles().then(setProfiles, () => setError("We couldn't open the saved children. Tap to try again."));
+    setCorrupt(false);
+    store.listProfiles().then(setProfiles, (e) => {
+      if (e instanceof CorruptDataError) setCorrupt(true);
+      else setError("We couldn't open the saved children. Tap to try again.");
+    });
   };
   useEffect(load, [store]);
 
@@ -51,6 +57,20 @@ export function Home({ onStart, onParent }: Props) {
   const save = (e: FormEvent) => { e.preventDefault(); create(start); };
 
   const examples = (id: string) => content.substeps.find((s) => s.id === id)!.words.filter((w) => w.kind === 'real').slice(0, 3).map((w) => w.text).join(', ');
+
+  if (corrupt) {
+    return (
+      <div className="screen">
+        <div className="stage">
+          <h1>Tapwords</h1>
+          <p className="caption">The saved data on this device is damaged, so we can't open the children. Restore from a backup file if you have one. Starting fresh removes the damaged data.</p>
+          <BackupPanel restoreOnly onRestored={load} />
+          <HoldButton onHold={() => store.clearAll().then(load, () => setError("We couldn't clear the data. Try again."))}>Start fresh (hold)</HoldButton>
+          {error && <p className="caption">{error}</p>}
+        </div>
+      </div>
+    );
+  }
 
   if (placing) {
     return (
@@ -80,6 +100,7 @@ export function Home({ onStart, onParent }: Props) {
               </div>
             ))}
             <BigButton variant="quiet" onClick={() => setAdding(true)}>Add a child</BigButton>
+            <BackupPanel onRestored={load} />
           </div>
         )}
         {adding && (

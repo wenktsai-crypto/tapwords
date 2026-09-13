@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { Home } from '../../src/ui/screens/Home';
 import { MemoryStore } from '../../src/store/memory';
 import { initialState } from '../../src/engine/types';
+import { CorruptDataError } from '../../src/store/types';
 import { renderWithServices } from './helpers';
 
 /** A store whose first `listProfiles` fails, then works — for the retry path. */
@@ -97,5 +98,34 @@ describe('Home', () => {
     await user.click(await screen.findByRole('button', { name: /use this/i }));
     expect(await screen.findByRole('button', { name: /^Ava$/ })).toBeInTheDocument();
     expect((await store.listProfiles())[0].state.currentSubstep).toBe('1.1');
+  });
+
+  it('offers restore or a fresh start when the saved data is damaged', async () => {
+    let broken = true;
+    class CorruptStore extends MemoryStore {
+      async listProfiles() {
+        if (broken) throw new CorruptDataError();
+        return super.listProfiles();
+      }
+      async clearAll() { broken = false; await super.clearAll(); }
+    }
+    const store = new CorruptStore();
+    renderWithServices(<Home onStart={() => {}} onParent={() => {}} />, { store });
+    expect(await screen.findByText(/saved data on this device is damaged/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/restore from a backup/i)).toBeInTheDocument();
+    const fresh = screen.getByRole('button', { name: /start fresh/i });
+    vi.useFakeTimers();
+    try {
+      fireEvent.pointerDown(fresh);
+      act(() => { vi.advanceTimersByTime(1600); });
+    } finally {
+      vi.useRealTimers();
+    }
+    expect(await screen.findByText(/add a child to get started/i)).toBeInTheDocument();
+  });
+
+  it('shows a restore control on the home screen', async () => {
+    renderWithServices(<Home onStart={() => {}} onParent={() => {}} />);
+    expect(await screen.findByLabelText(/restore from a backup/i)).toBeInTheDocument();
   });
 });

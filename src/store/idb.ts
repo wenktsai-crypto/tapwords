@@ -1,6 +1,6 @@
 import { clear, createStore, del, get, keys, set, type UseStore } from 'idb-keyval';
 import type { SessionLog } from '../engine/types';
-import type { Profile, Store } from './types';
+import { CorruptDataError, type Profile, type Store } from './types';
 
 const PROFILES = 'profiles';
 const logsKey = (id: string) => `logs:${id}`;
@@ -17,7 +17,13 @@ export class IdbStore implements Store {
     this.queue = run.catch(() => undefined);
     return run;
   }
-  async listProfiles() { return ((await get<Profile[]>(PROFILES, this.db)) ?? []); }
+  async listProfiles() {
+    const raw = await get<unknown>(PROFILES, this.db);
+    if (raw === undefined) return [];
+    const ok = Array.isArray(raw) && raw.every((p) => typeof p === 'object' && p !== null && typeof (p as Profile).id === 'string' && typeof (p as Profile).name === 'string' && typeof (p as Profile).state?.currentSubstep === 'string');
+    if (!ok) throw new CorruptDataError();
+    return raw as Profile[];
+  }
   async saveProfile(p: Profile) {
     return this.serial(async () => {
       const all = await this.listProfiles();

@@ -8,6 +8,7 @@ import { BigButton } from '../components/BigButton';
 import { Path } from '../components/Path';
 import { PlacementScreen } from './PlacementScreen';
 import { RecordScreen } from './RecordScreen';
+import { BackupPanel } from './BackupPanel';
 
 interface Props {
   profile: Profile;
@@ -129,6 +130,7 @@ export function ParentArea({ profile: initial, onBack }: Props) {
             <BigButton variant="quiet" onClick={() => setView('record')}>Record sounds</BigButton>
           </div>
         </div>
+        <BackupPanel />
       </div>
     </div>
   );

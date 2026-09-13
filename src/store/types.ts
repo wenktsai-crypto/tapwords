@@ -22,3 +22,10 @@ export interface Store {
   /** Remove every profile, log and clip on this device. */
   clearAll(): Promise<void>;
 }
+
+export class CorruptDataError extends Error {
+  constructor() {
+    super('The saved data on this device is damaged.');
+    this.name = 'CorruptDataError';
+  }
+}

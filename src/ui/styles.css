@@ -192,3 +192,7 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
 .cardrow-keyword { color: var(--muted); }
 .cardrow-status { font-size: 16px; color: var(--muted); }
 @media (max-width: 600px) { .cardrow { grid-template-columns: auto 1fr; } }
+
+.backup { width: 100%; max-width: 700px; }
+.filepick { display: flex; flex-direction: column; gap: 8px; }
+.filepick input { font-size: 18px; min-height: 64px; }

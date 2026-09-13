@@ -43,7 +43,7 @@ describe('ParentArea', () => {
     await user.click(screen.getByRole('button', { name: /^move$/i }));
     await waitFor(async () => expect((await store.listProfiles())[0].state.currentSubstep).toBe('1.2'));
     expect((await store.listProfiles())[0].state.lessonPending).toBe(true);
-    await user.click(screen.getByRole('button', { name: /back/i }));
+    await user.click(screen.getByRole('button', { name: /^back$/i }));
     expect(onBack).toHaveBeenCalled();
   });
 

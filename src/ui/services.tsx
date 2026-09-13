@@ -18,6 +18,7 @@ export interface Services {
   recorder: Recorder;
   rng: Rng;
   timing: Timing;
+  saveFile: (name: string, text: string) => Promise<void>;
 }
 
 export const ServicesContext = createContext<Services | null>(null);

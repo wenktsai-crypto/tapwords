@@ -15,6 +15,7 @@ export function makeServices(over: Partial<Services> = {}): Services {
     recorder: new FakeRecorder(),
     rng: seeded(1),
     timing: { demoDelayMs: 0, previewMs: 0, pauseMs: 0 },
+    saveFile: async () => {},
     ...over,
   };
 }
