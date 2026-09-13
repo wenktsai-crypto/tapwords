@@ -100,7 +100,10 @@ export function Home({ onStart, onParent }: Props) {
               </div>
             ))}
             <BigButton variant="quiet" onClick={() => setAdding(true)}>Add a child</BigButton>
-            <BackupPanel onRestored={load} />
+            {/* Restoring is only needed on a device with nothing on it yet; once a child is
+                saved the home screen belongs to the child and the full panel lives in the
+                grown-up area. */}
+            {profiles.length === 0 && <BackupPanel onRestored={load} />}
           </div>
         )}
         {adding && (

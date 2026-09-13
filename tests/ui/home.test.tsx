@@ -124,8 +124,16 @@ describe('Home', () => {
     expect(await screen.findByText(/add a child to get started/i)).toBeInTheDocument();
   });
 
-  it('shows a restore control on the home screen', async () => {
-    renderWithServices(<Home onStart={() => {}} onParent={() => {}} />);
+  it('shows a restore control on the home screen when no child is saved yet', async () => {
+    renderWithServices(<Home onStart={() => {}} onParent={() => {}} />, { store: new MemoryStore() });
     expect(await screen.findByLabelText(/restore from a backup/i)).toBeInTheDocument();
+  });
+
+  it('hides the restore control once a child is saved, keeping the home screen for the child', async () => {
+    const store = new MemoryStore();
+    await store.saveProfile({ id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') });
+    renderWithServices(<Home onStart={() => {}} onParent={() => {}} />, { store });
+    expect(await screen.findByRole('button', { name: /^Sam$/ })).toBeInTheDocument();
+    expect(screen.queryByLabelText(/restore from a backup/i)).toBeNull();
   });
 });
