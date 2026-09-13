@@ -1365,6 +1365,10 @@ Create `tests/content/s4-3.test.ts` modelled exactly on `tests/content/s3-5.test
       }
     }
   });
+
+  it('teaches both in one group, because the second u sound is not a new card face', () => {
+    expect(SUBSTEP_4_3.groups.map((g) => g.cards)).toEqual([['e_e', 'u_e_oo']]);
+  });
 ```
 
 - [ ] **Step 2: Run it to make sure it fails**
@@ -1376,12 +1380,14 @@ Expected: FAIL — cannot resolve `../../src/content/substeps/s4-3`.
 
 Create `src/content/substeps/s4-3.ts`.
 
-- `id: '4.3'`, `title: 'Silent e with e, and u_e saying oo'`. Two groups: `[{ cards: ['e_e'], lesson: [...] }, { cards: ['u_e_oo'], lesson: [...] }]`.
+- `id: '4.3'`, `title: 'Silent e with e, and u_e saying oo'`. **One group teaching both cards:** `groups: [{ cards: ['e_e', 'u_e_oo'], lesson: [...] }]`, with a single lesson that teaches `e_e` first and then turns to the second sound of `u_e`.
+
+  Why one group and not two, since 4.1 and 4.2 each use two: a group exists so the sound-card drill can introduce one new card face at a time. `u_e_oo` is not a new face — it is a second sound for the `u_e` card the child already has, and it is never drilled (`drill: false`). Splitting it into its own group would leave that group's drill showing nothing but `e_e`, a card taught moments earlier, which is worse than not splitting. Everything else about the section is unchanged.
 - `e_e` is genuinely rare in one-syllable words. Honest candidates: eve, Pete, Steve, theme, gene. Banned: scene (c says /s/), here and mere (r-controlled, not taught), these (s says /z/).
 - **If you cannot find enough honest `e_e` real words, say so plainly in your report and fill the bank with `u_e_oo` words rather than inventing strained ones.** Do not take `compete`, `complete`, `concrete` or `athlete` — they are two-syllable and belong to Task 12 (section 4.5).
 - `u_e_oo` candidates, the *rule* sound /oo/: June, rule, flute, prune, tune, dune, plume, brute, crude, dude, rude, jute, flume.
 - **The second group's lesson must say plainly that this is the same spelling with a second sound**, and that when one sound does not make a word she should try the other. Show the card face `u_e` — never `u_e_oo`, which is an internal name for a card the child never sees on its own.
-- `u_e_oo` is not drilled (`drill: false`), so the sound-card drill for group 2 falls back to the section's own word-bank cards. That is expected behaviour, not a bug.
+- The section's sound-card drill will show `e_e` as its one current card, plus review cards from earlier sections. That is correct and expected: `e_e` is the only new card face this section teaches.
 
 - [ ] **Step 4: Run the test**
 
