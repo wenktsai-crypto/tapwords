@@ -65,15 +65,15 @@ export class BrowserAudio implements AudioPlayer {
     this.current = el;
     await new Promise<void>((resolve) => {
       el.onended = () => {
-        this.current = null;
+        if (this.current === el) this.current = null;
         resolve();
       };
       el.onerror = () => {
-        this.current = null;
+        if (this.current === el) this.current = null;
         resolve();
       };
       el.play().catch(() => {
-        this.current = null;
+        if (this.current === el) this.current = null;
         resolve();
       });
     });
