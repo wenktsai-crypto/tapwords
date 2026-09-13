@@ -34,7 +34,7 @@ export const SUBSTEP_2_2: Substep = {
     word('brush', 'b,r,u,sh'),
 
     // Nonsense words, same four-sound shape.
-    cvcNonsense('flib'), cvcNonsense('stog'), cvcNonsense('plim'), cvcNonsense('crup'),
+    cvcNonsense('flib'), cvcNonsense('stog'), cvcNonsense('plim'), cvcNonsense('trup'),
     cvcNonsense('drep'), cvcNonsense('snup'), cvcNonsense('glup'), cvcNonsense('tesk'),
     cvcNonsense('mulp'), cvcNonsense('vand'), cvcNonsense('brop'),
     nonsense('clesh', 'c,l,e,sh'),
