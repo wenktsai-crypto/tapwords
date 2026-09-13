@@ -24,7 +24,7 @@ export function ParentArea({ profile: initial, onBack }: Props) {
   const movingRef = useRef(false);
 
   useEffect(() => {
-    store.listLogs(profile.id).then(setLogs);
+    store.listLogs(profile.id).then(setLogs, () => setNote("We couldn't load progress."));
   }, [store, profile.id]);
 
   const stats = useMemo(() => {
@@ -34,13 +34,22 @@ export function ParentArea({ profile: initial, onBack }: Props) {
       .filter((l) => l.substep === profile.state.currentSubstep && l.complete && l.sessionNumber > profile.state.substepEnteredAt)
       .slice(-3);
     const acc = accuracy(here.flatMap((l) => l.responses).filter((r) => !r.isReview && !r.parentMarked));
+    // Only the things a grown-up can actually practise: a sound card, shown as its letters,
+    // and a word, shown as the word. Sentence and story keys are skipped.
     const weakest = Object.entries(profile.state.strengths)
       .sort((a, b) => a[1].value - b[1].value)
-      .slice(0, 10)
-      .map(([k]) => k.split(':').slice(-1)[0]);
+      .flatMap(([k]) => {
+        if (k.startsWith('card:')) {
+          const card = content.cards.find((c) => c.id === k.slice('card:'.length));
+          return card ? [card.grapheme] : [];
+        }
+        if (k.startsWith('word:')) return [k.split(':').slice(2).join(':')];
+        return [];
+      })
+      .slice(0, 10);
     const lastRA = [...logs].reverse().find((l) => l.readAloudDone);
     return { recent, acc, weakest, lastRA: lastRA ? new Date(lastRA.date).toLocaleDateString() : 'never' };
-  }, [logs, profile.state]);
+  }, [logs, profile.state, content.cards]);
 
   const move = async () => {
     if (movingRef.current) return;

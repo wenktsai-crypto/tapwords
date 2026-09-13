@@ -7,7 +7,18 @@ A calm, self-guided structured-literacy reading app (Orton-Gillingham style) for
     npm install
     npm run dev
 
-Open the printed address on an iPad or in a desktop browser. Add a child, pick a starting point, tap their name.
+Vite prints two addresses. On the computer itself, open the **Local** one.
+
+To use it on an iPad, the iPad must be on the same Wi-Fi network as the computer. Open the
+**Network** address Vite prints (it looks like `http://192.168.x.x:5173`) in Safari on the iPad.
+
+Add a child, pick a starting point, tap their name.
+
+For a faster, production-like copy on the iPad:
+
+    npm run build && npx vite preview --host
+
+and open the Network address that prints.
 
 ## Check it
 

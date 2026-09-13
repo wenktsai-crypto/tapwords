@@ -71,6 +71,39 @@ describe('ParentArea', () => {
     await waitFor(() => expect(saveCount).toBe(1));
   });
 
+  it('lists only cards and words under "needs the most practice"', async () => {
+    const store = new MemoryStore();
+    const profile = {
+      id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd',
+      state: {
+        ...initialState('1.1'),
+        sessionsCompleted: 2,
+        strengths: {
+          'story:1.1:Rat on a Log:0': { value: 0.01, lastSeen: 2 },
+          'sentence:1.1:The rat sat on a log.': { value: 0.02, lastSeen: 2 },
+          'word:1.1:map': { value: 0.1, lastSeen: 2 },
+          'card:a': { value: 0.9, lastSeen: 2 },
+        },
+      },
+    };
+    await store.saveProfile(profile);
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
+
+    expect(await screen.findByText('map, a')).toBeInTheDocument();
+  });
+
+  it('says so plainly when the progress list cannot be loaded', async () => {
+    class BrokenLogsStore extends MemoryStore {
+      async listLogs(): Promise<never> {
+        throw new Error('storage unavailable');
+      }
+    }
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') };
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store: new BrokenLogsStore(), content: twoSubsteps });
+
+    expect(await screen.findByText(/couldn't load progress/i)).toBeInTheDocument();
+  });
+
   it('excludes accuracy from sessions before the current stay at this substep', async () => {
     const store = new MemoryStore();
     const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: { ...initialState('1.1'), substepEnteredAt: 2, sessionsCompleted: 3 } };

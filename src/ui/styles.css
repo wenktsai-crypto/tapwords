@@ -26,11 +26,20 @@ body {
 
 .screen {
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
+}
+
+/* The grown-up hold button: stop iOS offering "copy" or selecting the label mid-hold. */
+.hold {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .stage {

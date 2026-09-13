@@ -21,19 +21,29 @@ export function Home({ onStart, onParent }: Props) {
   const [name, setName] = useState('');
   const [color, setColor] = useState(COLORS[0]);
   const [start, setStart] = useState(content.substeps[0].id);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    store.listProfiles().then(setProfiles);
-  }, [store]);
+  // Storage can be unavailable (a locked-down browser, a full disk). Say so in plain words
+  // and let the grown-up try again, rather than sitting on "Loading..." for ever.
+  const load = () => {
+    setError(null);
+    store.listProfiles().then(setProfiles, () => setError("We couldn't open the saved children. Tap to try again."));
+  };
+  useEffect(load, [store]);
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     const p: Profile = { id: newId(), name: name.trim(), color, createdAt: new Date().toISOString(), state: initialState(start) };
-    await store.saveProfile(p);
-    setProfiles(await store.listProfiles());
-    setName('');
-    setAdding(false);
+    try {
+      setError(null);
+      await store.saveProfile(p);
+      setProfiles(await store.listProfiles());
+      setName('');
+      setAdding(false);
+    } catch {
+      setError("We couldn't save that. Try again.");
+    }
   };
 
   const examples = (id: string) => content.substeps.find((s) => s.id === id)!.words.filter((w) => w.kind === 'real').slice(0, 3).map((w) => w.text).join(', ');
@@ -42,7 +52,9 @@ export function Home({ onStart, onParent }: Props) {
     <div className="screen">
       <div className="stage">
         <h1>Tapwords</h1>
-        {profiles === null && <p className="caption">Loading…</p>}
+        {error && <p className="caption">{error}</p>}
+        {profiles === null && error && <BigButton variant="quiet" onClick={load}>Try again</BigButton>}
+        {profiles === null && !error && <p className="caption">Loading…</p>}
         {profiles !== null && !adding && (
           <div className="profiles">
             {profiles.length === 0 && <p className="caption">Add a child to get started.</p>}
@@ -79,7 +91,7 @@ export function Home({ onStart, onParent }: Props) {
             </label>
             <p className="caption">Not sure where to start? Ask the tutor, or pick the first one. You can change this later in the grown-up area.</p>
             <div className="row">
-              <button type="submit" className="big big-primary">Save</button>
+              <button type="submit" className="big big-primary" disabled={!name.trim()}>Save</button>
               <BigButton variant="quiet" onClick={() => setAdding(false)}>Cancel</BigButton>
             </div>
           </form>

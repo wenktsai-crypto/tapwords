@@ -7,7 +7,42 @@ import { MemoryStore } from '../../src/store/memory';
 import { initialState } from '../../src/engine/types';
 import { renderWithServices } from './helpers';
 
+/** A store whose first `listProfiles` fails, then works — for the retry path. */
+class FlakyListStore extends MemoryStore {
+  private failed = false;
+  async listProfiles() {
+    if (!this.failed) {
+      this.failed = true;
+      throw new Error('storage unavailable');
+    }
+    return super.listProfiles();
+  }
+}
+
 describe('Home', () => {
+  it('explains a failed load and reloads when the grown-up taps Try again', async () => {
+    const user = userEvent.setup();
+    const store = new FlakyListStore();
+    await store.saveProfile({ id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') });
+    renderWithServices(<Home onStart={vi.fn()} onParent={vi.fn()} />, { store });
+
+    expect(await screen.findByText(/couldn't open the saved children/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /try again/i }));
+
+    expect(await screen.findByRole('button', { name: /^Sam$/ })).toBeInTheDocument();
+    expect(screen.queryByText(/couldn't open the saved children/i)).not.toBeInTheDocument();
+  });
+
+  it('will not save a child with a blank name', async () => {
+    const user = userEvent.setup();
+    renderWithServices(<Home onStart={vi.fn()} onParent={vi.fn()} />, { store: new MemoryStore() });
+
+    await user.click(await screen.findByRole('button', { name: /add a child/i }));
+    expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
+    await user.type(screen.getByLabelText(/name/i), 'Sam');
+    expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
+  });
+
   it('creates a profile with a starting point and starts a session', async () => {
     const user = userEvent.setup();
     const store = new MemoryStore();

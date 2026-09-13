@@ -16,6 +16,18 @@ export function TileBuilder({ tray, expected, kind = 'tile', onDone }: Props) {
   const [used, setUsed] = useState<number[]>([]);
   const joiner = kind === 'tile' ? '' : ' ';
 
+  // When the same piece appears twice in the tray ("tot"), plain letter labels would be
+  // ambiguous to a screen reader and to tests, so repeats are numbered. Pieces that appear
+  // once keep the bare letter.
+  const totals = new Map<string, number>();
+  for (const t of tray) totals.set(t, (totals.get(t) ?? 0) + 1);
+  const seen = new Map<string, number>();
+  const trayLabels = tray.map((t) => {
+    const n = (seen.get(t) ?? 0) + 1;
+    seen.set(t, n);
+    return (totals.get(t) ?? 0) > 1 ? `${t} ${n}` : t;
+  });
+
   const pick = (idx: number) => {
     if (used.includes(idx) || used.length >= expected.length) return;
     setUsed([...used, idx]);
@@ -37,7 +49,7 @@ export function TileBuilder({ tray, expected, kind = 'tile', onDone }: Props) {
         {used.map((k, pos) => <span key={pos}>{piece(tray[k], { onClick: () => unpick(pos), label: `Remove ${tray[k]}` })}</span>)}
       </div>
       <div className="row" data-testid="tray">
-        {tray.map((t, idx) => <span key={idx}>{piece(t, { onClick: () => pick(idx), dim: used.includes(idx) })}</span>)}
+        {tray.map((t, idx) => <span key={idx}>{piece(t, { onClick: () => pick(idx), dim: used.includes(idx), label: trayLabels[idx] })}</span>)}
       </div>
       <BigButton onClick={finish} disabled={used.length !== expected.length}>Done</BigButton>
     </div>
