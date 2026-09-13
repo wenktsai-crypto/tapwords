@@ -38,6 +38,17 @@ export function storeContract(make: () => Store) {
     expect(await s.listClipIds()).toEqual(['a']);
   });
 
+  it('deletes one clip and leaves the others alone', async () => {
+    const s = make();
+    await s.saveClip('a', new Blob(['x'], { type: 'audio/webm' }));
+    await s.saveClip('b', new Blob(['y'], { type: 'audio/webm' }));
+    await s.deleteClip('a');
+    expect(await s.getClip('a')).toBeUndefined();
+    expect(await s.listClipIds()).toEqual(['b']);
+    await s.deleteClip('nope');
+    expect(await s.listClipIds()).toEqual(['b']);
+  });
+
   it('does not expose internal state through returned profiles or logs', async () => {
     const s = make();
     await s.saveProfile(profile('p1'));

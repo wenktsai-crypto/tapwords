@@ -68,14 +68,25 @@ export function parseBackup(text: string): BackupFile {
   return raw as unknown as BackupFile;
 }
 
-/** Writes the backup into the store. `replace` wipes the device first; `merge` keeps profiles the
- * backup does not mention and overwrites any profile whose id it does. Returns how many profiles were written. */
+/** Writes the backup into the store. `merge` keeps profiles the backup does not mention and
+ * overwrites any profile whose id it does. `replace` ends with only what the backup holds, but it
+ * writes everything first and removes the leftovers afterwards, so a restore that fails part way
+ * leaves the device's own profiles and clips where they were. Returns how many profiles were written. */
 export async function restoreBackup(store: Store, backup: BackupFile, mode: 'replace' | 'merge'): Promise<number> {
-  if (mode === 'replace') await store.clearAll();
+  const existingProfileIds = mode === 'replace' ? (await store.listProfiles()).map((p) => p.id) : [];
+  const existingClipIds = mode === 'replace' ? await store.listClipIds() : [];
+
   for (const { profile, logs } of backup.profiles) {
     await store.saveProfile(profile);
     await store.setLogs(profile.id, logs);
   }
   for (const clip of backup.clips) await store.saveClip(clip.cardId, base64ToBlob(clip.base64, clip.type));
+
+  if (mode === 'replace') {
+    const keptProfiles = new Set(backup.profiles.map((p) => p.profile.id));
+    for (const id of existingProfileIds) if (!keptProfiles.has(id)) await store.deleteProfile(id);
+    const keptClips = new Set(backup.clips.map((c) => c.cardId));
+    for (const cardId of existingClipIds) if (!keptClips.has(cardId)) await store.deleteClip(cardId);
+  }
   return backup.profiles.length;
 }

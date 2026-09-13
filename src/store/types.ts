@@ -16,6 +16,8 @@ export interface Store {
   appendLog(profileId: string, log: SessionLog): Promise<void>;
   getClip(cardId: string): Promise<Blob | undefined>;
   saveClip(cardId: string, blob: Blob): Promise<void>;
+  /** Remove one recorded clip, leaving everything else alone. */
+  deleteClip(cardId: string): Promise<void>;
   listClipIds(): Promise<string[]>;
   /** Replace every log for a profile (used by restore). */
   setLogs(profileId: string, logs: SessionLog[]): Promise<void>;

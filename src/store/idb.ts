@@ -48,6 +48,7 @@ export class IdbStore implements Store {
   }
   async getClip(cardId: string) { return get<Blob>(clipKey(cardId), this.db); }
   async saveClip(cardId: string, blob: Blob) { await set(clipKey(cardId), blob, this.db); }
+  async deleteClip(cardId: string) { await del(clipKey(cardId), this.db); }
   async listClipIds() {
     return (await keys<string>(this.db)).filter((k) => k.startsWith('clip:')).map((k) => k.slice(5));
   }

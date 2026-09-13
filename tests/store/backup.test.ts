@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { MemoryStore } from '../../src/store/memory';
 import { initialState } from '../../src/engine/types';
 import { backupFileName, base64ToBlob, blobToBase64, createBackup, parseBackup, restoreBackup } from '../../src/store/backup';
-import type { Profile } from '../../src/store/types';
+import type { Profile, Store } from '../../src/store/types';
 
 const profile = (id: string, name: string): Profile => ({ id, name, color: 'sky', createdAt: '2026-09-12T00:00:00Z', state: { ...initialState('1.1'), sessionsCompleted: 2 } });
 const log = (n: number) => ({ sessionNumber: n, date: 'd', substep: '1.1', complete: true, readAloudDone: false, responses: [] });
@@ -49,7 +49,7 @@ describe('backup', () => {
     expect(() => parseBackup(JSON.stringify({ app: 'tapwords', version: 1, profiles: 'nope', clips: [] }))).toThrow(/not a Tapwords backup/);
   });
 
-  it('replace mode wipes the device first', async () => {
+  it('replace mode ends with only the backup\'s profiles and clips', async () => {
     const b = await createBackup(await seeded());
     const target = new MemoryStore();
     await target.saveProfile(profile('p9', 'Old'));
@@ -73,6 +73,43 @@ describe('backup', () => {
     expect(ids).toEqual(['p1', 'p2', 'p9']);
     expect((await target.listProfiles()).find((p) => p.id === 'p1')?.name).toBe('Sam');
     expect((await target.listLogs('p1')).map((l) => l.sessionNumber)).toEqual([1, 2]);
+  });
+
+  it('leaves the device untouched when a replace restore fails part way', async () => {
+    const b = await createBackup(await seeded());
+    const target = new MemoryStore();
+    await target.saveProfile(profile('p9', 'Old'));
+    await target.saveProfile(profile('p8', 'Older'));
+    await target.appendLog('p9', log(3));
+    await target.saveClip('z', new Blob(['z'], { type: 'audio/webm' }));
+
+    let saves = 0;
+    const failing: Store = {
+      ...target,
+      listProfiles: () => target.listProfiles(),
+      saveProfile: async (p) => {
+        saves++;
+        if (saves === 3) throw new Error('disk full');
+        await target.saveProfile(p);
+      },
+      deleteProfile: (id) => target.deleteProfile(id),
+      listLogs: (id) => target.listLogs(id),
+      appendLog: (id, l) => target.appendLog(id, l),
+      getClip: (id) => target.getClip(id),
+      saveClip: (id, blob) => target.saveClip(id, blob),
+      deleteClip: (id) => target.deleteClip(id),
+      listClipIds: () => target.listClipIds(),
+      setLogs: (id, logs) => target.setLogs(id, logs),
+      clearAll: () => target.clearAll(),
+    };
+    // Three profiles in the backup means the third saveProfile throws mid-restore.
+    const big = { ...b, profiles: [...b.profiles, { profile: profile('p3', 'Third'), logs: [] }] };
+
+    await expect(restoreBackup(failing, big, 'replace')).rejects.toThrow('disk full');
+    const ids = (await target.listProfiles()).map((p) => p.id).sort();
+    expect(ids).toEqual(['p1', 'p2', 'p8', 'p9']);
+    expect((await target.listLogs('p9')).length).toBe(1);
+    expect(await target.listClipIds()).toEqual(['z']);
   });
 
   it('names the file by date', () => {
