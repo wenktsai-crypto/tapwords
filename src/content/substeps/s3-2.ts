@@ -34,7 +34,7 @@ export const SUBSTEP_3_2: Substep = {
     word('blanket', 'b,l,a,n,k,e,t', { syllables: [4] }),
     word('trumpet', 't,r,u,m,p,e,t', { syllables: [4] }),
     word('pumpkin', 'p,u,m,p,k,i,n', { syllables: [4] }),
-    word('basket', 'b,a,s,k,e,t', { syllables: [4] }),
+
     word('address', 'a,d,d,r,e,ss:s', { syllables: [2] }),
     word('unplug', 'u,n,p,l,u,g', { syllables: [2] }),
     word('command', 'c,o,m,m,a,n,d', { syllables: [3] }),
