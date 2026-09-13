@@ -24,6 +24,9 @@ export function StoryPart({ story, substep, onComplete }: Props) {
   // question twice (e.g. a rapid double-tap) before it advances. Reset
   // whenever the phase or index changes.
   const advancedRef = useRef(false);
+  // Guards a second tap on "Hear the choices" from starting a second,
+  // interleaved read-through of the choices while one is already speaking.
+  const hearingChoicesRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
@@ -68,19 +71,25 @@ export function StoryPart({ story, substep, onComplete }: Props) {
   const q = story.questions[i];
   const answer = async (k: number) => {
     if (!q || answered !== null || finishedRef.current || advancedRef.current) return;
+    // Set for both branches (not just the correct one) so a second
+    // synchronous tap on a choice — right or wrong — cannot push a second
+    // response before `answered` state has actually committed. Released by
+    // nextQuestion once the question's outcome has been committed.
+    advancedRef.current = true;
     const correct = k === q.answer;
     const rs = [...responses, { itemKey: storyKey(substep, story.title, i), activity: 'story-question' as const, correct, isReview: false, parentMarked: false }];
     setResponses(rs);
-    if (correct) {
-      advancedRef.current = true;
-      return nextQuestion(rs);
-    }
+    if (correct) return nextQuestion(rs);
     setAnswered(k);
     await say(`The answer is: ${q.choices[q.answer]}.`);
   };
 
   const nextQuestion = (rs: ScoredResponse[]) => {
     if (finishedRef.current) return;
+    // Release the guard `answer` set (for the immediate correct-answer path,
+    // this simply hands straight back off to the next question's own guard;
+    // for the wrong-answer path this is what lets the "Next" button work).
+    advancedRef.current = false;
     setAnswered(null);
     if (i + 1 < story.questions.length) setI(i + 1);
     else finish(rs);
@@ -119,8 +128,21 @@ export function StoryPart({ story, substep, onComplete }: Props) {
         {q.choices.map((c, k) => <BigButton key={k} variant={answered !== null && k === q.answer ? 'primary' : 'quiet'} onClick={() => answer(k)}>{c}</BigButton>)}
       </div>
       <div className="row">
-        <BigButton variant="quiet" onClick={async () => { for (const c of q.choices) await audio.speak(c); }}>Hear the choices</BigButton>
-        {answered !== null && <BigButton onClick={() => { if (!advancedRef.current) { advancedRef.current = true; nextQuestion(responses); } }}>Next</BigButton>}
+        <BigButton
+          variant="quiet"
+          onClick={async () => {
+            if (hearingChoicesRef.current) return;
+            hearingChoicesRef.current = true;
+            try {
+              for (const c of q.choices) await audio.speak(c);
+            } finally {
+              hearingChoicesRef.current = false;
+            }
+          }}
+        >
+          Hear the choices
+        </BigButton>
+        {answered !== null && <BigButton onClick={() => nextQuestion(responses)}>Next</BigButton>}
       </div>
     </div>
   );

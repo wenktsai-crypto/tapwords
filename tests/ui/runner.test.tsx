@@ -6,13 +6,26 @@ import { SessionRunner } from '../../src/ui/session/SessionRunner';
 import { CONTENT } from '../../src/content';
 import { MemoryStore } from '../../src/store/memory';
 import { buildSession } from '../../src/engine/session';
-import { initialState } from '../../src/engine/types';
+import { initialState, type SessionLog } from '../../src/engine/types';
 import { seeded } from '../../src/engine/rng';
 import { getCard } from '../../src/engine/availability';
 import type { Profile } from '../../src/store/types';
 import { renderWithServices } from './helpers';
 
 const profile = (): Profile => ({ id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') });
+
+/** A store whose first `appendLog` call fails, then succeeds — for exercising the runner's
+ * "Try again" retry path without a real network/storage failure. */
+class FlakyStore extends MemoryStore {
+  private failedOnce = false;
+  async appendLog(profileId: string, log: SessionLog) {
+    if (!this.failedOnce) {
+      this.failedOnce = true;
+      throw new Error('append failed');
+    }
+    return super.appendLog(profileId, log);
+  }
+}
 
 describe('SessionRunner', () => {
   it('saves a partial session when the child stops early', async () => {
@@ -24,6 +37,8 @@ describe('SessionRunner', () => {
     renderWithServices(<SessionRunner profile={p} onExit={onExit} />, { store });
     await user.click(await screen.findByRole('button', { name: /stop for now/i }));
     expect(await screen.findByText(/nice work today/i)).toBeInTheDocument();
+    expect(screen.getByText(/you stopped early/i)).toBeInTheDocument();
+    expect(screen.queryByText(/sound cards/i)).not.toBeInTheDocument();
     const saved = (await store.listProfiles())[0];
     expect(saved.state.sessionsCompleted).toBe(1);
     expect(saved.state.lessonPending).toBe(false);
@@ -106,6 +121,8 @@ describe('SessionRunner', () => {
     for (const q of plan.story.questions) await click(q.choices[q.answer]);
 
     expect(await screen.findByText(/nice work today/i)).toBeInTheDocument();
+    expect(screen.getByText(/sound cards/i)).toBeInTheDocument();
+    expect(screen.getByText(/a story/i)).toBeInTheDocument();
     const saved = (await store.listProfiles())[0];
     expect(saved.state.sessionsCompleted).toBe(1);
     expect(saved.state.pendingReadAloud).toBe(false);
@@ -117,4 +134,20 @@ describe('SessionRunner', () => {
     await click(/^done$/i);
     expect(onExit).toHaveBeenCalled();
   }, 30000);
+
+  it('shows "Try again" after a failed save and saves exactly one log on retry', async () => {
+    const user = userEvent.setup();
+    const store = new FlakyStore();
+    const p = profile();
+    await store.saveProfile(p);
+    const onExit = vi.fn();
+    renderWithServices(<SessionRunner profile={p} onExit={onExit} />, { store });
+
+    await user.click(await screen.findByRole('button', { name: /stop for now/i }));
+    await user.click(await screen.findByRole('button', { name: /try again/i }));
+
+    expect(await screen.findByText(/nice work today/i)).toBeInTheDocument();
+    const logs = await store.listLogs('p1');
+    expect(logs.length).toBe(1);
+  });
 });
