@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { CARDS } from '../../src/content/cards';
 import { CONTENT } from '../../src/content';
-import { cvc, cvcNonsense } from '../../src/content/build';
+import { cvc, cvcNonsense, word } from '../../src/content/build';
 import type { Content, Substep, Word } from '../../src/content/types';
 import { buildSession, findChoices, COUNTS, usableSentences, usableStories, shuffleQuestion } from '../../src/engine/session';
 import { initialState } from '../../src/engine/types';
@@ -155,7 +155,41 @@ describe('findChoices', () => {
     const out = findChoices(cvc('log'), [cvc('log'), cvc('sit'), cvc('map')], seeded(2));
     expect(out.sort()).toEqual(['log', 'map', 'sit']);
   });
+  it('never offers a capitalised name among the wrong answers, which would stand out', () => {
+    // Same shape as the real 1.5 bank, so "Sam" is a prime one-sound-off distractor for "ham".
+    const named: Word[] = [word('Sam', 's,am'), word('ham', 'h,am'), word('jam', 'j,am'), word('ram', 'r,am'), word('yam', 'y,am')];
+    for (let seed = 1; seed <= 20; seed++) {
+      const out = findChoices(named[1], named, seeded(seed));
+      expect(out, `seed ${seed}`).not.toContain('Sam');
+      expect(out).toContain('ham');
+      expect(out.length).toBe(3);
+    }
+  });
 });
+
+describe('capitalised names in word work', () => {
+  it('never asks the child to pick a capitalised name out of a line-up', () => {
+    for (let n = 1; n <= 10; n++) {
+      const plan = buildSession(CONTENT, initialState('1.5'), seeded(n));
+      for (const item of plan.wordWork) {
+        if (item.type === 'find') expect(/^[A-Z]/.test(item.word.text), `session ${n}: ${item.word.text}`).toBe(false);
+      }
+      expect(plan.wordWork.length).toBe(COUNTS.wordWork);
+    }
+  });
+
+  it('still practises the names some other way', () => {
+    const seen = new Set<string>();
+    for (let n = 1; n <= 10; n++) {
+      for (const item of buildSession(CONTENT, initialState('1.5'), seeded(n)).wordWork) {
+        if (/^[A-Z]/.test(item.word.text)) seen.add(item.type);
+      }
+    }
+    expect(seen.size).toBeGreaterThan(0);
+    expect(seen.has('find')).toBe(false);
+  });
+});
+
 
 describe('sentence and story availability by group', () => {
   const one = CONTENT.substeps[0];

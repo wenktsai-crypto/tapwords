@@ -56,8 +56,12 @@ export function shuffleQuestion(q: Question, rng: Rng): Question {
   return { ...q, choices, answer: order.indexOf(q.answer) as 0 | 1 | 2 };
 }
 
+/** A name such as "Sam" is written with a capital, which would give it away in a line-up of
+ * lower-case words, so a capitalised word is never used as a wrong answer. */
+export const isCapitalised = (text: string) => /^[A-Z]/.test(text);
+
 export function findChoices(target: Word, pool: Word[], rng: Rng): string[] {
-  const others = pool.filter((w) => w.text !== target.text);
+  const others = pool.filter((w) => w.text !== target.text && !isCapitalised(w.text));
   const sameLen = others.filter((w) => w.parts.length === target.parts.length);
   const oneOff = sameLen.filter((w) => w.parts.filter((p, i) => p.card !== target.parts[i].card).length === 1);
   const rest = sameLen.filter((w) => !oneOff.includes(w));
@@ -157,7 +161,9 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const current = topUp(picked, currentWords, COUNTS.wordWork - review.length).map((w) => ({ ...w, isReview: false }));
   const types: WordWorkItem['type'][] = ['tap', 'find', 'build'];
   const wordWork: WordWorkItem[] = shuffle([...current, ...review], rng).map((w, i) => {
-    const type = types[i % 3];
+    // A capitalised name would be the obvious pick in a line-up of lower-case words, so it is
+    // tapped out sound by sound instead; the rotation carries on for everything else.
+    const type = types[i % 3] === 'find' && isCapitalised(w.word.text) ? 'tap' : types[i % 3];
     return type === 'find' ? { ...w, type, choices: findChoices(w.word, allWords, rng) } : { ...w, type };
   });
 
