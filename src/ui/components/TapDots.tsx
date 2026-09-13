@@ -26,12 +26,12 @@ export function TapDots({ word, mode, onResult }: Props) {
   const blendingRef = useRef(false);
   const mounted = useRef(true);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
       mounted.current = false;
-    },
-    [],
-  );
+    };
+  }, []);
 
   useEffect(() => {
     setTapped(0);

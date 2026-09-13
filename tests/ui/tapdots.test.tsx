@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { StrictMode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -72,6 +73,23 @@ describe('TapDots', () => {
     fireEvent.click(blendButton);
     await waitFor(() => expect(onResult).toHaveBeenCalledTimes(1));
     expect(onResult).toHaveBeenCalledWith(true);
+  });
+
+  it('under StrictMode (mount/cleanup/remount), tapping then blending still reports a result', async () => {
+    const user = userEvent.setup();
+    const onResult = vi.fn();
+    const audio = new FakeAudio();
+    renderWithServices(
+      <StrictMode>
+        <TapDots word={cvc('map')} mode="try" onResult={onResult} />
+      </StrictMode>,
+      { audio },
+    );
+    await user.click(screen.getByRole('button', { name: 'Sound 1' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    await user.click(await screen.findByRole('button', { name: 'Blend' }));
+    await waitFor(() => expect(onResult).toHaveBeenCalledWith(true));
   });
 });
 
