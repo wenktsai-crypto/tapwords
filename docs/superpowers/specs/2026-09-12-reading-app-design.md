@@ -73,23 +73,23 @@ Substep 1.2 is special: it introduces many sounds "gradually." Its data file lis
 - **cards introduced**: list of sound-card ids.
 - **concepts introduced**: tags such as `suffix-s`, `welded-ing`, `doubling-rule`, `two-syllable`.
 - **mini-lesson script**: an ordered list of steps, each either `say` (text spoken by the app), `show` (tiles to display), `tap` (a word to demonstrate tapping), or `try` (a word the child must tap themselves).
-- **word bank**: entries with `text`, `sounds` (ordered list of card ids, which is also the tapping pattern), `kind` (`real` or `nonsense`), and `syllables` (for step 3).
+- **word bank**: entries with `text`, `parts` (an ordered list of grapheme-and-card pairs, e.g. for "off": `o`→card `o`, `ff`→card `f`; the parts are also the tapping pattern, so "off" taps twice), `kind` (`real` or `nonsense`), and `syllables` (for step 3, the split points).
 - **sentences**: each with text and an ordered list of the words it contains.
 - **stories**: one or two, each with title, text broken into sentences, and one or two comprehension questions with three answer choices.
 - **spelling sets**: sounds, words, and sentences used for dictation (may reference the word bank).
 
 ### 3.3 Sound cards
 
-A single shared card list covers all steps. Each card has an id, the grapheme shown (e.g. `sh`, `ck`, `ing`), a keyword and picture prompt (e.g. "ship"), a phoneme label for the recording page, and a `type` (`consonant`, `vowel`, `digraph`, `welded`, `blend-none`). Blends are not cards; Wilson taps blends as separate sounds. Roughly 60 cards through step 3.
+A single shared card list covers all steps. Each card has an id, the grapheme shown (e.g. `sh`, `ck`, `ing`), a keyword (e.g. "ship"), a phoneme label for the recording page, and a `type` (`consonant`, `vowel`, `digraph`, `welded`). Welded cards include all, am, an, the -ng and -nk family, and the 2.3 exceptions (ild, ind, old, ost, olt), each tapped as one unit. Blends are not cards; the method taps blends as separate sounds. Roughly 60 cards through step 3.
 
 ### 3.4 The content checker
 
 A test that loads every substep file and fails the build if:
 
-- any word's `sounds` list includes a card not introduced at or before that substep (respecting 1.2's ordered groups);
+- any word's `parts` reference a card not introduced at or before that substep (respecting 1.2's ordered groups), or use a spelling such as `ff` or `ck` whose rule is not yet introduced;
 - any word uses a concept tag not yet introduced;
 - any sentence or story contains a word not in the word bank of that or an earlier substep, other than a small allowed list of high-frequency sight words declared per substep (Wilson introduces these deliberately; we will declare them the same way);
-- any word's `sounds` do not spell out its `text` when concatenated as graphemes;
+- any word's `parts` graphemes, joined in order, do not equal its `text`;
 - a substep has fewer than the minimum content counts (20 real words, 10 nonsense words, 6 sentences, 1 story).
 
 ### 3.5 Authorship
@@ -153,7 +153,7 @@ The child advances from a substep when all of the following hold:
 - At least three sessions completed at this substep.
 - Over the last three sessions, scored solo accuracy on current-substep items is at least 90 percent.
 - Over the last three sessions, scored solo accuracy on review items is at least 85 percent.
-- Either a read-aloud check at this substep scored at least 85 percent, or no read-aloud has been done in the last five sessions (in which case the app advances anyway and shows the parent a note that read-aloud is the real test).
+- Either the most recent read-aloud check at this substep scored at least 85 percent, or no read-aloud check has been done in the last five sessions (in which case the app advances anyway and shows the parent a note that read-aloud is the real test). A failed read-aloud therefore holds the child at the substep until a later one passes or five sessions go by without one.
 
 Advancement happens at the end of a session. The next session opens with the new substep's mini-lesson. The app tells the child, spoken, "You've finished [title]. Tomorrow we start something new."
 
