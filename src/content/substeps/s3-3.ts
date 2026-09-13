@@ -65,7 +65,7 @@ export const SUBSTEP_3_3: Substep = {
     nonsense('plect', 'p,l,e,c,t'),
     { ...nonsense('conflact', 'c,o,n,f,l,a,c,t'), syllables: [3] },
     { ...nonsense('disnect', 'd,i,s,n,e,c,t'), syllables: [3] },
-    { ...nonsense('unstrict', 'u,n,s,t,r,i,c,t'), syllables: [2] },
+    nonsense('vunct', 'v,u,n,c,t'),
     { ...nonsense('subplict', 's,u,b,p,l,i,c,t'), syllables: [3] },
     { ...nonsense('misduct', 'm,i,s,d,u,c,t'), syllables: [3] },
   ],
