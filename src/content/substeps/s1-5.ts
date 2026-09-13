@@ -64,15 +64,15 @@ export const SUBSTEP_1_5: Substep = {
         'Sam has a big pan.',
         'Pam has ham and jam.',
         'The jam is in the pan.',
-        'A red hen ran to the pan.',
-        'The hen sat in the jam.',
+        'A red hen is at the pan.',
+        'The hen is in the jam.',
         'The hen has jam on a leg.',
         'Sam and Pam do not have jam.',
         'Sam and Pam have ham in the sun.',
       ],
       questions: [
-        { prompt: 'What did the hen sit in?', choices: ['the jam', 'the sun', 'the ham'], answer: 0 },
-        { prompt: 'Who ran to the pan?', choices: ['a red hen', 'Sam', 'Pam'], answer: 0 },
+        { prompt: 'What is the hen in?', choices: ['the jam', 'the sun', 'the ham'], answer: 0 },
+        { prompt: 'Who is at the pan?', choices: ['a red hen', 'Sam', 'Pam'], answer: 0 },
       ],
     },
     {
@@ -80,7 +80,7 @@ export const SUBSTEP_1_5: Substep = {
       sentences: [
         'Dan has a tan van.',
         'The van has a big fan in it.',
-        'Dan ran to the van in the sun.',
+        'Dan is in the van in the sun.',
         'A man and a cat sit in the van.',
         'The cat has a nap on a red rug.',
         'Dan does not have a map.',
