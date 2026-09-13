@@ -33,7 +33,7 @@ test('a parent can move the child, and the next session opens with the full less
   await page.getByLabel(/move to/i).selectOption('1.1');
   await page.getByRole('button', { name: /^move$/i }).click();
   await expect(page.getByText(/moved to 1\.1/i)).toBeVisible();
-  await page.getByRole('button', { name: /back/i }).click();
+  await page.getByRole('button', { name: /^back$/i }).click();
 
   await startSession(page, 'Lee');
   // skip the sound cards, then the lesson must start with a spoken "say" step (full lesson)
