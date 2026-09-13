@@ -55,6 +55,17 @@ export const SUBSTEP_3_3: Substep = {
     word('distinct', 'd,i,s,t,i,n,c,t', { syllables: [3] }),
     word('extinct', 'e,x,t,i,n,c,t', { syllables: [2] }),
 
+    // two-syllable words with the stress on the second syllable
+    word('elect', 'e,l,e,c,t', { syllables: [1] }),
+    word('erect', 'e,r,e,c,t', { syllables: [1] }),
+    word('eject', 'e,j,e,c,t', { syllables: [1] }),
+    word('inject', 'i,n,j,e,c,t', { syllables: [2] }),
+    word('detect', 'd,e,t,e,c,t', { syllables: [2] }),
+    word('protect', 'p,r,o,t,e,c,t', { syllables: [3] }),
+    word('retract', 'r,e,t,r,a,c,t', { syllables: [2] }),
+    word('attract', 'a,t,t,r,a,c,t', { syllables: [2] }),
+    word('extract', 'e,x,t,r,a,c,t', { syllables: [2] }),
+
     // nonsense, same ct ending
     nonsense('vact', 'v,a,c,t'),
     nonsense('brect', 'b,r,e,c,t'),
@@ -68,6 +79,16 @@ export const SUBSTEP_3_3: Substep = {
     nonsense('vunct', 'v,u,n,c,t'),
     { ...nonsense('subplict', 's,u,b,p,l,i,c,t'), syllables: [3] },
     { ...nonsense('misduct', 'm,i,s,d,u,c,t'), syllables: [3] },
+
+    // nonsense, more one-syllable ct shapes
+    nonsense('clact', 'c,l,a,c,t'),
+    nonsense('trect', 't,r,e,c,t'),
+    nonsense('snact', 's,n,a,c,t'),
+    nonsense('blect', 'b,l,e,c,t'),
+    nonsense('plact', 'p,l,a,c,t'),
+    nonsense('drect', 'd,r,e,c,t'),
+    nonsense('grect', 'g,r,e,c,t'),
+    nonsense('stect', 's,t,e,c,t'),
   ],
   sentences: [
     'Sam and Pam collect a bug.',
@@ -79,6 +100,15 @@ export const SUBSTEP_3_3: Substep = {
     'One duck can inspect the shell.',
     'Water can fill a red cup.',
     'People can inspect the wet mud.',
+    'Dan can protect the duck from the fox.',
+    'The vet can detect the sick hen.',
+    'The vet can inject the sick cat.',
+    'Pam can retract the rod and net.',
+    'A red hat can attract the duck.',
+    'Sam and Pam elect a boss for the shop.',
+    'Sam and Pam erect a tall wall.',
+    'Dan can eject the mud from the van.',
+    'The vet can extract the bug from the mud.',
   ],
   stories: [
     {
@@ -90,15 +120,16 @@ export const SUBSTEP_3_3: Substep = {
         'Pam has the insect in a cup.',
         'They connect the cup and the lid.',
         'The insect is intact in the cup.',
-        'Sam and Pam have fun with the insect.',
+        'Sam and Pam pass the cup to Nan.',
       ],
       questions: [
         { prompt: 'What does Sam collect?', choices: ['an insect', 'a cup', 'a lid'], answer: 0 },
         {
           prompt: 'What do Sam and Pam connect?',
-          choices: ['the cup and the lid', 'the insect and the log', 'the cup and the insect'],
+          choices: ['the cup and the lid', 'the insect and the log', 'the lid and the log'],
           answer: 0,
         },
+        { prompt: 'Who gets the cup at the end?', choices: ['Nan', 'Pam', 'the insect'], answer: 0 },
       ],
     },
     {
@@ -110,11 +141,54 @@ export const SUBSTEP_3_3: Substep = {
         'The correct shell is big and intact.',
         'The duck can not collect the shell.',
         'Pam and Sam connect the shell to the cup.',
-        'They have fun with the duck and the shell.',
+        'Pam and Sam pass the shell to Jan.',
       ],
       questions: [
         { prompt: 'What do Pam and Sam pick up?', choices: ['a shell', 'a duck', 'a rock'], answer: 0 },
         { prompt: 'Where do Pam and Sam sit?', choices: ['in the water', 'on the rock', 'in the cup'], answer: 0 },
+      ],
+    },
+    {
+      title: 'Dan Can Protect the Duck',
+      sentences: [
+        'The fox can expect to have the duck.',
+        'Dan can protect the duck from the fox.',
+        'Dan can erect a wall of mud.',
+        'The wall is big, and the fox can not pass.',
+        'The fox can not have the duck.',
+        'Dan can inspect the wall, and the duck is intact.',
+      ],
+      questions: [
+        { prompt: 'What does the fox want?', choices: ['the duck', 'the wall', 'the mud'], answer: 0 },
+        { prompt: 'What does Dan erect?', choices: ['a wall of mud', 'a duck', 'a fox'], answer: 0 },
+        {
+          prompt: 'What happens to the duck at the end?',
+          choices: ['it is intact', 'it is with the fox', 'it can not pass'],
+          answer: 0,
+        },
+      ],
+    },
+    {
+      title: 'Nan Has the Exact Map',
+      sentences: [
+        'Nan has a map to the shed.',
+        'The map is not correct, and Nan is sad.',
+        'Nan can inspect the map and fix it.',
+        'The map is exact.',
+        'Nan can run to the log, then to the shed.',
+        'Nan is at the shed with the exact map.',
+      ],
+      questions: [
+        {
+          prompt: 'What is wrong with the map at the start of the story?',
+          choices: ['it is not correct', 'it is exact', 'it is at the shed'],
+          answer: 0,
+        },
+        {
+          prompt: 'What does Nan do to fix the map?',
+          choices: ['she can inspect it', 'she can run to the shed', 'she has a map'],
+          answer: 0,
+        },
       ],
     },
   ],
