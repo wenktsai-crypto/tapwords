@@ -130,7 +130,7 @@ export function ParentArea({ profile: initial, onBack }: Props) {
             <BigButton variant="quiet" onClick={() => setView('record')}>Record sounds</BigButton>
           </div>
         </div>
-        <BackupPanel />
+        <BackupPanel onRestored={onBack} />
       </div>
     </div>
   );
