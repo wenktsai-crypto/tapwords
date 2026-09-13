@@ -81,11 +81,19 @@ export function TapDots({ word, mode, onResult }: Props) {
   };
 
   const done = tapped >= word.parts.length;
+  const starts = new Set(word.syllables ?? []);
+  const long = word.parts.length > 6;
   return (
-    <div className="tapdots">
-      <div className="row">
+    <div className={['tapdots', long ? 'tapdots-long' : ''].filter(Boolean).join(' ')}>
+      <div className="row row-tight">
         {word.parts.map((p, i) => (
-          <Tile key={i} grapheme={p.grapheme} type={cardTypeFor(content.cards, p.grapheme)} selected={i < tapped} />
+          <Tile
+            key={i}
+            grapheme={p.grapheme}
+            type={cardTypeFor(content.cards, p.grapheme)}
+            selected={i < tapped}
+            className={starts.has(i) ? 'tile-syllable-start' : ''}
+          />
         ))}
       </div>
       <div className="dots">
@@ -94,12 +102,12 @@ export function TapDots({ word, mode, onResult }: Props) {
             <button
               key={i}
               type="button"
-              className={`dot ${i < tapped ? 'dot-lit' : ''}`}
+              className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(i) ? 'dot-syllable-start' : ''}`}
               aria-label={`Sound ${i + 1}`}
               onClick={() => tapDot(i)}
             />
           ) : (
-            <span key={i} className={`dot ${i < tapped ? 'dot-lit' : ''}`} aria-hidden="true" />
+            <span key={i} className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(i) ? 'dot-syllable-start' : ''}`} aria-hidden="true" />
           ),
         )}
       </div>

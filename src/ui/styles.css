@@ -161,3 +161,28 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
   .tile { min-width: 64px; height: 64px; font-size: 30px; }
   .tile-large { min-width: 120px; height: 120px; font-size: 72px; }
 }
+
+.row-tight { gap: 10px; }
+.tile-syllable-start { margin-left: 22px; }
+.dot-syllable-start { margin-left: 22px; }
+.tapdots-long .tile { min-width: 60px; height: 76px; font-size: 40px; padding: 0 8px; }
+.tapdots-long .dots { gap: 4px; }
+.tapdots-long .dot {
+  width: 64px;
+  height: 64px;
+  border: none;
+  background: transparent;
+  position: relative;
+}
+.tapdots-long .dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--quiet);
+}
+.tapdots-long .dot-lit::after { background: var(--accent); }
