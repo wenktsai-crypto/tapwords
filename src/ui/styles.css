@@ -148,7 +148,7 @@ button.tile:active { transform: scale(0.97); }
 
 form.card { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 600px; }
 form.card label { display: flex; flex-direction: column; gap: 6px; font-size: 18px; color: var(--muted); }
-form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; border-radius: 12px; border: 2px solid #d8d1c3; }
+form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; min-height: 64px; border-radius: 12px; border: 2px solid #d8d1c3; }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 700px; font-size: 18px; }
 .stats dt { color: var(--muted); }
