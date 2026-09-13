@@ -24,20 +24,20 @@ export const SUBSTEP_1_5: Substep = {
   concepts: [],
   sightWords: ['from', 'have', 'do', 'does'],
   words: [
-    // Real words ending in the welded am. Names are stored lower case, like "chip" in 1.2,
-    // and written with a capital in the sentences and stories below.
+    // Real words ending in the welded am. Names keep their capital letter here too, so a tile
+    // row or a read-aloud line shows "Sam", not "sam"; their parts stay lower case.
     word('am', 'am'),
     word('ham', 'h,am'), word('jam', 'j,am'), word('ram', 'r,am'), word('yam', 'y,am'),
     word('dam', 'd,am'), word('cam', 'c,am'), word('bam', 'b,am'),
     word('wham', 'wh,am'), word('sham', 'sh,am'),
-    word('sam', 's,am'), word('pam', 'p,am'),
+    word('Sam', 's,am'), word('Pam', 'p,am'),
 
     // Real words ending in the welded an.
     word('an', 'an'),
     word('fan', 'f,an'), word('man', 'm,an'), word('pan', 'p,an'), word('ran', 'r,an'),
     word('tan', 't,an'), word('van', 'v,an'), word('can', 'c,an'), word('ban', 'b,an'),
     word('than', 'th,an'),
-    word('dan', 'd,an'), word('jan', 'j,an'), word('nan', 'n,an'),
+    word('Dan', 'd,an'), word('Jan', 'j,an'), word('Nan', 'n,an'),
 
     // Nonsense words, same two patterns.
     nonsense('zam', 'z,am'), nonsense('vam', 'v,am'), nonsense('quam', 'qu,am'),

@@ -157,6 +157,26 @@ describe('checkContent', () => {
     expect(checkContent(content(s), tiny)).toEqual([]);
   });
 
+  it('accepts a capitalised name whose parts are lower case, and sentences that use it', () => {
+    const s = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'am'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvc('sat'), cvcNonsense('tas'), word('Sam', 's,am')],
+      sentences: ['Sam sat.'],
+      stories: [{ title: 'Sam', sentences: ['Sam sat.'], questions: [aQuestion] }],
+    });
+    expect(checkContent(content(s), tiny)).toEqual([]);
+  });
+
+  it('still catches parts that do not spell a capitalised name', () => {
+    const s = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'am'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvc('sat'), cvcNonsense('tas'), word('Sam', 'm,ap:p')],
+      sentences: ['Sam sat.'],
+      stories: [{ title: 'Sam', sentences: ['Sam sat.'], questions: [aQuestion] }],
+    });
+    expect(checkContent(content(s), tiny).some((e) => e.includes('parts spell'))).toBe(true);
+  });
+
   it('validates syllable split points', () => {
     const bad = sub({ words: [cvc('map'), cvcNonsense('tas'), word('mapmat', 'm,a,p,m,a,t', { syllables: [0, 6] })] });
     const errors = checkContent(content(bad), tiny);
