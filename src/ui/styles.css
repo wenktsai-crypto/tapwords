@@ -1,0 +1,154 @@
+:root {
+  --bg: #f6f1e7;
+  --ink: #2b2a26;
+  --muted: #6b675e;
+  --tile: #ffffff;
+  --tile-vowel: #ffe2c4;
+  --tile-vowel-ink: #7a3d00;
+  --tile-welded: #e4ecf7;
+  --accent: #2f6f5e;
+  --accent-ink: #ffffff;
+  --quiet: #e9e3d6;
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+
+body {
+  font-family: 'Lexend', 'Atkinson Hyperlegible', system-ui, sans-serif;
+  font-size: 22px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  -webkit-text-size-adjust: 100%;
+}
+
+.screen {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.stage {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  text-align: center;
+}
+
+.topbar {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.caption {
+  margin: 0;
+  color: var(--muted);
+  font-size: 20px;
+  max-width: 700px;
+}
+
+.bigword {
+  font-size: 72px;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.bigtext {
+  font-size: 44px;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 800px;
+}
+
+.row { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; }
+
+.tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: 80px;
+  padding: 0 18px;
+  border-radius: var(--radius);
+  border: 2px solid #d8d1c3;
+  background: var(--tile);
+  color: var(--ink);
+  font: inherit;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.tile-large { min-width: 160px; height: 160px; font-size: 96px; }
+.tile-vowel { background: var(--tile-vowel); color: var(--tile-vowel-ink); }
+.tile-welded, .tile-digraph { background: var(--tile-welded); }
+.tile-selected { outline: 4px solid var(--accent); outline-offset: 2px; }
+.tile-dim { opacity: 0.35; }
+button.tile { cursor: pointer; }
+button.tile:active { transform: scale(0.97); }
+
+.big {
+  min-height: 64px;
+  min-width: 64px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  font: inherit;
+  font-size: 24px;
+  cursor: pointer;
+}
+.big-primary { background: var(--accent); color: var(--accent-ink); }
+.big-quiet { background: var(--quiet); color: var(--ink); }
+.big:disabled { opacity: 0.4; cursor: default; }
+
+.dots { display: flex; gap: 28px; justify-content: center; }
+.dot {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 3px solid var(--accent); background: transparent; cursor: pointer;
+}
+.dot-lit { background: var(--accent); }
+
+.path { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; font-size: 16px; }
+.path li { padding: 6px 12px; border-radius: 999px; background: var(--quiet); color: var(--muted); }
+.path .path-current { background: var(--accent); color: var(--accent-ink); }
+.path-id { font-weight: 600; }
+
+.profiles { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 600px; }
+.profile-row { display: flex; gap: 12px; align-items: center; }
+.profile-row .big-primary { flex: 1; text-align: left; }
+.swatch-sky { border-left: 12px solid #7cb7e6; }
+.swatch-moss { border-left: 12px solid #8fbf7f; }
+.swatch-sand { border-left: 12px solid #e4c17a; }
+.swatch-plum { border-left: 12px solid #b891c9; }
+
+form.card { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 600px; }
+form.card label { display: flex; flex-direction: column; gap: 6px; font-size: 18px; color: var(--muted); }
+form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; border-radius: 12px; border: 2px solid #d8d1c3; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 700px; font-size: 18px; }
+.stats dt { color: var(--muted); }
+.stats dd { margin: 0; font-size: 24px; }
+
+@media (max-width: 600px) {
+  body { font-size: 18px; }
+  .bigword { font-size: 52px; }
+  .bigtext { font-size: 30px; }
+  .tile { min-width: 64px; height: 64px; font-size: 30px; }
+  .tile-large { min-width: 120px; height: 120px; font-size: 72px; }
+}
