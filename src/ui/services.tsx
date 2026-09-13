@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { Content } from '../content/types';
 import type { Store } from '../store/types';
-import type { AudioPlayer } from '../audio/types';
+import type { AudioPlayer, Recorder } from '../audio/types';
 import type { Rng } from '../engine/rng';
 
 export interface Timing {
@@ -15,6 +15,7 @@ export interface Services {
   content: Content;
   store: Store;
   audio: AudioPlayer;
+  recorder: Recorder;
   rng: Rng;
   timing: Timing;
 }

@@ -139,4 +139,16 @@ describe('ParentArea', () => {
     expect((await store.listProfiles())[0].state.substepEnteredAt).toBe(4);
     expect(await screen.findByText(/grown-up area/i)).toBeInTheDocument();
   });
+
+  it('opens the recording page from the tools', async () => {
+    const user = userEvent.setup();
+    const store = new MemoryStore();
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') };
+    await store.saveProfile(profile);
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
+    await user.click(await screen.findByRole('button', { name: /record sounds/i }));
+    expect(await screen.findByText(/record the sounds/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /back/i }));
+    expect(await screen.findByText(/grown-up area/i)).toBeInTheDocument();
+  });
 });

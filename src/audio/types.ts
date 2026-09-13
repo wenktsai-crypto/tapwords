@@ -6,3 +6,12 @@ export interface AudioPlayer {
   /** Cut off anything currently playing. */
   stop(): void;
 }
+
+export interface Recorder {
+  /** False when this browser has no microphone recording support. */
+  supported(): boolean;
+  /** Asks for the microphone on first use and starts recording. Rejects if the microphone is refused. */
+  start(): Promise<void>;
+  /** Stops and resolves with the recorded audio. */
+  stop(): Promise<Blob>;
+}

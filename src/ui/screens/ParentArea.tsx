@@ -7,6 +7,7 @@ import { useServices } from '../services';
 import { BigButton } from '../components/BigButton';
 import { Path } from '../components/Path';
 import { PlacementScreen } from './PlacementScreen';
+import { RecordScreen } from './RecordScreen';
 
 interface Props {
   profile: Profile;
@@ -19,7 +20,7 @@ export function ParentArea({ profile: initial, onBack }: Props) {
   const [logs, setLogs] = useState<SessionLog[]>([]);
   const [target, setTarget] = useState(initial.state.currentSubstep);
   const [note, setNote] = useState('');
-  const [view, setView] = useState<'main' | 'placement'>('main');
+  const [view, setView] = useState<'main' | 'placement' | 'record'>('main');
   // Guards a rapid double submit of the "Move" form: two synchronous submits
   // could both read the in-flight flag as false before either commits state,
   // so the ref is checked and set synchronously before any await.
@@ -92,6 +93,10 @@ export function ParentArea({ profile: initial, onBack }: Props) {
     );
   }
 
+  if (view === 'record') {
+    return <RecordScreen onBack={() => setView('main')} />;
+  }
+
   return (
     <div className="screen">
       <div className="topbar">
@@ -121,6 +126,7 @@ export function ParentArea({ profile: initial, onBack }: Props) {
           <h2>Tools</h2>
           <div className="row">
             <BigButton variant="quiet" onClick={() => setView('placement')}>Run the placement check</BigButton>
+            <BigButton variant="quiet" onClick={() => setView('record')}>Record sounds</BigButton>
           </div>
         </div>
       </div>

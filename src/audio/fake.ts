@@ -1,4 +1,4 @@
-import type { AudioPlayer } from './types';
+import type { AudioPlayer, Recorder } from './types';
 
 export class FakeAudio implements AudioPlayer {
   spoken: string[] = [];
@@ -7,4 +7,12 @@ export class FakeAudio implements AudioPlayer {
   async speak(text: string) { this.spoken.push(text); }
   async playCard(cardId: string) { this.played.push(cardId); }
   stop() { this.stops++; }
+}
+
+export class FakeRecorder implements Recorder {
+  starts = 0;
+  stops = 0;
+  supported() { return true; }
+  async start() { this.starts++; }
+  async stop() { this.stops++; return new Blob(['fake'], { type: 'audio/webm' }); }
 }
