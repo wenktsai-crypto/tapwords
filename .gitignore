@@ -2,3 +2,5 @@ node_modules
 dist
 .claude/worktrees
 .superpowers
+playwright-report
+test-results
