@@ -104,7 +104,7 @@ export function WordWorkPart({ items, onComplete, onProgress }: Props) {
   if (miss) return <MissReview key={i} word={item.word} onDone={() => advance(responses)} />;
 
   return (
-    <div className="stage" data-part="word-work">
+    <div className="stage" data-part="word-work" data-testid="part" data-item={item.type} data-answer={item.type === 'find' ? item.word.text : item.type === 'build' ? item.word.parts.map((p) => p.grapheme).join(',') : String(item.word.parts.length)}>
       <Caption />
       {item.type === 'tap' && <TapDots key={i} word={item.word} mode="try" onResult={record} />}
       {item.type === 'find' && (

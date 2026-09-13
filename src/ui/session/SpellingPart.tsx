@@ -102,7 +102,7 @@ export function SpellingPart({ items, onComplete, onProgress }: Props) {
   if (feedback === 'word' && item.type === 'word') return <MissReview key={i} word={item.word} onDone={() => advance(responses)} />;
 
   return (
-    <div className="stage" data-part="spelling">
+    <div className="stage" data-part="spelling" data-testid="part" data-item={item.type} data-answer={item.type === 'sound' ? item.card : item.type === 'word' ? item.word.parts.map((p) => p.grapheme).join(',') : item.text.split(/\s+/).join('|')}>
       <Caption />
       {item.type === 'sound' && (
         <div className="row">

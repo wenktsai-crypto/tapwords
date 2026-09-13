@@ -52,7 +52,7 @@ export function LessonPart({ steps, substep, onComplete }: Props) {
 
   if (!step) return null;
   return (
-    <div className="stage" data-part="lesson">
+    <div className="stage" data-part="lesson" data-testid="part" data-step={'say' in step ? 'say' : 'show' in step ? 'show' : 'tap' in step ? 'tap' : 'try'}>
       <Caption />
       {'say' in step && <BigButton onClick={next}>Next</BigButton>}
       {'show' in step && (

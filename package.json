@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "e2e": "npm run build && playwright test",
+    "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "@fontsource/lexend": "^5.1.0",
@@ -18,10 +20,12 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^26.5.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
@@ -29,6 +33,7 @@
     "jsdom": "^25.0.0",
     "typescript": "^5.6.2",
     "vite": "^5.4.8",
+    "vite-plugin-pwa": "^0.20.5",
     "vitest": "^2.1.1"
   }
 }
