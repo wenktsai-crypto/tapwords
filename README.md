@@ -40,7 +40,9 @@ If the app ever says the saved data is damaged, restore from a backup the same w
 
 ## Publish it so other families can use it
 
-The repository includes a GitHub Pages workflow. To publish:
+Tapwords is published at **https://wenktsai-crypto.github.io/tapwords/** from the `wenktsai-crypto/tapwords` repository. Every push to `main` republishes it.
+
+To publish your own copy, the repository includes a GitHub Pages workflow:
 
 1. Create a GitHub repository and push this project to its `main` branch.
 2. In the repository settings, under Pages, set the source to **GitHub Actions**.
