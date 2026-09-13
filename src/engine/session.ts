@@ -5,6 +5,7 @@ import { availableCards, availableWords, getSubstep, substepIndex } from './avai
 import { pickReview, type Candidate } from './review';
 import { sample, shuffle, type Rng } from './rng';
 import { tokenize } from '../content/check';
+import { cardMap, isDrillable } from '../content/parts';
 
 export interface ReverseItem { target: string; choices: string[]; isReview: boolean }
 export interface WordRef { word: Word; substep: string; isReview: boolean }
@@ -120,19 +121,29 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const n = state.sessionsCompleted + 1;
   const strengths = state.strengths;
 
+  // A silent letter has no sound, and a second sound of a spelling already in the deck would make
+  // the drill unanswerable. Both still appear inside words; neither is ever drilled as a card.
+  const deck = cardMap(content.cards);
+  const drillable = (id: string) => {
+    const c = deck.get(id);
+    return c !== undefined && isDrillable(c);
+  };
+
   // Some substeps introduce no new sound cards of their own. Without a stand-in their whole
   // sound-card drill would count as review, so the distinct cards their own word bank uses
   // (first seen first) become the current set instead.
   const declaredCards = sub.groups.slice(0, groupIndex + 1).flatMap((g) => g.cards);
   const usingStandIns = declaredCards.length === 0;
-  const currentCards = usingStandIns
+  const currentCards = (usingStandIns
     ? [...new Set(sub.words.flatMap((w) => w.parts.map((p) => p.card)))]
-    : declaredCards;
-  const allCards = availableCards(content, sub.id, groupIndex);
+    : declaredCards
+  ).filter(drillable);
+  const allCards = availableCards(content, sub.id, groupIndex).filter(drillable);
   // A card already being drilled as current work is never also offered as review.
   const earlierCards: Candidate<string>[] = earlier
     .flatMap((s) => s.groups.flatMap((g) => g.cards.map((c) => ({ key: cardKey(c), substep: s.id, item: c }))))
-    .filter((c) => !currentCards.includes(c.item));
+    .filter((c) => !currentCards.includes(c.item))
+    .filter((c) => drillable(c.item));
   const available = availableWords(content, sub.id, groupIndex);
   const currentWords = available.filter((w) => w.substep === sub.id);
   const allWords = available.map((w) => w.word);
