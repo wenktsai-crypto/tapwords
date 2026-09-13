@@ -91,7 +91,7 @@ export const SUBSTEP_1_2: Substep = {
     cvc('cat'), cvc('cup'), cvc('cut'),
     cvc('kid'), cvc('kit'),
     word('kick', 'k,i,ck'), word('sock', 's,o,ck'), word('rock', 'r,o,ck'), word('duck', 'd,u,ck'),
-    cvcNonsense('jop'), cvcNonsense('kib'), cvcNonsense('cug'), nonsense('gock', 'g,o,ck'),
+    cvcNonsense('jop'), cvcNonsense('kib'), cvcNonsense('cug'), nonsense('geck', 'g,e,ck'),
 
     // Group 3: e, v, w
     cvc('bed'), cvc('red'), cvc('web'), cvc('wet'),
