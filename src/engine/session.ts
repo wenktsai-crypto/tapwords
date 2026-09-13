@@ -1,9 +1,10 @@
-import type { Content, LessonStep, Story, Word } from '../content/types';
+import type { Content, LessonStep, Question, Story, Word } from '../content/types';
 import type { ProfileState } from './types';
 import { cardKey, wordKey } from './types';
 import { availableCards, availableWords, getSubstep, substepIndex } from './availability';
 import { pickReview, type Candidate } from './review';
 import { sample, shuffle, type Rng } from './rng';
+import { tokenize } from '../content/check';
 
 export interface ReverseItem { target: string; choices: string[]; isReview: boolean }
 export interface WordRef { word: Word; substep: string; isReview: boolean }
@@ -33,6 +34,8 @@ export interface SessionPlan {
 
 export const COUNTS = {
   forwardReview: 6,
+  /** Cap on the stand-in cards a substep with none of its own shows in one forward drill. */
+  forwardFallback: 10,
   reverse: 6,
   reverseCurrent: 4,
   wordWork: 12,
@@ -49,8 +52,18 @@ export const COUNTS = {
   readAloudSentences: 3,
 };
 
+export function shuffleQuestion(q: Question, rng: Rng): Question {
+  const order = shuffle([0, 1, 2], rng);
+  const choices = order.map((i) => q.choices[i]) as [string, string, string];
+  return { ...q, choices, answer: order.indexOf(q.answer) as 0 | 1 | 2 };
+}
+
+/** A name such as "Sam" is written with a capital, which would give it away in a line-up of
+ * lower-case words, so a capitalised word is never used as a wrong answer. */
+export const isCapitalised = (text: string) => /^[A-Z]/.test(text);
+
 export function findChoices(target: Word, pool: Word[], rng: Rng): string[] {
-  const others = pool.filter((w) => w.text !== target.text);
+  const others = pool.filter((w) => w.text !== target.text && !isCapitalised(w.text));
   const sameLen = others.filter((w) => w.parts.length === target.parts.length);
   const oneOff = sameLen.filter((w) => w.parts.filter((p, i) => p.card !== target.parts[i].card).length === 1);
   const rest = sameLen.filter((w) => !oneOff.includes(w));
@@ -58,6 +71,44 @@ export function findChoices(target: Word, pool: Word[], rng: Rng): string[] {
   if (picks.length < 2) picks.push(...sample(rest, 2 - picks.length, rng));
   if (picks.length < 2) picks.push(...sample(others.filter((w) => !picks.includes(w)), 2 - picks.length, rng));
   return shuffle([target.text, ...picks.map((w) => w.text)], rng);
+}
+
+function readableWordSet(content: Content, substepId: string, groupIndex: number): Set<string> {
+  const idx = substepIndex(content, substepId);
+  const words = new Set(
+    availableWords(content, substepId, groupIndex)
+      .filter((w) => w.word.kind === 'real')
+      .map((w) => w.word.text.toLowerCase()),
+  );
+  content.substeps.slice(0, idx + 1).forEach((s) => s.sightWords.forEach((sw) => words.add(sw.toLowerCase())));
+  return words;
+}
+
+const readable = (text: string, known: Set<string>) => tokenize(text).every((t) => known.has(t));
+
+/** Current-substep sentences the child can read at this group, then earlier substeps' sentences (latest first). */
+export function usableSentences(content: Content, substepId: string, groupIndex: number): { text: string; substep: string }[] {
+  const idx = substepIndex(content, substepId);
+  const known = readableWordSet(content, substepId, groupIndex);
+  const cur = content.substeps[idx].sentences.filter((t) => readable(t, known)).map((text) => ({ text, substep: substepId }));
+  const earlier = content.substeps
+    .slice(0, idx)
+    .reverse()
+    .flatMap((s) => s.sentences.map((text) => ({ text, substep: s.id })));
+  return [...cur, ...earlier];
+}
+
+/** Current-substep stories fully readable at this group; if none, the nearest earlier substep's stories. */
+export function usableStories(content: Content, substepId: string, groupIndex: number): { story: Story; substep: string }[] {
+  const idx = substepIndex(content, substepId);
+  const known = readableWordSet(content, substepId, groupIndex);
+  const cur = content.substeps[idx].stories.filter((st) => st.sentences.every((t) => readable(t, known))).map((story) => ({ story, substep: substepId }));
+  if (cur.length > 0) return cur;
+  for (let i = idx - 1; i >= 0; i--) {
+    const s = content.substeps[i];
+    if (s.stories.length > 0) return s.stories.map((story) => ({ story, substep: s.id }));
+  }
+  return [];
 }
 
 export function buildSession(content: Content, state: ProfileState, rng: Rng): SessionPlan {
@@ -69,9 +120,19 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const n = state.sessionsCompleted + 1;
   const strengths = state.strengths;
 
-  const currentCards = sub.groups.slice(0, groupIndex + 1).flatMap((g) => g.cards);
+  // Some substeps introduce no new sound cards of their own. Without a stand-in their whole
+  // sound-card drill would count as review, so the distinct cards their own word bank uses
+  // (first seen first) become the current set instead.
+  const declaredCards = sub.groups.slice(0, groupIndex + 1).flatMap((g) => g.cards);
+  const usingStandIns = declaredCards.length === 0;
+  const currentCards = usingStandIns
+    ? [...new Set(sub.words.flatMap((w) => w.parts.map((p) => p.card)))]
+    : declaredCards;
   const allCards = availableCards(content, sub.id, groupIndex);
-  const earlierCards: Candidate<string>[] = earlier.flatMap((s) => s.groups.flatMap((g) => g.cards.map((c) => ({ key: cardKey(c), substep: s.id, item: c }))));
+  // A card already being drilled as current work is never also offered as review.
+  const earlierCards: Candidate<string>[] = earlier
+    .flatMap((s) => s.groups.flatMap((g) => g.cards.map((c) => ({ key: cardKey(c), substep: s.id, item: c }))))
+    .filter((c) => !currentCards.includes(c.item));
   const available = availableWords(content, sub.id, groupIndex);
   const currentWords = available.filter((w) => w.substep === sub.id);
   const allWords = available.map((w) => w.word);
@@ -82,7 +143,11 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const topUp = <T,>(picked: T[], pool: T[], n: number): T[] => [...picked, ...sample(pool.filter((x) => !picked.includes(x)), n - picked.length, rng)];
 
   // 1. sound cards
-  const forwardCards = shuffle([...currentCards, ...pickReview(earlierCards, strengths, COUNTS.forwardReview, n, rng)], rng);
+  // A substep that declares its own cards shows all of them. A stand-in set is far larger
+  // (a whole word bank's worth), so only a drill's worth is shown at a time; the reverse drill
+  // and the sound spelling below still draw on the whole set.
+  const forwardCurrent = usingStandIns ? sample(currentCards, COUNTS.forwardFallback, rng) : currentCards;
+  const forwardCards = shuffle([...forwardCurrent, ...pickReview(earlierCards, strengths, COUNTS.forwardReview, n, rng)], rng);
   const reverseCur = sample(currentCards, COUNTS.reverseCurrent, rng);
   const reverseRev = pickReview(earlierCards, strengths, COUNTS.reverse - reverseCur.length, n, rng);
   const reverseTargets = [
@@ -104,7 +169,9 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const current = topUp(picked, currentWords, COUNTS.wordWork - review.length).map((w) => ({ ...w, isReview: false }));
   const types: WordWorkItem['type'][] = ['tap', 'find', 'build'];
   const wordWork: WordWorkItem[] = shuffle([...current, ...review], rng).map((w, i) => {
-    const type = types[i % 3];
+    // A capitalised name would be the obvious pick in a line-up of lower-case words, so it is
+    // tapped out sound by sound instead; the rotation carries on for everything else.
+    const type = types[i % 3] === 'find' && isCapitalised(w.word.text) ? 'tap' : types[i % 3];
     return type === 'find' ? { ...w, type, choices: findChoices(w.word, allWords, rng) } : { ...w, type };
   });
 
@@ -128,17 +195,27 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
     isReview: w.isReview,
     tray: shuffle([...w.word.parts.map((p) => p.grapheme), ...distractors(w.word.parts.map((p) => p.card), 2)], rng),
   }));
-  const spellSentences: SpellingItem[] = sample(sub.sentences, COUNTS.spellSentence, rng).map((text) => ({ type: 'sentence', text, substep: sub.id, words: shuffle(text.split(/\s+/), rng) }));
+  // Sentences the child can actually read at this group; earlier substeps' sentences fill any gap.
+  const sentencePool = usableSentences(content, sub.id, groupIndex);
+  const curSentences = sentencePool.filter((s) => s.substep === sub.id).map((s) => s.text);
+  const pickSentences = (k: number) => {
+    const picked = sample(curSentences, k, rng);
+    const rest = sentencePool.filter((s) => s.substep !== sub.id).map((s) => s.text);
+    return topUp(picked, rest, k);
+  };
+  const spellSentences: SpellingItem[] = pickSentences(COUNTS.spellSentence).map((text) => ({ type: 'sentence', text, substep: sub.id, words: shuffle(text.split(/\s+/), rng) }));
   const spelling = [...spellSounds, ...spellWords, ...spellSentences];
 
   // 5. read aloud
   const raPick = sample(curReal, COUNTS.readAloudCurrent, rng);
   const raRev = pickReview(earlierWords, strengths, COUNTS.readAloudWords - raPick.length, n, rng).map((w) => ({ ...w, isReview: true }));
   const raCur = topUp(raPick, curReal, COUNTS.readAloudWords - raRev.length).map((w) => ({ ...w, isReview: false }));
-  const readAloud = { words: [...raCur, ...raRev], sentences: sample(sub.sentences, COUNTS.readAloudSentences, rng) };
+  const readAloud = { words: [...raCur, ...raRev], sentences: pickSentences(COUNTS.readAloudSentences) };
 
   // 6. story
-  const story = sub.stories[(n - 1) % sub.stories.length];
+  const stories = usableStories(content, sub.id, groupIndex);
+  const chosen = stories.length > 0 ? stories[(n - 1) % stories.length].story : sub.stories[(n - 1) % sub.stories.length];
+  const story = { ...chosen, questions: chosen.questions.map((q) => shuffleQuestion(q, rng)) };
 
   return {
     sessionNumber: n,

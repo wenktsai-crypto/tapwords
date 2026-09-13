@@ -148,7 +148,7 @@ button.tile:active { transform: scale(0.97); }
 
 form.card { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 600px; }
 form.card label { display: flex; flex-direction: column; gap: 6px; font-size: 18px; color: var(--muted); }
-form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; border-radius: 12px; border: 2px solid #d8d1c3; }
+form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; min-height: 64px; border-radius: 12px; border: 2px solid #d8d1c3; }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 700px; font-size: 18px; }
 .stats dt { color: var(--muted); }
@@ -161,3 +161,38 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
   .tile { min-width: 64px; height: 64px; font-size: 30px; }
   .tile-large { min-width: 120px; height: 120px; font-size: 72px; }
 }
+
+.row-tight { gap: 10px; }
+.tile-syllable-start { margin-left: 22px; }
+.dot-syllable-start { margin-left: 22px; }
+.tapdots-long .tile { min-width: 60px; height: 76px; font-size: 40px; padding: 0 8px; }
+.tapdots-long .dots { gap: 4px; }
+.tapdots-long .dot {
+  width: 64px;
+  height: 64px;
+  border: none;
+  background: transparent;
+  position: relative;
+}
+.tapdots-long .dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--quiet);
+}
+.tapdots-long .dot-lit::after { background: var(--accent); }
+
+.cardlist { list-style: none; padding: 0; margin: 0; width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 12px; }
+.cardrow { display: grid; grid-template-columns: auto 1fr auto auto; gap: 16px; align-items: center; padding: 8px 12px; background: var(--quiet); border-radius: var(--radius); }
+.cardrow-keyword { color: var(--muted); }
+.cardrow-status { font-size: 16px; color: var(--muted); }
+@media (max-width: 600px) { .cardrow { grid-template-columns: auto 1fr; } }
+
+.backup { width: 100%; max-width: 700px; }
+.filepick { display: flex; flex-direction: column; gap: 8px; }
+.filepick input { font-size: 18px; min-height: 64px; }

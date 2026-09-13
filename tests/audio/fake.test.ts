@@ -12,3 +12,18 @@ describe('FakeAudio', () => {
     expect(a.stops).toBe(1);
   });
 });
+
+import { FakeRecorder } from '../../src/audio/fake';
+
+describe('FakeRecorder', () => {
+  it('counts starts and stops and returns a small audio blob', async () => {
+    const r = new FakeRecorder();
+    expect(r.supported()).toBe(true);
+    await r.start();
+    const blob = await r.stop();
+    expect(blob.size).toBeGreaterThan(0);
+    expect(blob.type).toBe('audio/webm');
+    expect(r.starts).toBe(1);
+    expect(r.stops).toBe(1);
+  });
+});

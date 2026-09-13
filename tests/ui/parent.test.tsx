@@ -9,6 +9,7 @@ import { CARDS } from '../../src/content/cards';
 import { cvc, cvcNonsense } from '../../src/content/build';
 import type { Content } from '../../src/content/types';
 import { CONTENT } from '../../src/content';
+import { createBackup } from '../../src/store/backup';
 import { renderWithServices } from './helpers';
 
 const twoSubsteps: Content = {
@@ -43,7 +44,7 @@ describe('ParentArea', () => {
     await user.click(screen.getByRole('button', { name: /^move$/i }));
     await waitFor(async () => expect((await store.listProfiles())[0].state.currentSubstep).toBe('1.2'));
     expect((await store.listProfiles())[0].state.lessonPending).toBe(true);
-    await user.click(screen.getByRole('button', { name: /back/i }));
+    await user.click(screen.getByRole('button', { name: /^back$/i }));
     expect(onBack).toHaveBeenCalled();
   });
 
@@ -122,5 +123,52 @@ describe('ParentArea', () => {
     renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
 
     expect(await screen.findByText('100%')).toBeInTheDocument();
+  });
+
+  it('can move the child by running the placement check', async () => {
+    const user = userEvent.setup();
+    const store = new MemoryStore();
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: { ...initialState('1.1'), sessionsCompleted: 4 } };
+    await store.saveProfile(profile);
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
+    await user.click(await screen.findByRole('button', { name: /placement check/i }));
+    await user.click(screen.getByRole('button', { name: /begin/i }));
+    for (let i = 0; i < 8; i++) await user.click(screen.getByRole('button', { name: /got it/i }));
+    await user.selectOptions(await screen.findByLabelText(/start at/i), '1.2');
+    await user.click(screen.getByRole('button', { name: /use this/i }));
+    await waitFor(async () => expect((await store.listProfiles())[0].state.currentSubstep).toBe('1.2'));
+    expect((await store.listProfiles())[0].state.substepEnteredAt).toBe(4);
+    expect(await screen.findByText(/grown-up area/i)).toBeInTheDocument();
+  });
+
+  it('opens the recording page from the tools', async () => {
+    const user = userEvent.setup();
+    const store = new MemoryStore();
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') };
+    await store.saveProfile(profile);
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
+    await user.click(await screen.findByRole('button', { name: /record sounds/i }));
+    expect(await screen.findByText(/record the sounds/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /back/i }));
+    expect(await screen.findByText(/grown-up area/i)).toBeInTheDocument();
+  });
+
+  it('leaves the grown-up area after an in-place restore, so no stale profile is kept', async () => {
+    const user = userEvent.setup();
+    const source = new MemoryStore();
+    await source.saveProfile({ id: 'p2', name: 'Restored', color: 'sky', createdAt: 'd', state: initialState('1.1') });
+    const text = JSON.stringify(await createBackup(source));
+
+    const store = new MemoryStore();
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: initialState('1.1') };
+    await store.saveProfile(profile);
+    const onBack = vi.fn();
+    renderWithServices(<ParentArea profile={profile} onBack={onBack} />, { store, content: twoSubsteps });
+
+    const input = await screen.findByLabelText(/restore from a backup/i);
+    await user.upload(input, new File([text], 'b.json', { type: 'application/json' }));
+    await user.click(await screen.findByRole('button', { name: /replace everything/i }));
+
+    await waitFor(() => expect(onBack).toHaveBeenCalled());
   });
 });

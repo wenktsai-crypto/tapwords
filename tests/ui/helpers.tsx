@@ -2,7 +2,7 @@ import { render, type RenderResult } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { CONTENT } from '../../src/content';
 import { MemoryStore } from '../../src/store/memory';
-import { FakeAudio } from '../../src/audio/fake';
+import { FakeAudio, FakeRecorder } from '../../src/audio/fake';
 import { seeded } from '../../src/engine/rng';
 import { ServicesContext, type Services } from '../../src/ui/services';
 import { SpeechProvider } from '../../src/ui/speech';
@@ -12,8 +12,10 @@ export function makeServices(over: Partial<Services> = {}): Services {
     content: CONTENT,
     store: new MemoryStore(),
     audio: new FakeAudio(),
+    recorder: new FakeRecorder(),
     rng: seeded(1),
     timing: { demoDelayMs: 0, previewMs: 0, pauseMs: 0 },
+    saveFile: async () => {},
     ...over,
   };
 }

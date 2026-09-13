@@ -91,6 +91,25 @@ describe('TapDots', () => {
     await user.click(await screen.findByRole('button', { name: 'Blend' }));
     await waitFor(() => expect(onResult).toHaveBeenCalledWith(true));
   });
+
+  it('marks syllable starts and shrinks long words', () => {
+    const word = { text: 'sunsetlamp', parts: 'sunsetlamp'.split('').map((g) => ({ grapheme: g, card: g })), kind: 'real' as const, syllables: [3, 6] };
+    const { container } = renderWithServices(<TapDots word={word} mode="try" onResult={() => {}} />);
+    expect(container.querySelector('.tapdots')?.classList.contains('tapdots-long')).toBe(true);
+    const starts = container.querySelectorAll('.tile-syllable-start');
+    expect(starts.length).toBe(2);
+    expect(starts[0].textContent).toBe('s');
+    expect(starts[1].textContent).toBe('l');
+    const dotButtons = container.querySelectorAll('button.dot');
+    expect(dotButtons.length).toBe(word.parts.length);
+  });
+
+  it('does not shrink or split a short word', () => {
+    const word = { text: 'map', parts: 'map'.split('').map((g) => ({ grapheme: g, card: g })), kind: 'real' as const };
+    const { container } = renderWithServices(<TapDots word={word} mode="try" onResult={() => {}} />);
+    expect(container.querySelector('.tapdots')?.classList.contains('tapdots-long')).toBe(false);
+    expect(container.querySelectorAll('.tile-syllable-start').length).toBe(0);
+  });
 });
 
 describe('MissReview', () => {

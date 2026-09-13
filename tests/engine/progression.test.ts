@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { CONTENT } from '../../src/content';
 import { CARDS } from '../../src/content/cards';
 import { cvc, cvcNonsense } from '../../src/content/build';
 import type { Content, Substep } from '../../src/content/types';
-import { ADVANCE, accuracy, finishSession, moveTo, shouldAdvance, suggestPlacement } from '../../src/engine/progression';
+import { ADVANCE, accuracy, finishSession, moveTo, placementLists, shouldAdvance, suggestPlacement } from '../../src/engine/progression';
 import { cardKey, initialState, type ProfileState, type ScoredResponse, type SessionLog } from '../../src/engine/types';
+import { seeded } from '../../src/engine/rng';
 
 const base: Omit<Substep, 'id' | 'groups'> = { title: '', parentSummary: '', concepts: [], sightWords: [], sentences: [], stories: [], words: [cvc('map'), cvcNonsense('mip')] };
 const s11: Substep = { ...base, id: '1.1', groups: [{ cards: ['m', 'a', 'p'], lesson: [] }] };
@@ -163,5 +165,23 @@ describe('suggestPlacement', () => {
   });
   it('exposes the thresholds', () => {
     expect(ADVANCE.current).toBe(0.9);
+  });
+});
+
+describe('placementLists', () => {
+  it('returns 5 real and 3 nonsense words for each placement substep that exists, in order', () => {
+    const one = CONTENT.substeps[0];
+    const content: Content = {
+      cards: CARDS,
+      substeps: [one, { ...one, id: '1.2', title: 'x', words: [cvc('bat')] }, { ...one, id: '1.3', title: 'Digraphs', words: one.words }],
+    };
+    const lists = placementLists(content, seeded(1));
+    expect(lists.map((l) => l.substep)).toEqual(['1.1', '1.3']);
+    expect(lists[1].title).toBe('Digraphs');
+    for (const l of lists) {
+      expect(l.words.filter((w) => w.kind === 'real').length).toBe(5);
+      expect(l.words.filter((w) => w.kind === 'nonsense').length).toBe(3);
+      expect(new Set(l.words.map((w) => w.text)).size).toBe(8);
+    }
   });
 });

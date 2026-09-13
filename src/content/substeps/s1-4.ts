@@ -1,0 +1,125 @@
+import type { Substep } from '../types';
+import { word, nonsense } from '../build';
+
+export const SUBSTEP_1_4: Substep = {
+  id: '1.4',
+  title: 'Double letters ff, ll, ss, and all',
+  parentSummary:
+    'At the end of a short word the letters f, l, s and z are usually doubled, and the pair still makes one sound and gets one tap, as in "off" and "bell". Your child also meets the first welded chunk, a-l-l, which is tapped as one piece in words like "ball" and "tall".',
+  groups: [
+    {
+      cards: ['all'],
+      lesson: [
+        { say: 'At the end of a short word, f, l, s and z like to come in pairs. Two letters, but still just one sound.' },
+        { show: ['ff', 'll', 'ss'] },
+        { say: 'A pair like ff gets one tap, the same as a single f. Do not tap it twice.' },
+        { tap: 'off' },
+        { try: 'bell' },
+        { try: 'miss' },
+        { say: 'Here is a new kind of card. The letters a, l and l are welded together and say all.' },
+        { show: ['all'] },
+        { tap: 'ball' },
+        { try: 'tall' },
+      ],
+    },
+  ],
+  concepts: ['doubling'],
+  sightWords: ['for', 'or', 'said', 'one'],
+  words: [
+    // ff
+    word('off', 'o,ff:f'),
+    word('puff', 'p,u,ff:f'),
+    word('huff', 'h,u,ff:f'),
+    // ll
+    word('fill', 'f,i,ll:l'),
+    word('hill', 'h,i,ll:l'),
+    word('will', 'w,i,ll:l'),
+    word('bell', 'b,e,ll:l'),
+    word('fell', 'f,e,ll:l'),
+    word('sell', 's,e,ll:l'),
+    word('tell', 't,e,ll:l'),
+    word('well', 'w,e,ll:l'),
+    word('yell', 'y,e,ll:l'),
+    word('shell', 'sh,e,ll:l'),
+    word('doll', 'd,o,ll:l'),
+    word('quill', 'qu,i,ll:l'),
+    // ss
+    word('kiss', 'k,i,ss:s'),
+    word('miss', 'm,i,ss:s'),
+    word('boss', 'b,o,ss:s'),
+    word('moss', 'm,o,ss:s'),
+    word('toss', 't,o,ss:s'),
+    word('mess', 'm,e,ss:s'),
+    word('fuss', 'f,u,ss:s'),
+    word('pass', 'p,a,ss:s'),
+    // zz
+    word('fizz', 'f,i,zz:z'),
+    word('buzz', 'b,u,zz:z'),
+    // welded all
+    word('ball', 'b,all'),
+    word('call', 'c,all'),
+    word('fall', 'f,all'),
+    word('tall', 't,all'),
+    word('wall', 'w,all'),
+    // nonsense
+    nonsense('zeff', 'z,e,ff:f'),
+    nonsense('juff', 'j,u,ff:f'),
+    nonsense('hoff', 'h,o,ff:f'),
+    nonsense('gell', 'g,e,ll:l'),
+    nonsense('thull', 'th,u,ll:l'),
+    nonsense('chull', 'ch,u,ll:l'),
+    nonsense('luss', 'l,u,ss:s'),
+    nonsense('voss', 'v,o,ss:s'),
+    nonsense('vess', 'v,e,ss:s'),
+    nonsense('nuzz', 'n,u,zz:z'),
+    nonsense('vall', 'v,all'),
+    nonsense('zall', 'z,all'),
+  ],
+  sentences: [
+    'The tall doll fell off the wall.',
+    'One red bell is in the mud.',
+    'Toss the ball to the tall kid.',
+    'The cat has moss on his hat.',
+    'Yell for the duck in the shed.',
+    'The bug has a big buzz.',
+    'The boss said yes to the mess.',
+    'Will the shell fit in the box?',
+    'Pass the ball or the quill.',
+  ],
+  stories: [
+    {
+      title: 'The Doll on the Wall',
+      sentences: [
+        'A tall doll sat on the wall.',
+        'The doll has a red hat.',
+        'A duck sat on the wall as well.',
+        'The duck said hop to the doll.',
+        'The doll fell off the wall.',
+        'The doll fell in the moss.',
+        'A kid and a cat sit in the moss.',
+        'The cat has the doll.',
+      ],
+      questions: [
+        { prompt: 'Where did the doll fall?', choices: ['in the moss', 'on the wall', 'in the sun'], answer: 0 },
+        { prompt: 'Who got the doll?', choices: ['the cat', 'the kid', 'the duck'], answer: 0 },
+      ],
+    },
+    {
+      title: 'The Bell in the Shed',
+      sentences: [
+        'A big bell is in the shed.',
+        'The bell has moss on it.',
+        'A bug has a nap in the bell.',
+        'A kid will hit the bell.',
+        'The bell has a big buzz.',
+        'The bug fell off the bell.',
+        'The bug is not mad.',
+        'The bug and the kid sit in the sun.',
+      ],
+      questions: [
+        { prompt: 'What is in the bell?', choices: ['a bug', 'a kid', 'moss'], answer: 0 },
+        { prompt: 'What did the kid hit?', choices: ['the bell', 'the bug', 'the shed'], answer: 0 },
+      ],
+    },
+  ],
+};

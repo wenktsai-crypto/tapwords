@@ -10,6 +10,10 @@ export const SPELLING_RULES: Record<string, string> = {
 
 export const MIN = { real: 20, nonsense: 10, sentences: 6, stories: 1, questions: 1 };
 
+/** Endings that must always be tapped as the welded card of the same spelling. ild, ind and ost
+ * are left out because "wind", "cost" and "lost" are regular closed syllables. */
+export const WELDED_ENDINGS = ['ang', 'ing', 'ong', 'ung', 'ank', 'ink', 'onk', 'unk', 'all', 'old', 'olt', 'am', 'an'];
+
 export function tokenize(sentence: string): string[] {
   return sentence
     .toLowerCase()
@@ -27,7 +31,7 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
   const knownWords = new Set<string>();
   const knownSight = new Set<string>();
   const seenIds = new Set<string>();
-  /** Word text -> the substep whose bank owns it, so a text is never taught twice. */
+  /** Lower-cased word text -> the substep whose bank owns it, so a text is never taught twice. */
   const wordOwner = new Map<string, string>();
 
   for (const s of content.substeps) {
@@ -40,7 +44,9 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
     for (const c of s.concepts) introducedConcepts.add(c);
     for (const sw of s.sightWords) knownSight.add(sw.toLowerCase());
 
-    const bank = new Map(s.words.map((w) => [w.text, w]));
+    // Word texts are matched without regard to case, so a proper noun can be stored the way a
+    // child should see it ("Sam") while its parts, cards and sentences stay lower case.
+    const bank = new Map(s.words.map((w) => [w.text.toLowerCase(), w]));
     // Groups are taught in order (spec 3.4), so a group's lesson may only lean on cards its own
     // group or an earlier one has introduced. Word banks are checked against the whole substep
     // further down, because availableWords already filters them by group at runtime.
@@ -66,7 +72,7 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
         }
         const ref = 'tap' in step ? step.tap : 'try' in step ? step.try : null;
         if (ref === null) continue;
-        const w = bank.get(ref);
+        const w = bank.get(ref.toLowerCase());
         if (!w) {
           errors.push(`${s.id}: lesson refers to "${ref}" which is not in this substep's word bank`);
           continue;
@@ -83,10 +89,19 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
       if (w.kind === 'real') real++;
       else nonsenseCount++;
       const joined = w.parts.map((p) => p.grapheme).join('');
-      if (joined !== w.text) errors.push(`${s.id}: "${w.text}" parts spell "${joined}"`);
-      const owner = wordOwner.get(w.text);
+      if (joined !== w.text.toLowerCase()) errors.push(`${s.id}: "${w.text}" parts spell "${joined}"`);
+      const ending = WELDED_ENDINGS.find((g) => w.text.toLowerCase().endsWith(g));
+      const lastPart = w.parts[w.parts.length - 1];
+      if (ending && lastPart && lastPart.grapheme !== ending) {
+        errors.push(`${s.id}: "${w.text}" ends in "${ending}" which must be tapped as the welded card "${ending}"`);
+      }
+      if (w.syllables) {
+        const ok = w.syllables.every((x, i) => Number.isInteger(x) && x > 0 && x < w.parts.length && (i === 0 || x > w.syllables![i - 1]));
+        if (!ok) errors.push(`${s.id}: "${w.text}" has invalid syllables [${w.syllables}]`);
+      }
+      const owner = wordOwner.get(w.text.toLowerCase());
       if (owner !== undefined && owner !== s.id) errors.push(`${s.id}: "${w.text}" is already in substep ${owner}'s word bank`);
-      else wordOwner.set(w.text, s.id);
+      else wordOwner.set(w.text.toLowerCase(), s.id);
       for (const p of w.parts) {
         const card = cardById.get(p.card);
         if (!card) {

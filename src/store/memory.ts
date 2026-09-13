@@ -14,4 +14,6 @@ export class MemoryStore implements Store {
   async getClip(cardId: string) { return this.clips.get(cardId); }
   async saveClip(cardId: string, blob: Blob) { this.clips.set(cardId, blob); }
   async listClipIds() { return [...this.clips.keys()]; }
+  async setLogs(profileId: string, logs: SessionLog[]) { this.logs.set(profileId, logs.map((l) => structuredClone(l))); }
+  async clearAll() { this.profiles.clear(); this.logs.clear(); this.clips.clear(); }
 }

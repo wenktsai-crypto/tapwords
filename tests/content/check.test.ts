@@ -129,4 +129,59 @@ describe('checkContent', () => {
     expect(errors.some((e) => e.includes('nonsense words'))).toBe(true);
     expect(errors.some((e) => e.includes('sentences'))).toBe(true);
   });
+
+  it('requires a word ending in a welded sound to tap it as the welded card', () => {
+    const s = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'h', 'am'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvcNonsense('tas'), word('ham', 'h,a,m')],
+    });
+    const errors = checkContent(content(s), tiny);
+    expect(errors.some((e) => e.includes('"ham"') && e.includes('welded card "am"'))).toBe(true);
+    const ok = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'h', 'am'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvcNonsense('tas'), word('ham', 'h,am')],
+    });
+    expect(checkContent(content(ok), tiny)).toEqual([]);
+  });
+
+  it('rejects a welded ending before its card is taught', () => {
+    const errors = checkContent(content(sub({ words: [cvc('map'), cvcNonsense('tas'), word('pam', 'p,a,m')] })), tiny);
+    expect(errors.some((e) => e.includes('"pam"') && e.includes('welded card "am"'))).toBe(true);
+  });
+
+  it('does not apply the welded rule to ild, ind, ost', () => {
+    const s = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'o', 'l', 'c'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvcNonsense('tas'), cvc('cost')],
+    });
+    expect(checkContent(content(s), tiny)).toEqual([]);
+  });
+
+  it('accepts a capitalised name whose parts are lower case, and sentences that use it', () => {
+    const s = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'am'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvc('sat'), cvcNonsense('tas'), word('Sam', 's,am')],
+      sentences: ['Sam sat.'],
+      stories: [{ title: 'Sam', sentences: ['Sam sat.'], questions: [aQuestion] }],
+    });
+    expect(checkContent(content(s), tiny)).toEqual([]);
+  });
+
+  it('still catches parts that do not spell a capitalised name', () => {
+    const s = sub({
+      groups: [{ cards: ['m', 'a', 'p', 's', 't', 'am'], lesson: [{ try: 'map' }] }],
+      words: [cvc('map'), cvc('sat'), cvcNonsense('tas'), word('Sam', 'm,ap:p')],
+      sentences: ['Sam sat.'],
+      stories: [{ title: 'Sam', sentences: ['Sam sat.'], questions: [aQuestion] }],
+    });
+    expect(checkContent(content(s), tiny).some((e) => e.includes('parts spell'))).toBe(true);
+  });
+
+  it('validates syllable split points', () => {
+    const bad = sub({ words: [cvc('map'), cvcNonsense('tas'), word('mapmat', 'm,a,p,m,a,t', { syllables: [0, 6] })] });
+    const errors = checkContent(content(bad), tiny);
+    expect(errors.some((e) => e.includes('"mapmat"') && e.includes('invalid syllables'))).toBe(true);
+    const good = sub({ words: [cvc('map'), cvcNonsense('tas'), word('mapmat', 'm,a,p,m,a,t', { syllables: [3] })] });
+    expect(checkContent(content(good), tiny)).toEqual([]);
+  });
 });

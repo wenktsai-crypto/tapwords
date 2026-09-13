@@ -62,4 +62,24 @@ export function storeContract(make: () => Store) {
     await Promise.all([s.appendLog('p1', l(1)), s.appendLog('p1', l(2)), s.appendLog('p1', l(3))]);
     expect((await s.listLogs('p1')).length).toBe(3);
   });
+
+  it('replaces a profile\'s logs wholesale with setLogs', async () => {
+    const s = make();
+    await s.saveProfile(profile('p1'));
+    const l = (n: number) => ({ sessionNumber: n, date: 'd', substep: '1.1', complete: true, readAloudDone: false, responses: [] });
+    await s.appendLog('p1', l(1));
+    await s.setLogs('p1', [l(5), l(4)]);
+    expect((await s.listLogs('p1')).map((x) => x.sessionNumber)).toEqual([4, 5]);
+  });
+
+  it('clearAll removes profiles, logs and clips', async () => {
+    const s = make();
+    await s.saveProfile(profile('p1'));
+    await s.appendLog('p1', { sessionNumber: 1, date: 'd', substep: '1.1', complete: true, readAloudDone: false, responses: [] });
+    await s.saveClip('a', new Blob(['x'], { type: 'audio/webm' }));
+    await s.clearAll();
+    expect(await s.listProfiles()).toEqual([]);
+    expect(await s.listLogs('p1')).toEqual([]);
+    expect(await s.listClipIds()).toEqual([]);
+  });
 }

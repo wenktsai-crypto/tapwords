@@ -82,4 +82,21 @@ describe('LessonPart', () => {
 
     await waitFor(() => expect(onComplete).toHaveBeenCalled());
   });
+  it('shrinks the tiles when a show step has more than four of them', async () => {
+    const onComplete = vi.fn();
+    const { unmount } = renderWithServices(
+      <LessonPart steps={[{ show: ['b', 'a', 's', 'k', 'e', 't'] }]} substep={CONTENT.substeps[0]} onComplete={onComplete} />,
+    );
+    const six = screen.getAllByText(/^[baskept]$/).filter((el) => el.classList.contains('tile'));
+    expect(six).toHaveLength(6);
+    for (const tile of six) expect(tile.classList.contains('tile-normal')).toBe(true);
+    unmount();
+
+    renderWithServices(
+      <LessonPart steps={[{ show: ['m', 'a', 'p'] }]} substep={CONTENT.substeps[0]} onComplete={onComplete} />,
+    );
+    const three = screen.getAllByText(/^[map]$/).filter((el) => el.classList.contains('tile'));
+    expect(three).toHaveLength(3);
+    for (const tile of three) expect(tile.classList.contains('tile-large')).toBe(true);
+  });
 });

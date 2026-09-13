@@ -58,7 +58,9 @@ export function LessonPart({ steps, substep, onComplete }: Props) {
       {'show' in step && (
         <>
           <div className="row">
-            {step.show.map((g, k) => <Tile key={k} grapheme={g} type={cardTypeFor(content.cards, g)} size="large" />)}
+            {step.show.map((g, k) => (
+              <Tile key={k} grapheme={g} type={cardTypeFor(content.cards, g)} size={step.show.length > 4 ? 'normal' : 'large'} />
+            ))}
           </div>
           <BigButton onClick={next}>Next</BigButton>
         </>

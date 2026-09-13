@@ -1,5 +1,6 @@
-import type { Content } from '../content/types';
+import type { Content, Word } from '../content/types';
 import { getSubstep, substepIndex } from './availability';
+import { sample, shuffle, type Rng } from './rng';
 import { decayStrengths, updateStrengths } from './strength';
 import { cardKey, type ProfileState, type ScoredResponse, type SessionLog } from './types';
 
@@ -105,4 +106,20 @@ export function suggestPlacement(results: PlacementResult[]): string {
     last = r.substep;
   }
   return last;
+}
+
+export interface PlacementList {
+  substep: string;
+  title: string;
+  words: Word[];
+}
+
+/** Short word lists for the placement check, one per placement substep present in the content. */
+export function placementLists(content: Content, rng: Rng, counts = { real: 5, nonsense: 3 }): PlacementList[] {
+  return PLACEMENT_SUBSTEPS.filter((id) => content.substeps.some((s) => s.id === id)).map((id) => {
+    const sub = getSubstep(content, id);
+    const real = sample(sub.words.filter((w) => w.kind === 'real'), counts.real, rng);
+    const nonsense = sample(sub.words.filter((w) => w.kind === 'nonsense'), counts.nonsense, rng);
+    return { substep: id, title: sub.title, words: shuffle([...real, ...nonsense], rng) };
+  });
 }

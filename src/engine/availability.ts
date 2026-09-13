@@ -16,8 +16,9 @@ export function getCard(content: Content, id: string): Card {
   return c;
 }
 
+/** Matched without regard to case, so a lesson may refer to a capitalised name as "sam". */
 export function findWord(substep: Substep, text: string): Word {
-  const w = substep.words.find((x) => x.text === text);
+  const w = substep.words.find((x) => x.text.toLowerCase() === text.toLowerCase());
   if (!w) throw new Error(`Word "${text}" is not in substep ${substep.id}`);
   return w;
 }

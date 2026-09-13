@@ -1,0 +1,127 @@
+import type { Substep } from '../types';
+import { word, nonsense } from '../build';
+
+export const SUBSTEP_3_5: Substep = {
+  id: '3.5',
+  title: 'Adding ed and ing',
+  parentSummary:
+    'Your child learns two endings that always stay together: ed, which shows something already happened, and ing, which shows something happening right now. Both endings are tapped as one piece, as in "landed" and "fishing".',
+  groups: [
+    {
+      cards: ['ed'],
+      lesson: [
+        { say: 'Today we learn two chunks that go on the end of a word: ed and ing.' },
+        { show: ['ed', 'ing'] },
+        { say: 'ed is the chunk at the end of landed. It shows something already happened, and it is one tap.' },
+        { tap: 'jumped' },
+        { say: 'ing is the chunk at the end of fishing. It shows something happening right now, and it is one tap too.' },
+        { try: 'landed' },
+        { try: 'fishing' },
+        { try: 'melted' },
+        { try: 'thinking' },
+      ],
+    },
+  ],
+  concepts: ['suffix-ed', 'suffix-ing'],
+  sightWords: ['every', 'something', 'always', 'right'],
+  words: [
+    // -ed on one-syllable closed-syllable bases
+    word('jumped', 'j,u,m,p,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('landed', 'l,a,n,d,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('wished', 'w,i,sh,ed', { concepts: ['suffix-ed'], syllables: [3] }),
+    word('melted', 'm,e,l,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('rested', 'r,e,s,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('printed', 'p,r,i,n,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
+    word('planted', 'p,l,a,n,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
+    word('thanked', 'th,ank,ed', { concepts: ['suffix-ed'], syllables: [2] }),
+    word('blasted', 'b,l,a,s,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
+    word('drifted', 'd,r,i,f,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
+    word('twisted', 't,w,i,s,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
+    word('lifted', 'l,i,f,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('handed', 'h,a,n,d,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('acted', 'a,c,t,ed', { concepts: ['suffix-ed'], syllables: [3] }),
+    word('tested', 't,e,s,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('ended', 'e,n,d,ed', { concepts: ['suffix-ed'], syllables: [3] }),
+    word('rented', 'r,e,n,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('hunted', 'h,u,n,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('bumped', 'b,u,m,p,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('packed', 'p,a,ck,ed', { concepts: ['suffix-ed'], syllables: [3] }),
+    word('shifted', 'sh,i,f,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    // a two-syllable base plus ed
+    word('inspected', 'i,n,s,p,e,c,t,ed', { concepts: ['suffix-ed'], syllables: [2, 7] }),
+
+    // -ing on one-syllable closed-syllable bases
+    word('fishing', 'f,i,sh,ing', { concepts: ['suffix-ing'], syllables: [3] }),
+    word('camping', 'c,a,m,p,ing', { concepts: ['suffix-ing'], syllables: [4] }),
+    word('chomping', 'ch,o,m,p,ing', { concepts: ['suffix-ing'], syllables: [4] }),
+    word('dusting', 'd,u,s,t,ing', { concepts: ['suffix-ing'], syllables: [4] }),
+    word('banking', 'b,ank,ing', { concepts: ['suffix-ing'], syllables: [2] }),
+    word('thinking', 'th,ink,ing', { concepts: ['suffix-ing'], syllables: [2] }),
+    word('punching', 'p,u,n,ch,ing', { concepts: ['suffix-ing'], syllables: [4] }),
+    word('crunching', 'c,r,u,n,ch,ing', { concepts: ['suffix-ing'], syllables: [5] }),
+    word('splashing', 's,p,l,a,sh,ing', { concepts: ['suffix-ing'], syllables: [5] }),
+    word('buzzing', 'b,u,zz:z,ing', { concepts: ['suffix-ing'], syllables: [3] }),
+    word('singing', 's,ing,ing', { concepts: ['suffix-ing'], syllables: [2] }),
+    word('ringing', 'r,ing,ing', { concepts: ['suffix-ing'], syllables: [2] }),
+
+    // nonsense: same base+suffix shapes, never real words
+    nonsense('blimped', 'b,l,i,m,p,ed'),
+    nonsense('tranked', 't,r,ank,ed'),
+    nonsense('gusked', 'g,u,s,k,ed'),
+    nonsense('flisting', 'f,l,i,s,t,ing'),
+    nonsense('dranking', 'd,r,ank,ing'),
+    nonsense('scrunted', 's,c,r,u,n,t,ed'),
+    nonsense('thusting', 'th,u,s,t,ing'),
+    nonsense('vashed', 'v,a,sh,ed'),
+    nonsense('wumping', 'w,u,m,p,ing'),
+    nonsense('zelted', 'z,e,l,t,ed'),
+    nonsense('chelted', 'ch,e,l,t,ed'),
+    nonsense('thrimped', 'th,r,i,m,p,ed'),
+  ],
+  sentences: [
+    'Sam jumped and jumped.',
+    'Something landed on the wall.',
+    'Pam packed the box.',
+    'The bell rang, and Sam jumped.',
+    'Dan is fishing in the sun.',
+    'Jan is thinking of a fox.',
+    'Every duck has a wing.',
+    'The fox always hunted for fun.',
+    'Dan said the king is right.',
+  ],
+  stories: [
+    {
+      title: 'Sam Planted a Bud',
+      sentences: [
+        'Sam planted a bud in the sun.',
+        'Then Sam packed a box.',
+        'The duck landed on the box.',
+        'The box shifted in the sun.',
+        'Sam and the duck thanked the sun.',
+        'It ended in fun.',
+        'Pam was thinking of the duck.',
+        'Every duck sat with Sam.',
+      ],
+      questions: [
+        { prompt: 'What did Sam pack?', choices: ['a box', 'the sun', 'the duck'], answer: 0 },
+        { prompt: 'Who thanked the sun?', choices: ['Sam and the duck', 'Pam', 'the box'], answer: 0 },
+      ],
+    },
+    {
+      title: 'Dan and the Fish',
+      sentences: [
+        'Dan packed a net for fishing.',
+        'He was fishing in the sun.',
+        'Something bumped his net.',
+        'A big fish was in the net!',
+        'Dan thanked the fish and the sun.',
+        'He packed up and sat in the van.',
+        'Every duck sat with Dan.',
+      ],
+      questions: [
+        { prompt: 'What did Dan pack?', choices: ['a net', 'a van', 'a duck'], answer: 0 },
+        { prompt: 'Where did Dan sit?', choices: ['in the van', 'in the net', 'in the sun'], answer: 0 },
+      ],
+    },
+  ],
+};
