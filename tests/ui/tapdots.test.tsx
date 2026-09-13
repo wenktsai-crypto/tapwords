@@ -100,6 +100,8 @@ describe('TapDots', () => {
     expect(starts.length).toBe(2);
     expect(starts[0].textContent).toBe('s');
     expect(starts[1].textContent).toBe('l');
+    const dotButtons = container.querySelectorAll('button.dot');
+    expect(dotButtons.length).toBe(word.parts.length);
   });
 
   it('does not shrink or split a short word', () => {

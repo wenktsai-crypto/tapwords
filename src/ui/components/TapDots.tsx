@@ -84,7 +84,7 @@ export function TapDots({ word, mode, onResult }: Props) {
   const starts = new Set(word.syllables ?? []);
   const long = word.parts.length > 6;
   return (
-    <div className={`tapdots ${long ? 'tapdots-long' : ''}`}>
+    <div className={['tapdots', long ? 'tapdots-long' : ''].filter(Boolean).join(' ')}>
       <div className="row row-tight">
         {word.parts.map((p, i) => (
           <Tile
