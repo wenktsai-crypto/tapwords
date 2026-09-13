@@ -15,7 +15,7 @@ describe('card list', () => {
 
   it('includes the cards needed through step 3', () => {
     const ids = new Set(CARDS.map((c) => c.id));
-    for (const id of ['a', 'i', 'o', 'u', 'e', 'sh', 'ch', 'th', 'wh', 'qu', 'ck', 'all', 'am', 'an', 'ang', 'ing', 'ong', 'ung', 'ank', 'ink', 'onk', 'unk', 'ild', 'ind', 'old', 'ost', 'olt']) {
+    for (const id of ['a', 'i', 'o', 'u', 'e', 'sh', 'ch', 'th', 'wh', 'qu', 'ck', 'all', 'am', 'an', 'ang', 'ing', 'ong', 'ung', 'ank', 'ink', 'onk', 'unk', 'ild', 'ind', 'old', 'ost', 'olt', 'ed']) {
       expect(ids.has(id), `missing card ${id}`).toBe(true);
     }
   });

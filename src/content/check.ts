@@ -10,6 +10,10 @@ export const SPELLING_RULES: Record<string, string> = {
 
 export const MIN = { real: 20, nonsense: 10, sentences: 6, stories: 1, questions: 1 };
 
+/** Endings that must always be tapped as the welded card of the same spelling. ild, ind and ost
+ * are left out because "wind", "cost" and "lost" are regular closed syllables. */
+export const WELDED_ENDINGS = ['ang', 'ing', 'ong', 'ung', 'ank', 'ink', 'onk', 'unk', 'all', 'old', 'olt', 'am', 'an'];
+
 export function tokenize(sentence: string): string[] {
   return sentence
     .toLowerCase()
@@ -84,6 +88,15 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
       else nonsenseCount++;
       const joined = w.parts.map((p) => p.grapheme).join('');
       if (joined !== w.text) errors.push(`${s.id}: "${w.text}" parts spell "${joined}"`);
+      const ending = WELDED_ENDINGS.find((g) => w.text.endsWith(g));
+      const lastPart = w.parts[w.parts.length - 1];
+      if (ending && lastPart && lastPart.grapheme !== ending) {
+        errors.push(`${s.id}: "${w.text}" ends in "${ending}" which must be tapped as the welded card "${ending}"`);
+      }
+      if (w.syllables) {
+        const ok = w.syllables.every((x, i) => Number.isInteger(x) && x > 0 && x < w.parts.length && (i === 0 || x > w.syllables![i - 1]));
+        if (!ok) errors.push(`${s.id}: "${w.text}" has invalid syllables [${w.syllables}]`);
+      }
       const owner = wordOwner.get(w.text);
       if (owner !== undefined && owner !== s.id) errors.push(`${s.id}: "${w.text}" is already in substep ${owner}'s word bank`);
       else wordOwner.set(w.text, s.id);

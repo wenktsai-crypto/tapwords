@@ -55,4 +55,6 @@ export const CARDS: Card[] = [
   card('old', 'cold', 'welded'),
   card('ost', 'most', 'welded'),
   card('olt', 'bolt', 'welded'),
+  // Suffix taught in 3.5; tapped as one unit like a welded sound
+  card('ed', 'landed', 'welded', 'ed, as in landed'),
 ];
