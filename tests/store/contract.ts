@@ -37,4 +37,29 @@ export function storeContract(make: () => Store) {
     expect((await s.getClip('a'))?.size).toBe(1);
     expect(await s.listClipIds()).toEqual(['a']);
   });
+
+  it('does not expose internal state through returned profiles or logs', async () => {
+    const s = make();
+    await s.saveProfile(profile('p1'));
+    const returned = (await s.listProfiles())[0];
+    returned.name = 'Mutated';
+    expect((await s.listProfiles()).find((p) => p.id === 'p1')?.name).toBe('Kid');
+
+    const l = { sessionNumber: 1, date: 'd', substep: '1.1', complete: true, readAloudDone: false, responses: [] };
+    await s.appendLog('p1', l);
+    const returnedLog = (await s.listLogs('p1'))[0];
+    returnedLog.sessionNumber = 999;
+    returnedLog.responses.push({ itemKey: 'x', activity: 'tap', correct: true, isReview: false, parentMarked: false });
+    const fresh = (await s.listLogs('p1'))[0];
+    expect(fresh.sessionNumber).toBe(1);
+    expect(fresh.responses).toEqual([]);
+  });
+
+  it('serializes concurrent appendLog calls without dropping entries', async () => {
+    const s = make();
+    await s.saveProfile(profile('p1'));
+    const l = (n: number) => ({ sessionNumber: n, date: 'd', substep: '1.1', complete: true, readAloudDone: false, responses: [] });
+    await Promise.all([s.appendLog('p1', l(1)), s.appendLog('p1', l(2)), s.appendLog('p1', l(3))]);
+    expect((await s.listLogs('p1')).length).toBe(3);
+  });
 }
