@@ -33,7 +33,7 @@ export const SUBSTEP_3_5: Substep = {
     word('rested', 'r,e,s,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
     word('printed', 'p,r,i,n,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
     word('planted', 'p,l,a,n,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
-    word('thanked', 'th,a,n,k,ed', { concepts: ['suffix-ed'], syllables: [4] }),
+    word('thanked', 'th,ank,ed', { concepts: ['suffix-ed'], syllables: [2] }),
     word('blasted', 'b,l,a,s,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
     word('drifted', 'd,r,i,f,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
     word('twisted', 't,w,i,s,t,ed', { concepts: ['suffix-ed'], syllables: [5] }),
@@ -48,7 +48,7 @@ export const SUBSTEP_3_5: Substep = {
     word('packed', 'p,a,ck,ed', { concepts: ['suffix-ed'], syllables: [3] }),
     word('shifted', 'sh,i,f,t,ed', { concepts: ['suffix-ed'], syllables: [4] }),
     // a two-syllable base plus ed
-    word('inspected', 'i,n,s,p,e,c,t,ed', { concepts: ['suffix-ed'], syllables: [2, 5] }),
+    word('inspected', 'i,n,s,p,e,c,t,ed', { concepts: ['suffix-ed'], syllables: [2, 6] }),
 
     // -ing on one-syllable closed-syllable bases
     word('fishing', 'f,i,sh,ing', { concepts: ['suffix-ing'], syllables: [3] }),
@@ -91,16 +91,16 @@ export const SUBSTEP_3_5: Substep = {
   ],
   stories: [
     {
-      title: 'Sam Planted It',
+      title: 'Sam Planted a Bud',
       sentences: [
-        'Sam planted it in the sun.',
+        'Sam planted a bud in the sun.',
         'Then Sam packed a box.',
         'The duck landed on the box.',
-        'Something bumped the box.',
+        'The box shifted in the sun.',
         'Sam and the duck thanked the sun.',
         'It ended in fun.',
-        'Pam is thinking of the duck.',
-        'Every duck has fun with Sam.',
+        'Pam was thinking of the duck.',
+        'Every duck sat with Sam.',
       ],
       questions: [
         { prompt: 'What did Sam pack?', choices: ['a box', 'the sun', 'the duck'], answer: 0 },
@@ -111,12 +111,12 @@ export const SUBSTEP_3_5: Substep = {
       title: 'Dan and the Fish',
       sentences: [
         'Dan packed a net for fishing.',
-        'He is fishing in the sun.',
+        'He was fishing in the sun.',
         'Something bumped his net.',
-        'A big fish is in the net!',
+        'A big fish was in the net!',
         'Dan thanked the fish and the sun.',
         'He packed up and sat in the van.',
-        'Every duck has fun with Dan.',
+        'Every duck sat with Dan.',
       ],
       questions: [
         { prompt: 'What did Dan pack?', choices: ['a net', 'a van', 'a duck'], answer: 0 },
