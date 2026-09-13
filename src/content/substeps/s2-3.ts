@@ -63,16 +63,16 @@ export const SUBSTEP_2_3: Substep = {
     {
       title: 'The Gold Bolt',
       sentences: [
-        'The child sat in the cold.',
-        'A gold bolt was in the mud.',
-        'The child has the gold bolt.',
-        'The bolt is not cold.',
-        'The child will hold the gold bolt.',
+        'The child is in the cold.',
+        'A gold bolt is in the mud.',
+        'The child can find the gold bolt.',
+        'The child can hold the gold bolt.',
+        'The bolt is old and cold.',
         'The child and Sam sit in the sun.',
       ],
       questions: [
-        { prompt: 'What was in the mud?', choices: ['a gold bolt', 'the sun', 'the cold'], answer: 0 },
-        { prompt: 'Where was the bolt?', choices: ['in the mud', 'in the sun', 'in the cold'], answer: 0 },
+        { prompt: 'What is in the mud?', choices: ['a gold bolt', 'the sun', 'the cold'], answer: 0 },
+        { prompt: 'Who can hold the gold bolt?', choices: ['the child', 'Sam', 'the bolt'], answer: 0 },
       ],
     },
     {
@@ -80,14 +80,14 @@ export const SUBSTEP_2_3: Substep = {
       sentences: [
         'Sam has a bold colt.',
         'The colt is not tall.',
-        'Dan will sell the colt.',
-        'Sam told Dan not to sell the colt.',
-        'Dan will not sell the colt.',
+        'Dan would sell the colt.',
+        'Sam does not sell the colt.',
+        'The colt is old and kind.',
         'The colt and Sam sit in the sun.',
       ],
       questions: [
         { prompt: 'Who has the bold colt?', choices: ['Sam', 'Dan', 'the sun'], answer: 0 },
-        { prompt: 'Who told Dan not to sell the colt?', choices: ['Sam', 'Dan', 'the colt'], answer: 0 },
+        { prompt: 'Who does not sell the colt?', choices: ['Sam', 'Dan', 'the colt'], answer: 0 },
       ],
     },
   ],

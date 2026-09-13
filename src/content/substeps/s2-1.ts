@@ -65,18 +65,18 @@ export const SUBSTEP_2_1: Substep = {
   ],
   stories: [
     {
-      title: 'The King Who Sang',
+      title: 'The King Who Can Sing',
       sentences: [
-        'A king sat on a big bed.',
-        'A red hen sat with the king.',
+        'A king is on a big bed.',
+        'A red hen is with the king.',
         'He can sing a long song.',
         'The king can wink at the hen.',
-        'The man can honk at the duck.',
-        'The king is not sad.',
+        'The hen can hop on the bed.',
+        'The king and the hen sing a long song.',
       ],
       questions: [
-        { prompt: 'What did the king sing?', choices: ['a long song', 'a big bed', 'a red hen'], answer: 0 },
-        { prompt: 'Who can wink?', choices: ['the king', 'the hen', 'the man'], answer: 0 },
+        { prompt: 'What can the king sing?', choices: ['a long song', 'a big bed', 'a red hen'], answer: 0 },
+        { prompt: 'Who can wink?', choices: ['the king', 'the hen', 'the bed'], answer: 0 },
       ],
     },
     {
@@ -85,13 +85,13 @@ export const SUBSTEP_2_1: Substep = {
         'Sam has a pink sock.',
         'Sam has a big tank.',
         'The sock can sink in the tank.',
-        'The pink sock sank in the tank.',
-        'Pam has fun with the sock.',
+        'The pink sock is in the tank.',
         'Sam and Pam sit at the tank.',
-        'Pam is not sad.',
+        'Pam has fun with the sock.',
+        'Sam and Pam hang the sock in the sun.',
       ],
       questions: [
-        { prompt: 'What sank in the tank?', choices: ['the pink sock', 'the big tank', 'Pam'], answer: 0 },
+        { prompt: 'What is in the tank?', choices: ['the pink sock', 'the big tank', 'Pam'], answer: 0 },
         { prompt: 'Who has fun with the sock?', choices: ['Pam', 'Sam', 'the tank'], answer: 0 },
       ],
     },
