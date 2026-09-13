@@ -53,7 +53,7 @@ export const SUBSTEP_3_4: Substep = {
     word('establishment', 'e,s,t,a,b,l,i,sh,m,e,n,t', { syllables: [2, 5, 8] }),
 
     // Nonsense: same three-syllable closed shapes.
-    nonsense('pumkinlab', 'p,u,m,k,i,n,l,a,b'),
+    nonsense('vandriplum', 'v,a,n,d,r,i,p,l,u,m'),
     nonsense('distracmit', 'd,i,s,t,r,a,c,m,i,t'),
     nonsense('fantoblip', 'f,a,n,t,o,b,l,i,p'),
     nonsense('submandix', 's,u,b,m,a,n,d,i,x'),
@@ -61,7 +61,7 @@ export const SUBSTEP_3_4: Substep = {
     nonsense('undrimpot', 'u,n,d,r,i,m,p,o,t'),
     nonsense('mislantic', 'm,i,s,l,a,n,t,i,c'),
     nonsense('trusvendum', 't,r,u,s,v,e,n,d,u,m'),
-    nonsense('inspecton', 'i,n,s,p,e,c,t,o,n'),
+    nonsense('onbistrek', 'o,n,b,i,s,t,r,e,k'),
     nonsense('blimkastin', 'b,l,i,m,k,a,s,t,i,n'),
     nonsense('sunpelmit', 's,u,n,p,e,l,m,i,t'),
     nonsense('grandistop', 'g,r,a,n,d,i,s,t,o,p'),
@@ -74,7 +74,7 @@ export const SUBSTEP_3_4: Substep = {
     'The uncommon net does not disconnect.',
     'Sam does not know where Dan is.',
     'Pam and Sam run through the shed.',
-    'The map is indistinct.',
+    'Dan can establish a badminton net.',
     'Pam and Sam have fun in Manhattan.',
   ],
   stories: [
@@ -87,7 +87,8 @@ export const SUBSTEP_3_4: Substep = {
         'Dan does not know where it is.',
         'They know the basketball is uncommon.',
         'Pam has the basketball in the shed.',
-        'Dan was not sad in the sun.',
+        'Sam and Dan have fun with the basketball.',
+        'They have fun in the sun.',
       ],
       questions: [
         { prompt: 'Where is the basketball?', choices: ['in the shed', 'in Manhattan', 'in the sun'], answer: 0 },
@@ -98,6 +99,7 @@ export const SUBSTEP_3_4: Substep = {
       title: 'Badminton in Wisconsin',
       sentences: [
         'Pam and Sam inhabit Wisconsin.',
+        'Dan does not have a net.',
         'They have a badminton net here.',
         'Sam is unselfish with the net.',
         'Pam and Sam establish badminton in Wisconsin.',
@@ -107,7 +109,7 @@ export const SUBSTEP_3_4: Substep = {
       ],
       questions: [
         { prompt: 'Where do Pam and Sam inhabit?', choices: ['Wisconsin', 'the shed', 'the net'], answer: 0 },
-        { prompt: 'Who is unselfish with the net?', choices: ['Sam', 'Pam', 'Wisconsin'], answer: 0 },
+        { prompt: 'Who is unselfish with the net?', choices: ['Sam', 'Pam', 'Dan'], answer: 0 },
       ],
     },
   ],
