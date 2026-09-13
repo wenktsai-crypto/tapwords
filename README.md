@@ -22,6 +22,22 @@ For the finished, faster version:
 
 Progress lives on that iPad. Each child's profile and history are saved there.
 
+## Starting a child at the right place
+
+When you add a child you can either pick a starting point from the list (each entry shows example words) or tap **Find the starting point with a short check**. Sit with your child: words appear one at a time, your child reads each out loud, and you tap **Got it** or **Missed it**. The check stops on its own when the words get too hard and suggests where to begin. You can change the suggestion before saving, and re-run the check any time from the grown-up area (hold the **Grown-ups** button next to the child's name).
+
+## Recording the sounds in your own voice
+
+The app speaks with the device's built-in voice. If you would rather your child hear a person, open the grown-up area, tap **Record sounds**, and record each sound card once: tap **Record**, say the sound (the sound, not the letter name), tap **Stop**. Recordings are kept on the device and included in backups.
+
+## Backing up and moving to another device
+
+In the grown-up area, tap **Back up everything on this device**. On an iPad this opens the share sheet so you can save the file to Files or send it to yourself; on a computer it downloads. The file holds every child's progress and any recorded sounds.
+
+To restore, open Tapwords on the other device, tap **Restore from a backup** on the first screen (or in the grown-up area), choose the file, then choose **Replace everything on this device** or **Add to what is here**. Adding keeps the children already on the device and overwrites only a child with the same identity as one in the backup.
+
+If the app ever says the saved data is damaged, restore from a backup the same way, or hold **Start fresh** to clear it.
+
 ## Publish it so other families can use it
 
 The repository includes a GitHub Pages workflow. To publish:
@@ -38,7 +54,7 @@ Send families that address; they follow the home-screen steps above.
 
     npm test          # engine, content checker, screens, build output
     npm run typecheck
-    npm run e2e       # real browser at tablet size: full session, offline reload
+    npm run e2e       # real browser at tablet size: full session, offline reload, placement check, backup and restore
 
 The first time, run `npx playwright install chromium` once to download the test browser.
 
@@ -50,7 +66,7 @@ The first time, run `npx playwright install chromium` once to download the test 
 
 ## Where things live
 
-- `src/content` — sound cards and one file per substep. Every file must pass the content checker (`tests/content`).
+- `src/content` — sound cards and sixteen substep files, one per substep. Every file must pass the content checker (`tests/content`).
 - `src/engine` — session assembly, scoring, review, advancement. No React, no browser.
 - `src/store`, `src/audio` — device storage and voice, behind interfaces with test fakes.
 - `src/ui` — screens and session parts.
