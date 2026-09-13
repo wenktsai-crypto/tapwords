@@ -102,7 +102,7 @@ export const SUBSTEP_3_1: Substep = {
         'The muffin is on a red mat.',
         'The mat is in the cabin.',
         'Now the muffin is not on the mat.',
-        'The kitten has the muffin now.',
+        'A kitten has the muffin now.',
       ],
       questions: [
         { prompt: 'Where is the rabbit?', choices: ['in a cabin', 'on a mat', 'in the sun'], answer: 0 },

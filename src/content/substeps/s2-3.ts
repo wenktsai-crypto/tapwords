@@ -87,7 +87,7 @@ export const SUBSTEP_2_3: Substep = {
       ],
       questions: [
         { prompt: 'Who has the bold colt?', choices: ['Sam', 'Dan', 'the sun'], answer: 0 },
-        { prompt: 'Who does not sell the colt?', choices: ['Sam', 'Dan', 'the colt'], answer: 0 },
+        { prompt: 'Who would sell the colt?', choices: ['Dan', 'Sam', 'the colt'], answer: 0 },
       ],
     },
   ],

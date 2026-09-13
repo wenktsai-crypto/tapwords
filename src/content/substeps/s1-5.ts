@@ -72,7 +72,7 @@ export const SUBSTEP_1_5: Substep = {
       ],
       questions: [
         { prompt: 'What is the hen in?', choices: ['the jam', 'the sun', 'the ham'], answer: 0 },
-        { prompt: 'Who is at the pan?', choices: ['a red hen', 'Sam', 'Pam'], answer: 0 },
+        { prompt: "What is on the hen's leg?", choices: ['jam', 'ham', 'a pan'], answer: 0 },
       ],
     },
     {
