@@ -1,4 +1,5 @@
 import type { Content } from './types';
+import { cardMap, silentPartners } from './parts';
 
 /** Graphemes that are spellings of an existing card and need a rule taught first. */
 export const SPELLING_RULES: Record<string, string> = {
@@ -25,6 +26,7 @@ export function tokenize(sentence: string): string[] {
 export function checkContent(content: Content, min: typeof MIN = MIN): string[] {
   const errors: string[] = [];
   const cardById = new Map(content.cards.map((c) => [c.id, c]));
+  const cards = cardMap(content.cards);
   const introducedCards = new Set<string>();
   const introducedGraphemes = new Set<string>();
   const introducedConcepts = new Set<string>();
@@ -56,7 +58,11 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
         if (introducedCards.has(c)) errors.push(`${s.id}: card "${c}" was already introduced`);
         introducedCards.add(c);
         const card = cardById.get(c);
-        if (card) introducedGraphemes.add(card.grapheme);
+        if (card) {
+          introducedGraphemes.add(card.grapheme);
+          // A lesson may show "a_e", the face of the card, as well as the bare letter a word uses.
+          if (card.display) introducedGraphemes.add(card.display);
+        }
       }
       for (const step of g.lesson) {
         if ('show' in step) {
@@ -95,6 +101,19 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
       if (ending && lastPart && lastPart.grapheme !== ending) {
         errors.push(`${s.id}: "${w.text}" ends in "${ending}" which must be tapped as the welded card "${ending}"`);
       }
+      // A silent letter only makes sense as the partner of a vowel earlier in its syllable, and
+      // such a vowel is silent-e only if it has exactly one partner. Either half alone is a typo.
+      const pairs = silentPartners(w, cards);
+      w.parts.forEach((p, i) => {
+        const type = cards.get(p.card)?.type;
+        if (type === 'silent' && !pairs.some((pair) => pair.silent === i)) {
+          errors.push(`${s.id}: "${w.text}" has a silent "${p.grapheme}" with no silent-e vowel before it in the same syllable`);
+        }
+        if (type === 'vce') {
+          const n = pairs.filter((pair) => pair.vowel === i).length;
+          if (n !== 1) errors.push(`${s.id}: "${w.text}" has a silent-e vowel with ${n} silent partners in its syllable (need exactly 1)`);
+        }
+      });
       if (w.syllables) {
         const ok = w.syllables.every((x, i) => Number.isInteger(x) && x > 0 && x < w.parts.length && (i === 0 || x > w.syllables![i - 1]));
         if (!ok) errors.push(`${s.id}: "${w.text}" has invalid syllables [${w.syllables}]`);
