@@ -11,8 +11,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['icon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
+        id: base,
         name: 'Tapwords',
         short_name: 'Tapwords',
         description: 'A calm, self-guided reading program.',

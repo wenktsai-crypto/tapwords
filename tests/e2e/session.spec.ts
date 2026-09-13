@@ -16,7 +16,7 @@ test('a child can be added and a whole session played with a grown-up', async ({
 
   await openGrownUps(page);
   await expect(page.getByText(/sessions in the last 14 days/i)).toBeVisible();
-  await expect(page.locator('.stats')).toContainText('1');
+  await expect(page.locator('.stats div').filter({ hasText: /Sessions in the last 14 days/ }).locator('dd')).toHaveText('1');
   await expect(page.locator('.stats')).not.toContainText('never');
   expect(errors).toEqual([]);
 });

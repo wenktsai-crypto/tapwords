@@ -25,8 +25,8 @@ export async function openGrownUps(page: Page) {
   await expect(page.getByText(/grown-up area/i)).toBeVisible();
 }
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const pieceName = (g: string) => new RegExp(`^${escape(g)}( \\d+)?$`);
+export const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const pieceName = (g: string) => new RegExp(`^${escapeRegex(g)}( \\d+)?$`);
 
 async function buildFrom(page: Page, pieces: string[]) {
   const tray = page.getByTestId('tray');
@@ -97,7 +97,7 @@ export async function autoPlay(page: Page, opts: { adult?: boolean; stopAfterPar
         await page.getByRole('button', { name: /that's it/i }).click();
         break;
       case 'sound-reverse':
-        await part.getByRole('button', { name: new RegExp(`^${escape(answer)}$`) }).click();
+        await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
         break;
       case 'lesson': {
         const step = await part.getAttribute('data-step');
@@ -108,13 +108,13 @@ export async function autoPlay(page: Page, opts: { adult?: boolean; stopAfterPar
       case 'word-work': {
         const item = await part.getAttribute('data-item');
         if (item === 'tap') await tapOut(page, Number(answer));
-        else if (item === 'find') await part.getByRole('button', { name: new RegExp(`^${escape(answer)}$`) }).click();
+        else if (item === 'find') await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
         else await buildFrom(page, answer.split(','));
         break;
       }
       case 'spelling': {
         const item = await part.getAttribute('data-item');
-        if (item === 'sound') await part.getByRole('button', { name: new RegExp(`^${escape(answer)}$`) }).click();
+        if (item === 'sound') await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
         else if (item === 'word') await buildFrom(page, answer.split(','));
         else await buildFrom(page, answer.split('|'));
         break;
@@ -132,7 +132,7 @@ export async function autoPlay(page: Page, opts: { adult?: boolean; stopAfterPar
         await page.getByRole('button', { name: /^next$/i }).click();
         break;
       case 'story-question':
-        await part.getByRole('button', { name: new RegExp(`^${escape(answer)}$`) }).click();
+        await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
         break;
       default:
         throw new Error(`unknown part ${kind}`);

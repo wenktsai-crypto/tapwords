@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { addChild, autoPlay, openGrownUps, startSession } from './helpers';
+import { addChild, autoPlay, escapeRegex, openGrownUps, startSession } from './helpers';
 
 test('when no grown-up is around, the read-aloud is offered first next time', async ({ page }) => {
   await addChild(page, 'Kim');
@@ -45,7 +45,7 @@ test('a parent can move the child, and the next session opens with the full less
     if (kind === 'sound-forward') await page.getByRole('button', { name: /that's it/i }).click();
     else if (kind === 'sound-reverse') {
       const a = (await part.getAttribute('data-answer')) ?? '';
-      await part.getByRole('button', { name: new RegExp(`^${a}$`) }).click();
+      await part.getByRole('button', { name: new RegExp(`^${escapeRegex(a)}$`) }).click();
     } else if (kind === 'read-aloud-ask') await page.getByRole('button', { name: /not right now/i }).click();
     else throw new Error(`unexpected part ${kind}`);
   }
@@ -62,5 +62,5 @@ test('stopping early keeps the child and the session', async ({ page }) => {
   await page.reload();
   await expect(page.getByRole('button', { name: /^Ana$/ })).toBeVisible();
   await openGrownUps(page);
-  await expect(page.locator('.stats')).toContainText('1');
+  await expect(page.locator('.stats div').filter({ hasText: /Sessions in the last 14 days/ }).locator('dd')).toHaveText('1');
 });

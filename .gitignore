@@ -1,5 +1,6 @@
 node_modules
 dist
+.tmp-pwa-dist
 .claude/worktrees
 .superpowers
 playwright-report
