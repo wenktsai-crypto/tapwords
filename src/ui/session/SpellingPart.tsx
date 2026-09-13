@@ -12,9 +12,11 @@ import { MissReview } from '../components/MissReview';
 interface Props {
   items: SpellingItem[];
   onComplete: (responses: ScoredResponse[]) => void;
+  /** Called as each response is scored, so a session stopped mid-part keeps what was answered. */
+  onProgress?: (response: ScoredResponse) => void;
 }
 
-export function SpellingPart({ items, onComplete }: Props) {
+export function SpellingPart({ items, onComplete, onProgress }: Props) {
   const { audio, content } = useServices();
   const say = useSay();
   const [i, setI] = useState(0);
@@ -27,6 +29,8 @@ export function SpellingPart({ items, onComplete }: Props) {
   const answeredRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
   const item = items[i];
 
   const finish = (rs: ScoredResponse[]) => {
@@ -53,13 +57,15 @@ export function SpellingPart({ items, onComplete }: Props) {
     // Deferred to the next microtask so that under StrictMode's dev-mode
     // mount/cleanup/remount, the throwaway first pass's cleanup can mark
     // itself cancelled before it actually speaks anything.
-    Promise.resolve().then(async () => {
-      if (cancelled) return;
-      if (item.type === 'sound') await say('Tap the letter that makes this sound.');
-      if (item.type === 'word') await say('Spell the word.');
-      if (item.type === 'sentence') await say('Put the words in order.');
-      if (!cancelled) await hear();
-    });
+    Promise.resolve()
+      .then(async () => {
+        if (cancelled) return;
+        if (item.type === 'sound') await say('Tap the letter that makes this sound.');
+        if (item.type === 'word') await say('Spell the word.');
+        if (item.type === 'sentence') await say('Put the words in order.');
+        if (!cancelled) await hear();
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -85,6 +91,7 @@ export function SpellingPart({ items, onComplete }: Props) {
           : { ...base, itemKey: sentenceKey(item.substep, item.text), activity: 'spell-sentence', isReview: false };
     const rs = [...responses, r];
     setResponses(rs);
+    onProgressRef.current?.(r);
     if (correct) return advance(rs);
     setFeedback(item.type);
     await hear();

@@ -36,11 +36,13 @@ export function LessonPart({ steps, substep, onComplete }: Props) {
     // mount/cleanup/remount, the throwaway first pass's cleanup can mark
     // itself cancelled before it actually speaks anything.
     let cancelled = false;
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      if ('say' in step) say(step.say);
-      if ('try' in step) say('Your turn. Tap each sound, then blend.');
-    });
+    Promise.resolve()
+      .then(() => {
+        if (cancelled) return;
+        if ('say' in step) return say(step.say);
+        if ('try' in step) return say('Your turn. Tap each sound, then blend.');
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };

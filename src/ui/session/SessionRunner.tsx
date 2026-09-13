@@ -35,9 +35,11 @@ function labelFor(part: PartName, plan: SessionPlan, readAloudDone: boolean): st
 interface Props {
   profile: Profile;
   onExit: () => void;
+  /** How long a single store call may take before the save is treated as failed. */
+  saveTimeoutMs?: number;
 }
 
-export function SessionRunner({ profile, onExit }: Props) {
+export function SessionRunner({ profile, onExit, saveTimeoutMs = 10000 }: Props) {
   const { content, store, rng, audio } = useServices();
   // A lazy useState initializer (not useMemo) so the plan is built exactly
   // once for the life of this component and can never be silently recomputed
@@ -83,6 +85,24 @@ export function SessionRunner({ profile, onExit }: Props) {
   // The arguments of the most recent finalize attempt, so "Try again" can
   // call finalize again exactly as it was first invoked.
   const retryArgsRef = useRef<{ complete: boolean; rs: ScoredResponse[]; raDone: boolean } | null>(null);
+  // Responses the current part has scored but not yet handed over via onComplete, so
+  // "Stop for now" mid-part still saves what the child actually did (spec 4.4).
+  const liveResponsesRef = useRef<ScoredResponse[]>([]);
+  const onProgress = (r: ScoredResponse) => {
+    liveResponsesRef.current = [...liveResponsesRef.current, r];
+  };
+
+  /** Rejects if a store call has not settled in `saveTimeoutMs`, so a hung save reaches the
+   * retry screen instead of leaving the child on "Saving…" for ever. */
+  const withTimeout = <T,>(p: Promise<T>): Promise<T> => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    return Promise.race([
+      p,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('save timed out')), saveTimeoutMs);
+      }),
+    ]).finally(() => clearTimeout(timer));
+  };
 
   const finalize = async (complete: boolean, rs: ScoredResponse[], raDone: boolean) => {
     if (finishingRef.current) return;
@@ -97,12 +117,12 @@ export function SessionRunner({ profile, onExit }: Props) {
     const log = logRef.current;
     try {
       if (!logSavedRef.current) {
-        const previous = await store.listLogs(profile.id);
+        const previous = await withTimeout(store.listLogs(profile.id));
         outRef.current = finishSession(profile.state, log, previous, content);
-        await store.appendLog(profile.id, log);
+        await withTimeout(store.appendLog(profile.id, log));
         logSavedRef.current = true;
       }
-      await store.saveProfile({ ...profile, state: outRef.current!.state });
+      await withTimeout(store.saveProfile({ ...profile, state: outRef.current!.state }));
       setResult(outRef.current);
     } catch {
       // Release the guards so "Try again" can call finalize again; logSavedRef
@@ -123,6 +143,8 @@ export function SessionRunner({ profile, onExit }: Props) {
     if (partDoneRef.current || finishingRef.current) return;
     partDoneRef.current = true;
     const part = order[partIndex];
+    // The part's own list is authoritative; drop whatever it reported along the way.
+    liveResponsesRef.current = [];
     const all = [...responses, ...rs];
     setResponses(all);
     setReadAloudDone(raDone);
@@ -158,18 +180,18 @@ export function SessionRunner({ profile, onExit }: Props) {
     <div className="screen">
       <div className="topbar">
         <span>{profile.name}</span>
-        <BigButton variant="quiet" onClick={() => finalize(false, responses, readAloudDone)} disabled={finishing}>Stop for now</BigButton>
+        <BigButton variant="quiet" onClick={() => finalize(false, [...responses, ...liveResponsesRef.current], readAloudDone)} disabled={finishing}>Stop for now</BigButton>
       </div>
       {finishing ? (
         <p className="caption">Saving…</p>
       ) : (
         <>
-          {part === 'sound' && <SoundCardsPart key="sound" forwardCards={plan.forwardCards} reverseItems={plan.reverseItems} onComplete={(rs) => partDone(rs)} />}
+          {part === 'sound' && <SoundCardsPart key="sound" forwardCards={plan.forwardCards} reverseItems={plan.reverseItems} onComplete={(rs) => partDone(rs)} onProgress={onProgress} />}
           {part === 'lesson' && <LessonPart key="lesson" steps={plan.lesson} substep={substep} onComplete={() => partDone([])} />}
-          {part === 'wordWork' && <WordWorkPart key="wordWork" items={plan.wordWork} onComplete={(rs) => partDone(rs)} />}
-          {part === 'spelling' && <SpellingPart key="spelling" items={plan.spelling} onComplete={(rs) => partDone(rs)} />}
-          {part === 'readAloud' && <ReadAloudPart key="readAloud" words={plan.readAloud.words} sentences={plan.readAloud.sentences} substep={plan.substep} onComplete={(rs, done) => partDone(rs, done)} />}
-          {part === 'story' && <StoryPart key="story" story={plan.story} substep={plan.substep} onComplete={(rs) => partDone(rs)} />}
+          {part === 'wordWork' && <WordWorkPart key="wordWork" items={plan.wordWork} onComplete={(rs) => partDone(rs)} onProgress={onProgress} />}
+          {part === 'spelling' && <SpellingPart key="spelling" items={plan.spelling} onComplete={(rs) => partDone(rs)} onProgress={onProgress} />}
+          {part === 'readAloud' && <ReadAloudPart key="readAloud" words={plan.readAloud.words} sentences={plan.readAloud.sentences} substep={plan.substep} onComplete={(rs, done) => partDone(rs, done)} onProgress={onProgress} />}
+          {part === 'story' && <StoryPart key="story" story={plan.story} substep={plan.substep} onComplete={(rs) => partDone(rs)} onProgress={onProgress} />}
         </>
       )}
     </div>

@@ -27,7 +27,47 @@ class FlakyStore extends MemoryStore {
   }
 }
 
+/** A store whose `appendLog` never settles — for exercising the runner's save timeout. */
+class StuckStore extends MemoryStore {
+  async appendLog(_profileId: string, _log: SessionLog): Promise<void> {
+    return new Promise<void>(() => {});
+  }
+}
+
 describe('SessionRunner', () => {
+  it('keeps the responses from the part in progress when the child stops early', async () => {
+    const user = userEvent.setup();
+    const store = new MemoryStore();
+    const p = profile();
+    await store.saveProfile(p);
+    const plan = buildSession(CONTENT, p.state, seeded(1));
+    renderWithServices(<SessionRunner profile={p} onExit={vi.fn()} />, { store, rng: seeded(1) });
+
+    const click = async (name: string | RegExp) => user.click(await screen.findByRole('button', { name }));
+    for (let k = 0; k < plan.forwardCards.length; k++) await click(/that's it/i);
+    await click(getCard(CONTENT, plan.reverseItems[0].target).grapheme);
+    await click(/stop for now/i);
+
+    expect(await screen.findByText(/nice work today/i)).toBeInTheDocument();
+    const logs = await store.listLogs('p1');
+    expect(logs.length).toBe(1);
+    expect(logs[0].complete).toBe(false);
+    expect(logs[0].responses.filter((r) => r.activity === 'sound-reverse')).toHaveLength(1);
+    expect(logs[0].responses[0]).toMatchObject({ activity: 'sound-reverse', correct: true });
+  });
+
+  it('shows the retry screen when a save hangs past the timeout', async () => {
+    const user = userEvent.setup();
+    const store = new StuckStore();
+    const p = profile();
+    await store.saveProfile(p);
+    renderWithServices(<SessionRunner profile={p} onExit={vi.fn()} saveTimeoutMs={20} />, { store });
+
+    await user.click(await screen.findByRole('button', { name: /stop for now/i }));
+    expect(await screen.findByRole('button', { name: /try again/i })).toBeInTheDocument();
+    expect(screen.getByText(/couldn't save that/i)).toBeInTheDocument();
+  });
+
   it('saves a partial session when the child stops early', async () => {
     const user = userEvent.setup();
     const store = new MemoryStore();

@@ -9,9 +9,11 @@ interface Props {
   story: Story;
   substep: string;
   onComplete: (responses: ScoredResponse[]) => void;
+  /** Called as each response is scored, so a session stopped mid-part keeps what was answered. */
+  onProgress?: (response: ScoredResponse) => void;
 }
 
-export function StoryPart({ story, substep, onComplete }: Props) {
+export function StoryPart({ story, substep, onComplete, onProgress }: Props) {
   const { audio } = useServices();
   const say = useSay();
   const [phase, setPhase] = useState<'title' | 'read' | 'ask'>('title');
@@ -29,6 +31,8 @@ export function StoryPart({ story, substep, onComplete }: Props) {
   const hearingChoicesRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
 
   const finish = (rs: ScoredResponse[]) => {
     if (finishedRef.current) return;
@@ -43,15 +47,17 @@ export function StoryPart({ story, substep, onComplete }: Props) {
     // Deferred to the next microtask so that under StrictMode's dev-mode
     // mount/cleanup/remount, the throwaway first pass's cleanup can mark
     // itself cancelled before it actually speaks anything.
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      if (phase === 'title') say(`Story time. This one is called ${story.title}. Read each line, then tap Next.`);
-      if (phase === 'ask') {
-        const q = story.questions[i];
-        if (!q) finish(responses);
-        else say(q.prompt);
-      }
-    });
+    Promise.resolve()
+      .then(() => {
+        if (cancelled) return;
+        if (phase === 'title') return say(`Story time. This one is called ${story.title}. Read each line, then tap Next.`);
+        if (phase === 'ask') {
+          const q = story.questions[i];
+          if (!q) finish(responses);
+          else return say(q.prompt);
+        }
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -77,8 +83,10 @@ export function StoryPart({ story, substep, onComplete }: Props) {
     // nextQuestion once the question's outcome has been committed.
     advancedRef.current = true;
     const correct = k === q.answer;
-    const rs = [...responses, { itemKey: storyKey(substep, story.title, i), activity: 'story-question' as const, correct, isReview: false, parentMarked: false }];
+    const r: ScoredResponse = { itemKey: storyKey(substep, story.title, i), activity: 'story-question', correct, isReview: false, parentMarked: false };
+    const rs = [...responses, r];
     setResponses(rs);
+    onProgressRef.current?.(r);
     if (correct) return nextQuestion(rs);
     setAnswered(k);
     await say(`The answer is: ${q.choices[q.answer]}.`);

@@ -9,9 +9,11 @@ interface Props {
   sentences: string[];
   substep: string;
   onComplete: (responses: ScoredResponse[], done: boolean) => void;
+  /** Called as each response is scored, so a session stopped mid-part keeps what was answered. */
+  onProgress?: (response: ScoredResponse) => void;
 }
 
-export function ReadAloudPart({ words, sentences, substep, onComplete }: Props) {
+export function ReadAloudPart({ words, sentences, substep, onComplete, onProgress }: Props) {
   const say = useSay();
   const [phase, setPhase] = useState<'ask' | 'read'>('ask');
   const [i, setI] = useState(0);
@@ -23,6 +25,8 @@ export function ReadAloudPart({ words, sentences, substep, onComplete }: Props) 
   const answeredRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
 
   const lines = [
     ...words.map((w) => ({ text: w.word.text, itemKey: wordKey(w.substep, w.word.text), isReview: w.isReview })),
@@ -42,11 +46,13 @@ export function ReadAloudPart({ words, sentences, substep, onComplete }: Props) 
     // Deferred to the next microtask so that under StrictMode's dev-mode
     // mount/cleanup/remount, the throwaway first pass's cleanup can mark
     // itself cancelled before it actually speaks anything.
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      if (phase === 'ask') say('Is a grown-up with you? It is time to read out loud.');
-      if (phase === 'read' && i === 0) say('Grown-up: tap "Got it" or "Missed it" after each line.');
-    });
+    Promise.resolve()
+      .then(() => {
+        if (cancelled) return;
+        if (phase === 'ask') return say('Is a grown-up with you? It is time to read out loud.');
+        if (phase === 'read' && i === 0) return say('Grown-up: tap "Got it" or "Missed it" after each line.');
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -57,8 +63,10 @@ export function ReadAloudPart({ words, sentences, substep, onComplete }: Props) 
     if (finishedRef.current || answeredRef.current) return;
     answeredRef.current = true;
     const line = lines[i];
-    const rs = [...responses, { itemKey: line.itemKey, activity: 'read-aloud' as const, correct, isReview: line.isReview, parentMarked: true }];
+    const r: ScoredResponse = { itemKey: line.itemKey, activity: 'read-aloud', correct, isReview: line.isReview, parentMarked: true };
+    const rs = [...responses, r];
     setResponses(rs);
+    onProgressRef.current?.(r);
     if (i + 1 < lines.length) setI(i + 1);
     else finish(rs, true);
   };

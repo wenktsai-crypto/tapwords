@@ -11,9 +11,11 @@ interface Props {
   forwardCards: string[];
   reverseItems: ReverseItem[];
   onComplete: (responses: ScoredResponse[]) => void;
+  /** Called as each response is scored, so a session stopped mid-part keeps what was answered. */
+  onProgress?: (response: ScoredResponse) => void;
 }
 
-export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props) {
+export function SoundCardsPart({ forwardCards, reverseItems, onComplete, onProgress }: Props) {
   const { audio, content } = useServices();
   const say = useSay();
   const [phase, setPhase] = useState<'forward' | 'reverse'>(forwardCards.length > 0 ? 'forward' : 'reverse');
@@ -25,6 +27,8 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
   const finishedRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
 
   const item = phase === 'reverse' ? reverseItems[i] : undefined;
 
@@ -35,7 +39,20 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
   };
 
   useEffect(() => {
-    if (phase === 'forward' && i === 0) say('Say the sound for each card. Tap "Hear it" to check.');
+    if (phase !== 'forward' || i !== 0) return;
+    let cancelled = false;
+    // Deferred to the next microtask so that under StrictMode's dev-mode
+    // mount/cleanup/remount, the throwaway first pass's cleanup can mark
+    // itself cancelled before it actually speaks anything. A failed voice
+    // is swallowed: the cards are on screen either way.
+    Promise.resolve()
+      .then(() => {
+        if (!cancelled) return say('Say the sound for each card. Tap "Hear it" to check.');
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [phase, i, say]);
 
   useEffect(() => {
@@ -45,10 +62,13 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
       return;
     }
     let cancelled = false;
-    (async () => {
-      await say('Which card makes this sound?');
-      if (!cancelled) await audio.playCard(item.target);
-    })();
+    Promise.resolve()
+      .then(async () => {
+        if (cancelled) return;
+        await say('Which card makes this sound?');
+        if (!cancelled) await audio.playCard(item.target);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -76,8 +96,10 @@ export function SoundCardsPart({ forwardCards, reverseItems, onComplete }: Props
     if (!item || missedRef.current || finishedRef.current) return;
     missedRef.current = true;
     const correct = choice === item.target;
-    const rs = [...responses, { itemKey: cardKey(item.target), activity: 'sound-reverse' as const, correct, isReview: item.isReview, parentMarked: false }];
+    const r: ScoredResponse = { itemKey: cardKey(item.target), activity: 'sound-reverse', correct, isReview: item.isReview, parentMarked: false };
+    const rs = [...responses, r];
     setResponses(rs);
+    onProgressRef.current?.(r);
     if (correct) nextReverse(rs);
     else {
       setMissed(true);

@@ -32,12 +32,14 @@ export function SessionEnd({ plan, result, practiced, onDone }: Props) {
     // Deferred to the next microtask so that under StrictMode's dev-mode
     // mount/cleanup/remount, the throwaway first pass's cleanup can mark
     // itself cancelled before it actually speaks anything.
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      const to = result.advancedTo ? content.substeps.find((s) => s.id === result.advancedTo) : null;
-      const extra = to ? ` You have finished ${plan.substepTitle}. Next time we start ${to.title}.` : '';
-      say(`Nice work today.${extra}`);
-    });
+    Promise.resolve()
+      .then(() => {
+        if (cancelled) return;
+        const to = result.advancedTo ? content.substeps.find((s) => s.id === result.advancedTo) : null;
+        const extra = to ? ` You have finished ${plan.substepTitle}. Next time we start ${to.title}.` : '';
+        return say(`Nice work today.${extra}`);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };

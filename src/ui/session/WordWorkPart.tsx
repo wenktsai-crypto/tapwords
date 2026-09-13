@@ -13,9 +13,11 @@ import { MissReview } from '../components/MissReview';
 interface Props {
   items: WordWorkItem[];
   onComplete: (responses: ScoredResponse[]) => void;
+  /** Called as each response is scored, so a session stopped mid-part keeps what was answered. */
+  onProgress?: (response: ScoredResponse) => void;
 }
 
-export function WordWorkPart({ items, onComplete }: Props) {
+export function WordWorkPart({ items, onComplete, onProgress }: Props) {
   const { audio, content, timing } = useServices();
   const say = useSay();
   const [i, setI] = useState(0);
@@ -29,6 +31,8 @@ export function WordWorkPart({ items, onComplete }: Props) {
   const answeredRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
   const item = items[i];
 
   const finish = (rs: ScoredResponse[]) => {
@@ -51,20 +55,27 @@ export function WordWorkPart({ items, onComplete }: Props) {
     // Deferred to the next microtask so that under StrictMode's dev-mode
     // mount/cleanup/remount, the throwaway first pass's cleanup can mark
     // itself cancelled before it actually speaks anything.
-    Promise.resolve().then(async () => {
-      if (cancelled) return;
-      if (item.type === 'tap') await say('Tap it out, then blend.');
-      if (item.type === 'find') {
-        await say('Find the word.');
-        if (!cancelled) await audio.speak(item.word.text);
-      }
-      if (item.type === 'build') {
-        await say('Look, then build the word.');
-        if (!cancelled) await audio.speak(item.word.text);
-        await wait(timing.previewMs);
-        if (!cancelled) setPreview(false);
-      }
-    });
+    Promise.resolve()
+      .then(async () => {
+        if (cancelled) return;
+        if (item.type === 'tap') await say('Tap it out, then blend.');
+        if (item.type === 'find') {
+          await say('Find the word.');
+          if (!cancelled) await audio.speak(item.word.text);
+        }
+        if (item.type === 'build') {
+          try {
+            await say('Look, then build the word.');
+            if (!cancelled) await audio.speak(item.word.text);
+          } finally {
+            // The tray has to appear even when the voice failed, or the child is
+            // left looking at a word preview with nothing to tap.
+            await wait(timing.previewMs);
+            if (!cancelled) setPreview(false);
+          }
+        }
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
@@ -74,8 +85,10 @@ export function WordWorkPart({ items, onComplete }: Props) {
   const record = (correct: boolean) => {
     if (!item || answeredRef.current) return;
     answeredRef.current = true;
-    const rs = [...responses, { itemKey: wordKey(item.substep, item.word.text), activity: item.type, correct, isReview: item.isReview, parentMarked: false }];
+    const r: ScoredResponse = { itemKey: wordKey(item.substep, item.word.text), activity: item.type, correct, isReview: item.isReview, parentMarked: false };
+    const rs = [...responses, r];
     setResponses(rs);
+    onProgressRef.current?.(r);
     if (correct) advance(rs);
     else setMiss(true);
   };
