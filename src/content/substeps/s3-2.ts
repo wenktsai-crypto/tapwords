@@ -110,7 +110,7 @@ export const SUBSTEP_3_2: Substep = {
         'Dan is not sad, and he has fun.',
       ],
       questions: [
-        { prompt: 'What is Dan at first?', choices: ['sad', 'not sad', 'the dentist'], answer: 0 },
+        { prompt: 'How does Dan feel at the start of the story?', choices: ['sad', 'the pretzel', 'the dentist'], answer: 0 },
         { prompt: 'What does the dentist have?', choices: ['a splendid pretzel', 'a big problem', 'fun'], answer: 0 },
       ],
     },
