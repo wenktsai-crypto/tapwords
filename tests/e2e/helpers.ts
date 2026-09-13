@@ -25,6 +25,12 @@ export async function openGrownUps(page: Page) {
   await expect(page.getByText(/grown-up area/i)).toBeVisible();
 }
 
+/** Marks one placement list: `got` "Got it" taps then `missed` "Missed it" taps. */
+export async function markPlacementList(page: Page, got: number, missed: number) {
+  for (let i = 0; i < got; i++) await page.getByRole('button', { name: /got it/i }).click();
+  for (let i = 0; i < missed; i++) await page.getByRole('button', { name: /missed it/i }).click();
+}
+
 export const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const pieceName = (g: string) => new RegExp(`^${escapeRegex(g)}( \\d+)?$`);
 
