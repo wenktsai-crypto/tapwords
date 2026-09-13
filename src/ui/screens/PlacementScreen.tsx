@@ -79,16 +79,18 @@ export function PlacementScreen({ onDone, onCancel }: Props) {
       <ul className="caption">
         {results.map((r) => <li key={r.substep}>{r.substep}: {r.correct} of {r.total}</li>)}
       </ul>
-      <label>
-        Start at
-        <select value={choice} onChange={(e) => setChoice(e.target.value)}>
-          {content.substeps.map((s) => <option key={s.id} value={s.id}>{s.id} {s.title}</option>)}
-        </select>
-      </label>
-      <div className="row">
-        <BigButton onClick={() => onDone(choice)}>Use this</BigButton>
-        <BigButton variant="quiet" onClick={onCancel}>Cancel</BigButton>
-      </div>
+      <form className="card" onSubmit={(e) => { e.preventDefault(); onDone(choice); }}>
+        <label>
+          Start at
+          <select value={choice} onChange={(e) => setChoice(e.target.value)}>
+            {content.substeps.map((s) => <option key={s.id} value={s.id}>{s.id} {s.title}</option>)}
+          </select>
+        </label>
+        <div className="row">
+          <button type="submit" className="big big-primary">Use this</button>
+          <BigButton variant="quiet" onClick={onCancel}>Cancel</BigButton>
+        </div>
+      </form>
     </div>
   );
 }

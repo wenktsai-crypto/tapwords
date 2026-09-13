@@ -43,6 +43,7 @@ describe('PlacementScreen', () => {
 
     expect(await screen.findByText(/we suggest starting at 1\.3/i)).toBeInTheDocument();
     expect((screen.getByLabelText(/start at/i) as HTMLSelectElement).value).toBe('1.3');
+    expect(screen.getByLabelText(/start at/i).closest('form.card')).not.toBeNull();
     await user.click(screen.getByRole('button', { name: /use this/i }));
     expect(onDone).toHaveBeenCalledWith('1.3');
   });
