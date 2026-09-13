@@ -4,6 +4,7 @@ import { cardKey, wordKey } from './types';
 import { availableCards, availableWords, getSubstep, substepIndex } from './availability';
 import { pickReview, type Candidate } from './review';
 import { sample, shuffle, type Rng } from './rng';
+import { tokenize } from '../content/check';
 
 export interface ReverseItem { target: string; choices: string[]; isReview: boolean }
 export interface WordRef { word: Word; substep: string; isReview: boolean }
@@ -58,6 +59,44 @@ export function findChoices(target: Word, pool: Word[], rng: Rng): string[] {
   if (picks.length < 2) picks.push(...sample(rest, 2 - picks.length, rng));
   if (picks.length < 2) picks.push(...sample(others.filter((w) => !picks.includes(w)), 2 - picks.length, rng));
   return shuffle([target.text, ...picks.map((w) => w.text)], rng);
+}
+
+function readableWordSet(content: Content, substepId: string, groupIndex: number): Set<string> {
+  const idx = substepIndex(content, substepId);
+  const words = new Set(
+    availableWords(content, substepId, groupIndex)
+      .filter((w) => w.word.kind === 'real')
+      .map((w) => w.word.text.toLowerCase()),
+  );
+  content.substeps.slice(0, idx + 1).forEach((s) => s.sightWords.forEach((sw) => words.add(sw.toLowerCase())));
+  return words;
+}
+
+const readable = (text: string, known: Set<string>) => tokenize(text).every((t) => known.has(t));
+
+/** Current-substep sentences the child can read at this group, then earlier substeps' sentences (latest first). */
+export function usableSentences(content: Content, substepId: string, groupIndex: number): { text: string; substep: string }[] {
+  const idx = substepIndex(content, substepId);
+  const known = readableWordSet(content, substepId, groupIndex);
+  const cur = content.substeps[idx].sentences.filter((t) => readable(t, known)).map((text) => ({ text, substep: substepId }));
+  const earlier = content.substeps
+    .slice(0, idx)
+    .reverse()
+    .flatMap((s) => s.sentences.map((text) => ({ text, substep: s.id })));
+  return [...cur, ...earlier];
+}
+
+/** Current-substep stories fully readable at this group; if none, the nearest earlier substep's stories. */
+export function usableStories(content: Content, substepId: string, groupIndex: number): { story: Story; substep: string }[] {
+  const idx = substepIndex(content, substepId);
+  const known = readableWordSet(content, substepId, groupIndex);
+  const cur = content.substeps[idx].stories.filter((st) => st.sentences.every((t) => readable(t, known))).map((story) => ({ story, substep: substepId }));
+  if (cur.length > 0) return cur;
+  for (let i = idx - 1; i >= 0; i--) {
+    const s = content.substeps[i];
+    if (s.stories.length > 0) return s.stories.map((story) => ({ story, substep: s.id }));
+  }
+  return [];
 }
 
 export function buildSession(content: Content, state: ProfileState, rng: Rng): SessionPlan {
@@ -128,17 +167,26 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
     isReview: w.isReview,
     tray: shuffle([...w.word.parts.map((p) => p.grapheme), ...distractors(w.word.parts.map((p) => p.card), 2)], rng),
   }));
-  const spellSentences: SpellingItem[] = sample(sub.sentences, COUNTS.spellSentence, rng).map((text) => ({ type: 'sentence', text, substep: sub.id, words: shuffle(text.split(/\s+/), rng) }));
+  // Sentences the child can actually read at this group; earlier substeps' sentences fill any gap.
+  const sentencePool = usableSentences(content, sub.id, groupIndex);
+  const curSentences = sentencePool.filter((s) => s.substep === sub.id).map((s) => s.text);
+  const pickSentences = (k: number) => {
+    const picked = sample(curSentences, k, rng);
+    const rest = sentencePool.filter((s) => s.substep !== sub.id).map((s) => s.text);
+    return topUp(picked, rest, k);
+  };
+  const spellSentences: SpellingItem[] = pickSentences(COUNTS.spellSentence).map((text) => ({ type: 'sentence', text, substep: sub.id, words: shuffle(text.split(/\s+/), rng) }));
   const spelling = [...spellSounds, ...spellWords, ...spellSentences];
 
   // 5. read aloud
   const raPick = sample(curReal, COUNTS.readAloudCurrent, rng);
   const raRev = pickReview(earlierWords, strengths, COUNTS.readAloudWords - raPick.length, n, rng).map((w) => ({ ...w, isReview: true }));
   const raCur = topUp(raPick, curReal, COUNTS.readAloudWords - raRev.length).map((w) => ({ ...w, isReview: false }));
-  const readAloud = { words: [...raCur, ...raRev], sentences: sample(sub.sentences, COUNTS.readAloudSentences, rng) };
+  const readAloud = { words: [...raCur, ...raRev], sentences: pickSentences(COUNTS.readAloudSentences) };
 
   // 6. story
-  const story = sub.stories[(n - 1) % sub.stories.length];
+  const stories = usableStories(content, sub.id, groupIndex);
+  const story = stories.length > 0 ? stories[(n - 1) % stories.length].story : sub.stories[(n - 1) % sub.stories.length];
 
   return {
     sessionNumber: n,
