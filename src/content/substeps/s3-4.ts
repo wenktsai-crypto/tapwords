@@ -11,7 +11,7 @@ export const SUBSTEP_3_4: Substep = {
       cards: [],
       lesson: [
         { say: 'Some words look huge, but they are still just chunks put together, two or three or more.' },
-        { show: ['s', 'u', 'n', 's', 'e', 't', 'l', 'a', 'm', 'p'] },
+        { show: ['b', 'a', 's', 'k', 'e', 't', 'b', 'all'] },
         { say: 'Say each chunk by itself, then blend the chunks together to say the whole word.' },
         { tap: 'basketball' },
         { say: 'Your turn. Break the word into its chunks, then blend them together.' },
