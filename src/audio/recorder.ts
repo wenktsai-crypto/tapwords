@@ -10,13 +10,22 @@ export class BrowserRecorder implements Recorder {
   }
 
   async start() {
-    this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    this.stream = stream;
     this.chunks = [];
-    this.rec = new MediaRecorder(this.stream);
-    this.rec.ondataavailable = (e) => {
-      if (e.data.size > 0) this.chunks.push(e.data);
-    };
-    this.rec.start();
+    try {
+      const rec = new MediaRecorder(stream);
+      rec.ondataavailable = (e) => {
+        if (e.data.size > 0) this.chunks.push(e.data);
+      };
+      rec.start();
+      this.rec = rec;
+    } catch (err) {
+      stream.getTracks().forEach((t) => t.stop());
+      this.stream = null;
+      this.rec = null;
+      throw err;
+    }
   }
 
   stop() {
