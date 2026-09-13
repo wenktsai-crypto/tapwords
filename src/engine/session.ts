@@ -114,9 +114,17 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const n = state.sessionsCompleted + 1;
   const strengths = state.strengths;
 
-  const currentCards = sub.groups.slice(0, groupIndex + 1).flatMap((g) => g.cards);
+  // Some substeps introduce no new sound cards of their own. Without a stand-in their whole
+  // sound-card drill would count as review, so the distinct cards their own word bank uses
+  // (first seen first) become the current set instead.
+  const declaredCards = sub.groups.slice(0, groupIndex + 1).flatMap((g) => g.cards);
+  const currentCards =
+    declaredCards.length > 0 ? declaredCards : [...new Set(sub.words.flatMap((w) => w.parts.map((p) => p.card)))];
   const allCards = availableCards(content, sub.id, groupIndex);
-  const earlierCards: Candidate<string>[] = earlier.flatMap((s) => s.groups.flatMap((g) => g.cards.map((c) => ({ key: cardKey(c), substep: s.id, item: c }))));
+  // A card already being drilled as current work is never also offered as review.
+  const earlierCards: Candidate<string>[] = earlier
+    .flatMap((s) => s.groups.flatMap((g) => g.cards.map((c) => ({ key: cardKey(c), substep: s.id, item: c }))))
+    .filter((c) => !currentCards.includes(c.item));
   const available = availableWords(content, sub.id, groupIndex);
   const currentWords = available.filter((w) => w.substep === sub.id);
   const allWords = available.map((w) => w.word);

@@ -241,3 +241,23 @@ describe('story question shuffling', () => {
     });
   });
 });
+
+describe('buildSession on a substep that introduces no new sound cards', () => {
+  const plan = buildSession(CONTENT, initialState('1.3'), seeded(1));
+  const sub = CONTENT.substeps.find((s) => s.id === '1.3')!;
+  const bankCards = new Set(sub.words.flatMap((w) => w.parts.map((p) => p.card)));
+  const earlierCards = new Set(
+    CONTENT.substeps.slice(0, CONTENT.substeps.indexOf(sub)).flatMap((s) => s.groups.flatMap((g) => g.cards)),
+  );
+
+  it('drills the cards its own word bank uses as current work, not as review', () => {
+    expect(sub.groups.flatMap((g) => g.cards)).toEqual([]);
+    expect(plan.reverseItems.some((r) => !r.isReview)).toBe(true);
+    expect(plan.spelling.some((s) => s.type === 'sound' && !s.isReview)).toBe(true);
+  });
+
+  it('draws every forward card from its own bank or from an earlier substep', () => {
+    expect(plan.forwardCards.length).toBeGreaterThan(0);
+    for (const c of plan.forwardCards) expect(bankCards.has(c) || earlierCards.has(c)).toBe(true);
+  });
+});
