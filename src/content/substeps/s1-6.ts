@@ -69,7 +69,7 @@ export const SUBSTEP_1_6: Substep = {
     nonsense('zibs', 'z,i,b,s'), nonsense('vads', 'v,a,d,s'), nonsense('nups', 'n,u,p,s'),
     nonsense('yems', 'y,e,m,s'), nonsense('wubs', 'w,u,b,s'),
     nonsense('shups', 'sh,u,p,s'), nonsense('vushes', 'v,u,sh,e,s'),
-    nonsense('thoxes', 'th,o,x,e,s'), nonsense('loxes', 'l,o,x,e,s'),
+    nonsense('thoxes', 'th,o,x,e,s'), nonsense('jexes', 'j,e,x,e,s'),
   ],
   sentences: [
     'The bugs are on the maps.',
