@@ -70,4 +70,24 @@ describe('ParentArea', () => {
 
     await waitFor(() => expect(saveCount).toBe(1));
   });
+
+  it('excludes accuracy from sessions before the current stay at this substep', async () => {
+    const store = new MemoryStore();
+    const profile = { id: 'p1', name: 'Sam', color: 'sky', createdAt: 'd', state: { ...initialState('1.1'), substepEnteredAt: 2, sessionsCompleted: 3 } };
+    await store.saveProfile(profile);
+    const today = new Date().toISOString();
+    const log = (n: number, correct: number, total: number): SessionLog => ({
+      sessionNumber: n, date: today, substep: '1.1', complete: true, readAloudDone: false,
+      responses: Array.from({ length: total }, (_, k) => ({ itemKey: 'word:1.1:map', activity: 'tap', correct: k < correct, isReview: false, parentMarked: false })),
+    });
+    // Sessions 1 and 2 are from an earlier stay at 1.1 (before substepEnteredAt) and score 50%;
+    // only session 3, the current stay, should count, at 100%.
+    await store.appendLog('p1', log(1, 5, 10));
+    await store.appendLog('p1', log(2, 5, 10));
+    await store.appendLog('p1', log(3, 10, 10));
+
+    renderWithServices(<ParentArea profile={profile} onBack={vi.fn()} />, { store, content: twoSubsteps });
+
+    expect(await screen.findByText('100%')).toBeInTheDocument();
+  });
 });

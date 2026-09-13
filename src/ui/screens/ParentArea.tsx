@@ -30,7 +30,9 @@ export function ParentArea({ profile: initial, onBack }: Props) {
   const stats = useMemo(() => {
     const cutoff = Date.now() - 14 * 24 * 3600 * 1000;
     const recent = logs.filter((l) => new Date(l.date).getTime() >= cutoff).length;
-    const here = logs.filter((l) => l.substep === profile.state.currentSubstep && l.complete).slice(-3);
+    const here = logs
+      .filter((l) => l.substep === profile.state.currentSubstep && l.complete && l.sessionNumber > profile.state.substepEnteredAt)
+      .slice(-3);
     const acc = accuracy(here.flatMap((l) => l.responses).filter((r) => !r.isReview && !r.parentMarked));
     const weakest = Object.entries(profile.state.strengths)
       .sort((a, b) => a[1].value - b[1].value)
