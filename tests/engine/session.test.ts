@@ -295,3 +295,11 @@ describe('buildSession on a substep that introduces no new sound cards', () => {
     for (const c of plan.forwardCards) expect(bankCards.has(c) || earlierCards.has(c)).toBe(true);
   });
 });
+
+describe('the forward drill on a substep whose cards come from its own word bank', () => {
+  it('stays about as long as a substep that introduces its own cards', () => {
+    const plan = buildSession(CONTENT, initialState('3.4'), seeded(1));
+    expect(plan.forwardCards.length).toBeLessThanOrEqual(COUNTS.forwardFallback + COUNTS.forwardReview);
+    expect(plan.forwardCards.length).toBeGreaterThan(COUNTS.forwardReview);
+  });
+});

@@ -34,6 +34,8 @@ export interface SessionPlan {
 
 export const COUNTS = {
   forwardReview: 6,
+  /** Cap on the stand-in cards a substep with none of its own shows in one forward drill. */
+  forwardFallback: 10,
   reverse: 6,
   reverseCurrent: 4,
   wordWork: 12,
@@ -122,8 +124,10 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   // sound-card drill would count as review, so the distinct cards their own word bank uses
   // (first seen first) become the current set instead.
   const declaredCards = sub.groups.slice(0, groupIndex + 1).flatMap((g) => g.cards);
-  const currentCards =
-    declaredCards.length > 0 ? declaredCards : [...new Set(sub.words.flatMap((w) => w.parts.map((p) => p.card)))];
+  const usingStandIns = declaredCards.length === 0;
+  const currentCards = usingStandIns
+    ? [...new Set(sub.words.flatMap((w) => w.parts.map((p) => p.card)))]
+    : declaredCards;
   const allCards = availableCards(content, sub.id, groupIndex);
   // A card already being drilled as current work is never also offered as review.
   const earlierCards: Candidate<string>[] = earlier
@@ -139,7 +143,11 @@ export function buildSession(content: Content, state: ProfileState, rng: Rng): S
   const topUp = <T,>(picked: T[], pool: T[], n: number): T[] => [...picked, ...sample(pool.filter((x) => !picked.includes(x)), n - picked.length, rng)];
 
   // 1. sound cards
-  const forwardCards = shuffle([...currentCards, ...pickReview(earlierCards, strengths, COUNTS.forwardReview, n, rng)], rng);
+  // A substep that declares its own cards shows all of them. A stand-in set is far larger
+  // (a whole word bank's worth), so only a drill's worth is shown at a time; the reverse drill
+  // and the sound spelling below still draw on the whole set.
+  const forwardCurrent = usingStandIns ? sample(currentCards, COUNTS.forwardFallback, rng) : currentCards;
+  const forwardCards = shuffle([...forwardCurrent, ...pickReview(earlierCards, strengths, COUNTS.forwardReview, n, rng)], rng);
   const reverseCur = sample(currentCards, COUNTS.reverseCurrent, rng);
   const reverseRev = pickReview(earlierCards, strengths, COUNTS.reverse - reverseCur.length, n, rng);
   const reverseTargets = [
