@@ -4,6 +4,7 @@ import { initialState } from '../../engine/types';
 import { useServices } from '../services';
 import { BigButton } from '../components/BigButton';
 import { HoldButton } from '../components/HoldButton';
+import { PlacementScreen } from './PlacementScreen';
 
 export const COLORS = ['sky', 'moss', 'sand', 'plum'];
 
@@ -18,6 +19,7 @@ export function Home({ onStart, onParent }: Props) {
   const { store, content } = useServices();
   const [profiles, setProfiles] = useState<Profile[] | null>(null);
   const [adding, setAdding] = useState(false);
+  const [placing, setPlacing] = useState(false);
   const [name, setName] = useState('');
   const [color, setColor] = useState(COLORS[0]);
   const [start, setStart] = useState(content.substeps[0].id);
@@ -31,22 +33,33 @@ export function Home({ onStart, onParent }: Props) {
   };
   useEffect(load, [store]);
 
-  const save = async (e: FormEvent) => {
-    e.preventDefault();
+  const create = async (substep: string) => {
     if (!name.trim()) return;
-    const p: Profile = { id: newId(), name: name.trim(), color, createdAt: new Date().toISOString(), state: initialState(start) };
+    const p: Profile = { id: newId(), name: name.trim(), color, createdAt: new Date().toISOString(), state: initialState(substep) };
     try {
       setError(null);
       await store.saveProfile(p);
       setProfiles(await store.listProfiles());
       setName('');
       setAdding(false);
+      setPlacing(false);
     } catch {
       setError("We couldn't save that. Try again.");
+      setPlacing(false);
     }
   };
+  const save = (e: FormEvent) => { e.preventDefault(); create(start); };
 
   const examples = (id: string) => content.substeps.find((s) => s.id === id)!.words.filter((w) => w.kind === 'real').slice(0, 3).map((w) => w.text).join(', ');
+
+  if (placing) {
+    return (
+      <div className="screen">
+        <div className="topbar"><span>New child: {name.trim()}</span></div>
+        <PlacementScreen onDone={create} onCancel={() => setPlacing(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="screen">
@@ -90,6 +103,7 @@ export function Home({ onStart, onParent }: Props) {
               </select>
             </label>
             <p className="caption">Not sure where to start? Ask the tutor, or pick the first one. You can change this later in the grown-up area.</p>
+            <BigButton variant="quiet" onClick={() => setPlacing(true)} disabled={!name.trim()}>Find the starting point with a short check</BigButton>
             <div className="row">
               <button type="submit" className="big big-primary" disabled={!name.trim()}>Save</button>
               <BigButton variant="quiet" onClick={() => setAdding(false)}>Cancel</BigButton>

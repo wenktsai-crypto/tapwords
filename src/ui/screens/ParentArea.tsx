@@ -6,6 +6,7 @@ import { getSubstep } from '../../engine/availability';
 import { useServices } from '../services';
 import { BigButton } from '../components/BigButton';
 import { Path } from '../components/Path';
+import { PlacementScreen } from './PlacementScreen';
 
 interface Props {
   profile: Profile;
@@ -18,6 +19,7 @@ export function ParentArea({ profile: initial, onBack }: Props) {
   const [logs, setLogs] = useState<SessionLog[]>([]);
   const [target, setTarget] = useState(initial.state.currentSubstep);
   const [note, setNote] = useState('');
+  const [view, setView] = useState<'main' | 'placement'>('main');
   // Guards a rapid double submit of the "Move" form: two synchronous submits
   // could both read the in-flight flag as false before either commits state,
   // so the ref is checked and set synchronously before any await.
@@ -66,7 +68,29 @@ export function ParentArea({ profile: initial, onBack }: Props) {
     }
   };
 
+  const placed = async (substepId: string) => {
+    try {
+      const next = { ...profile, state: moveTo(profile.state, substepId) };
+      await store.saveProfile(next);
+      setProfile(next);
+      setTarget(substepId);
+      setNote(`Moved to ${substepId} after the placement check. The next session starts with its lesson.`);
+    } catch {
+      setNote("We couldn't save that. Try again.");
+    }
+    setView('main');
+  };
+
   const sub = getSubstep(content, profile.state.currentSubstep);
+
+  if (view === 'placement') {
+    return (
+      <div className="screen">
+        <div className="topbar"><span>Grown-up area: {profile.name}</span></div>
+        <PlacementScreen onDone={placed} onCancel={() => setView('main')} />
+      </div>
+    );
+  }
 
   return (
     <div className="screen">
@@ -93,6 +117,12 @@ export function ParentArea({ profile: initial, onBack }: Props) {
           <button type="submit" className="big big-primary">Move</button>
           {note && <p className="caption">{note}</p>}
         </form>
+        <div className="card">
+          <h2>Tools</h2>
+          <div className="row">
+            <BigButton variant="quiet" onClick={() => setView('placement')}>Run the placement check</BigButton>
+          </div>
+        </div>
       </div>
     </div>
   );
