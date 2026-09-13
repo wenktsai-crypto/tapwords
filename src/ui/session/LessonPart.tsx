@@ -21,16 +21,29 @@ export function LessonPart({ steps, substep, onComplete }: Props) {
   const [demoDone, setDemoDone] = useState(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
+  const completedRef = useRef(false);
   const step = steps[i];
 
   useEffect(() => {
     setDemoDone(false);
     if (!step) {
+      if (completedRef.current) return;
+      completedRef.current = true;
       onCompleteRef.current();
       return;
     }
-    if ('say' in step) say(step.say);
-    if ('try' in step) say('Your turn. Tap each sound, then blend.');
+    // Deferred to the next microtask so that under StrictMode's dev-mode
+    // mount/cleanup/remount, the throwaway first pass's cleanup can mark
+    // itself cancelled before it actually speaks anything.
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      if ('say' in step) say(step.say);
+      if ('try' in step) say('Your turn. Tap each sound, then blend.');
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [i, step, say]);
 
   const next = () => setI(i + 1);
@@ -50,11 +63,11 @@ export function LessonPart({ steps, substep, onComplete }: Props) {
       )}
       {'tap' in step && (
         <>
-          <TapDots word={findWord(substep, step.tap)} mode="demo" onResult={() => setDemoDone(true)} />
+          <TapDots key={i} word={findWord(substep, step.tap)} mode="demo" onResult={() => setDemoDone(true)} />
           {demoDone && <BigButton onClick={next}>Next</BigButton>}
         </>
       )}
-      {'try' in step && <TapDots word={findWord(substep, step.try)} mode="try" onResult={next} />}
+      {'try' in step && <TapDots key={i} word={findWord(substep, step.try)} mode="try" onResult={next} />}
     </div>
   );
 }

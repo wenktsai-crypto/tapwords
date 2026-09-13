@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { StrictMode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -32,6 +33,53 @@ describe('LessonPart', () => {
   it('completes immediately with no steps', async () => {
     const onComplete = vi.fn();
     renderWithServices(<LessonPart steps={[]} substep={CONTENT.substeps[0]} onComplete={onComplete} />);
+    await waitFor(() => expect(onComplete).toHaveBeenCalled());
+  });
+
+  it('calls onComplete exactly once under StrictMode with no steps', async () => {
+    const onComplete = vi.fn();
+    renderWithServices(
+      <StrictMode>
+        <LessonPart steps={[]} substep={CONTENT.substeps[0]} onComplete={onComplete} />
+      </StrictMode>,
+    );
+    await waitFor(() => expect(onComplete).toHaveBeenCalled());
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it('speaks a say step exactly once under StrictMode', async () => {
+    const audio = new FakeAudio();
+    const onComplete = vi.fn();
+    renderWithServices(
+      <StrictMode>
+        <LessonPart steps={[{ say: 'Hi' }]} substep={CONTENT.substeps[0]} onComplete={onComplete} />
+      </StrictMode>,
+      { audio },
+    );
+    await waitFor(() => expect(audio.spoken).toContain('Hi'));
+    expect(audio.spoken.filter((s) => s === 'Hi')).toHaveLength(1);
+  });
+
+  it('replays tapping for a second try step with the same word', async () => {
+    const user = userEvent.setup();
+    const onComplete = vi.fn();
+    const steps = [{ try: 'map' }, { try: 'map' }];
+    renderWithServices(<LessonPart steps={steps} substep={CONTENT.substeps[0]} onComplete={onComplete} />);
+
+    await user.click(await screen.findByRole('button', { name: 'Sound 1' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    await user.click(await screen.findByRole('button', { name: 'Blend' }));
+
+    const sound1Again = await screen.findByRole('button', { name: 'Sound 1' });
+    expect(sound1Again).toBeInTheDocument();
+    await user.click(sound1Again);
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    const blendAgain = await screen.findByRole('button', { name: 'Blend' });
+    expect(blendAgain).toBeInTheDocument();
+    await user.click(blendAgain);
+
     await waitFor(() => expect(onComplete).toHaveBeenCalled());
   });
 });
