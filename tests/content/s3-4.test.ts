@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CARDS } from '../../src/content/cards';
-import { checkContent } from '../../src/content/check';
+import { checkContent, tokenize } from '../../src/content/check';
 import { SUBSTEP_1_1 } from '../../src/content/substeps/s1-1';
 import { SUBSTEP_1_2 } from '../../src/content/substeps/s1-2';
 import { SUBSTEP_1_3 } from '../../src/content/substeps/s1-3';
@@ -60,6 +60,46 @@ describe('substep 3.4 content', () => {
   it("has retired the words that are not worth a ten-year-old's time", () => {
     const texts = new Set(SUBSTEP_3_4.words.map((w) => w.text.toLowerCase()));
     for (const gone of ['misconduct', 'combatant', 'enlistment', 'investment', 'commitment', 'consultant', 'vat', 'cam', 'sham', 'rind', 'volt']) expect(texts.has(gone), gone).toBe(false);
+  });
+
+  it('leaves the ed and ing endings to section 3.5', () => {
+    // unpacking, kickboxing and disgusting once sat in this bank. The checker let them past only
+    // because their concept tag was missing: the suffix itself is taught one section later.
+    for (const w of SUBSTEP_3_4.words) {
+      const last = w.parts[w.parts.length - 1].card;
+      expect(['ed', 'ing'].includes(last), w.text).toBe(false);
+    }
+    const prose = [
+      ...SUBSTEP_3_4.sentences,
+      ...SUBSTEP_3_4.stories.flatMap((st) => [st.title, ...st.sentences, ...st.questions.flatMap((q) => q.choices)]),
+    ];
+    for (const text of prose) {
+      for (const t of tokenize(text)) {
+        // A base of four letters or more means the ending really is a suffix, so "bed", "shed"
+        // and "thing" are left alone while "unpacking" and "landed" are caught.
+        const base = t.replace(/(ing|ed)$/, '');
+        expect(base !== t && base.length >= 4, `${text} -> ${t}`).toBe(false);
+      }
+    }
+  });
+
+  it('chunks every nonsense word the way it chunks the real ones', () => {
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
+    // Blends English keeps together at the start of a syllable. A chunk boundary inside one of
+    // these forces the chunk before it open, and Book 3 teaches closed syllables only.
+    const keepTogether = ['bl', 'cl', 'fl', 'gl', 'pl', 'br', 'cr', 'dr', 'fr', 'gr', 'pr', 'tr'];
+    for (const w of SUBSTEP_3_4.words.filter((x) => x.kind === 'nonsense')) {
+      expect(w.syllables, `${w.text} has no syllables array`).toBeDefined();
+      const cuts = [0, ...w.syllables!, w.parts.length];
+      for (let i = 0; i + 1 < cuts.length; i++) {
+        const chunk = w.parts.slice(cuts[i], cuts[i + 1]).map((p) => p.grapheme);
+        expect(vowels.has(chunk[chunk.length - 1]), `${w.text} chunk ${chunk.join('')} is open`).toBe(false);
+      }
+      for (const cut of w.syllables!) {
+        const pair = w.parts[cut - 1].grapheme + w.parts[cut].grapheme;
+        expect(keepTogether.includes(pair), `${w.text} splits the blend "${pair}"`).toBe(false);
+      }
+    }
   });
 
   it('can reach the welded sounds the child has already been taught', () => {
