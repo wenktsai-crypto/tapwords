@@ -5,17 +5,17 @@ export const SUBSTEP_4_1: Substep = {
   id: '4.1',
   title: 'Silent e with a and i',
   parentSummary:
-    'Until now every letter in a word made a sound, and your child tapped one dot per letter. This section is where that changes: in "cake" the last e says nothing at all, and its only job is to make the a say its name. Your child meets the new pattern with a first and then with i, and taps three sounds in a word with four letters.',
+    'Until now every letter in a word was part of a sound your child tapped, even where two letters shared one sound, as in "ship". This section is where that changes: in "cake" the last e is part of no sound at all, and its only job is to make the a say its name. Your child meets the new pattern with a first and then with i.',
   groups: [
     {
       cards: ['a_e', 'e_silent'],
       lesson: [
-        { say: 'Something changes today. In every word so far, each letter made a sound. Now you will meet a letter that makes no sound at all.' },
+        { say: 'Something changes today. In every word so far, every letter has been part of a sound. Now you will meet a letter that is part of no sound at all.' },
         { show: ['a_e'] },
-        { say: 'Here is the new card. It shows an a, then a gap, then an e. Inside a real word, another letter sits in that gap.' },
+        { say: 'Here is the new card. It shows an a, then a gap, then an e. Inside a real word, a consonant sits in that gap.' },
         { say: 'When a word ends this way, the e is silent. It says nothing. Its whole job is to reach back and make the a say its name, ay.' },
         { tap: 'cake' },
-        { say: 'Cake has four letters and only three sounds. The silent e gets no dot, so you never tap it. The curved line shows the job it is doing.' },
+        { say: 'Cake has four letters and three sounds, and the e is part of none of them. It gets no dot, so you never tap it. The curved line shows the job it is doing.' },
         { say: 'Your turn. Tap the sounds in order and leave the last e alone.' },
         { try: 'made' },
         { try: 'name' },
@@ -61,7 +61,7 @@ export const SUBSTEP_4_1: Substep = {
     word('fade', 'f,a:a_e,d,e:e_silent'),
     word('late', 'l,a:a_e,t,e:e_silent'),
     word('gate', 'g,a:a_e,t,e:e_silent'),
-    word('date', 'd,a:a_e,t,e:e_silent'),
+    word('tale', 't,a:a_e,l,e:e_silent'),
     word('tape', 't,a:a_e,p,e:e_silent'),
     word('safe', 's,a:a_e,f,e:e_silent'),
     word('wave', 'w,a:a_e,v,e:e_silent'),
@@ -69,7 +69,7 @@ export const SUBSTEP_4_1: Substep = {
     word('gave', 'g,a:a_e,v,e:e_silent'),
     word('save', 's,a:a_e,v,e:e_silent'),
     word('lane', 'l,a:a_e,n,e:e_silent'),
-    word('mane', 'm,a:a_e,n,e:e_silent'),
+    word('pale', 'p,a:a_e,l,e:e_silent'),
 
     // Group 2: i and silent e.
     word('ride', 'r,i:i_e,d,e:e_silent'),
@@ -104,8 +104,8 @@ export const SUBSTEP_4_1: Substep = {
     nonsense('vafe', 'v,a:a_e,f,e:e_silent'),
     nonsense('zame', 'z,a:a_e,m,e:e_silent'),
     nonsense('pame', 'p,a:a_e,m,e:e_silent'),
-    nonsense('bame', 'b,a:a_e,m,e:e_silent'),
-    nonsense('tave', 't,a:a_e,v,e:e_silent'),
+    nonsense('bave', 'b,a:a_e,v,e:e_silent'),
+    nonsense('vate', 'v,a:a_e,t,e:e_silent'),
     nonsense('zave', 'z,a:a_e,v,e:e_silent'),
     nonsense('yame', 'y,a:a_e,m,e:e_silent'),
 
@@ -116,7 +116,7 @@ export const SUBSTEP_4_1: Substep = {
     nonsense('bime', 'b,i:i_e,m,e:e_silent'),
     nonsense('jite', 'j,i:i_e,t,e:e_silent'),
     nonsense('nive', 'n,i:i_e,v,e:e_silent'),
-    nonsense('wike', 'w,i:i_e,k,e:e_silent'),
+    nonsense('zide', 'z,i:i_e,d,e:e_silent'),
     nonsense('pite', 'p,i:i_e,t,e:e_silent'),
   ],
   sentences: [
@@ -177,14 +177,14 @@ export const SUBSTEP_4_1: Substep = {
         'Nan and Dan came to the path at nine.',
         'It was a fine day for a long ride.',
         'The path up the hill was long and wide.',
-        'Nan is quick, and she came up the hill fast.',
+        'Nan is quick, and she made it up the hill fast.',
         'Dan came up late.',
         '"I am not as quick as you," said Dan.',
-        '"You came up, and that is fine," said Nan.',
+        '"You are up the hill, and that is fine," said Nan.',
         'Then they saw a red kite in a thick vine.',
         'Nan lifted the kite out of the vine.',
-        'They came back down the hill with the kite.',
-        'Dan came down fast, and Nan came down late.',
+        'It was time to ride back down the hill with the kite.',
+        'Dan came down fast. Nan was not quick.',
         '"Now you are the quick one," said Nan.',
       ],
       questions: [
@@ -195,7 +195,7 @@ export const SUBSTEP_4_1: Substep = {
         },
         {
           prompt: 'What did Dan say when he came up the hill late?',
-          choices: ['I am not as quick as you', 'you came up and that is fine', 'now you are the quick one'],
+          choices: ['I am not as quick as you', 'you are up the hill and that is fine', 'now you are the quick one'],
           answer: 0,
         },
         {
