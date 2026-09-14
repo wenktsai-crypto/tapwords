@@ -2230,10 +2230,10 @@ git commit -m "Give section 3.5 more to read"
 
 **Added by the controller mid-plan**, after three separate authors independently hit the same wall. Not in the original plan.
 
-**Depends on:** Tasks 15 to 19 (it edits Book 1 and 2 sections and the Book 3 fixtures; do not run it while a Book 3 author is live).
+**Depends on:** Tasks 16, 18 and 19 having landed. Tasks 15 and 17 are in fix rounds that own their own fixtures; this task must not touch `s3-1.test.ts` or `s3-3.test.ts`.
 
 **Files:**
-- Modify: `tests/content/s3-1.test.ts` … `s3-5.test.ts`
+- Modify: `tests/content/s3-2.test.ts`, `s3-4.test.ts`, `s3-5.test.ts` (NOT s3-1 or s3-3 — see below)
 - Modify: `src/content/substeps/s1-1.ts`, `s1-2.ts`, `s1-5.ts`, `s2-3.ts`
 - Test: the same five test files, plus `tests/content/all.test.ts` unchanged
 
@@ -2243,15 +2243,17 @@ git commit -m "Give section 3.5 more to read"
 
 | File | Loads |
 |---|---|
-| `s3-1.test.ts` | 1.1–1.5 |
+| `s3-1.test.ts` | 1.1–1.5 — **owned by Task 15's fix round, do not touch** |
 | `s3-2.test.ts` | 1.1–1.5, 3.1 |
-| `s3-3.test.ts` | 1.1–1.5 |
+| `s3-3.test.ts` | 1.1–1.5 — **owned by Task 17's fix round, do not touch** |
 | `s3-4.test.ts` | 1.1–1.5 |
 | `s3-5.test.ts` | 1.1–1.5, 2.1 |
 
+Sections 3.1 and 3.3 are being re-authored in their own fix rounds, and each widens its own fixture as part of that, so this task owns only `s3-2`, `s3-4` and `s3-5`.
+
 None loads 1.6 or 2.2–2.5, so an author writing a Book 3 story cannot use suffix s/es, the welded ng/nk sounds, ild/ind/old/ost/olt, or three-letter blends — every one of which the child has been taught by then. Task 19's author had to discard good words for exactly this reason.
 
-Fix: each `s3-N.test.ts` loads the full chain from 1.1 up to and including its own section. Keep each file's other assertions untouched.
+Fix: each of `s3-2.test.ts`, `s3-4.test.ts` and `s3-5.test.ts` loads the full chain from 1.1 up to and including its own section. Keep each file's other assertions untouched.
 
 **Problem 2 — five bookish words nobody owns.** The spec asks for `vat`, `cam`, `sham`, `rind` and `volt` to be retired. They are in no Book 3 file, so no task in this plan removes them. They live at `src/content/substeps/s1-2.ts:99` (`vat`), `s1-5.ts:31-32` (`cam`, `sham`), `s2-3.ts:35` (`rind`) and `s2-3.ts:43` (`volt`). Replace each with a word of the same pattern and sound count that a ten-year-old would actually meet.
 
