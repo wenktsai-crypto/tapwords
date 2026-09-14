@@ -2226,6 +2226,73 @@ git commit -m "Give section 3.5 more to read"
 
 ---
 
+### Task 22: Widen what a content author has to write with
+
+**Added by the controller mid-plan**, after three separate authors independently hit the same wall. Not in the original plan.
+
+**Depends on:** Tasks 15 to 19 (it edits Book 1 and 2 sections and the Book 3 fixtures; do not run it while a Book 3 author is live).
+
+**Files:**
+- Modify: `tests/content/s3-1.test.ts` … `s3-5.test.ts`
+- Modify: `src/content/substeps/s1-1.ts`, `s1-2.ts`, `s1-5.ts`, `s2-3.ts`
+- Test: the same five test files, plus `tests/content/all.test.ts` unchanged
+
+**Three problems, one cause: the vocabulary an author may draw on is narrower than the vocabulary the child actually has.**
+
+**Problem 1 — the per-section test fixtures are too narrow.** Each Book 3 section's test builds a small `Content` from a handful of earlier substeps. Today they load only Book 1:
+
+| File | Loads |
+|---|---|
+| `s3-1.test.ts` | 1.1–1.5 |
+| `s3-2.test.ts` | 1.1–1.5, 3.1 |
+| `s3-3.test.ts` | 1.1–1.5 |
+| `s3-4.test.ts` | 1.1–1.5 |
+| `s3-5.test.ts` | 1.1–1.5, 2.1 |
+
+None loads 1.6 or 2.2–2.5, so an author writing a Book 3 story cannot use suffix s/es, the welded ng/nk sounds, ild/ind/old/ost/olt, or three-letter blends — every one of which the child has been taught by then. Task 19's author had to discard good words for exactly this reason.
+
+Fix: each `s3-N.test.ts` loads the full chain from 1.1 up to and including its own section. Keep each file's other assertions untouched.
+
+**Problem 2 — five bookish words nobody owns.** The spec asks for `vat`, `cam`, `sham`, `rind` and `volt` to be retired. They are in no Book 3 file, so no task in this plan removes them. They live at `src/content/substeps/s1-2.ts:99` (`vat`), `s1-5.ts:31-32` (`cam`, `sham`), `s2-3.ts:35` (`rind`) and `s2-3.ts:43` (`volt`). Replace each with a word of the same pattern and sound count that a ten-year-old would actually meet.
+
+**Problem 3 — common words that are readable but untaught.** `but`, `did`, `had`, `got`, `hot`, `went` and `let` appear in no bank in the whole program, yet every one is decodable with Book 1 cards. Their absence is why stories throughout the app read clipped. Add each to the earliest bank whose cards can spell it, following that file's existing grouping and style.
+
+- [ ] **Step 1: Widen the five fixtures, and prove it changed something**
+
+Edit the five test files. Then, to prove the fixtures were really the constraint, add to `tests/content/s3-5.test.ts`:
+
+```ts
+  it('can reach the welded sounds the child has already been taught', () => {
+    const taught = new Set(content.substeps.flatMap((s) => s.groups.flatMap((g) => g.cards)));
+    for (const card of ['ing', 'ank', 'ind', 'old', 'ost', 'olt']) {
+      expect(taught.has(card), `fixture is missing ${card}`).toBe(true);
+    }
+  });
+```
+
+Run `npx vitest run tests/content/` and show it failing before the fixture change and passing after.
+
+- [ ] **Step 2: Make the retirements**
+
+Replace the five words. Run `npx vitest run tests/content/` after each file.
+
+- [ ] **Step 3: Add the missing common words**
+
+Add `but`, `did`, `had`, `got`, `hot`, `went`, `let` to the earliest bank that can spell each. Check first that none already exists under another section — the checker enforces one bank per word text and will tell you.
+
+- [ ] **Step 4: Run everything**
+
+Run `npm test && npm run typecheck`. Every existing assertion must still pass; you are widening what is available, not changing what any section teaches.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add tests/content/ src/content/substeps/
+git commit -m "Let the stories use words the child can already read"
+```
+
+---
+
 ### Task 20: A browser test for a silent-e session
 
 **Files:**
