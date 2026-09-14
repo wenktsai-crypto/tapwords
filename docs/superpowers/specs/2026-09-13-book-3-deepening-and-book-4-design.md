@@ -122,12 +122,26 @@ sight words the stories need; keep the list short and justify each one.
 Nonsense words in Book 4 follow the silent-e pattern — a consonant, a vowel, a
 consonant, a silent e — and are held to the same safety bar.
 
-One trap to avoid. The app plays a card's sound for every part, so a word is
-only usable if each letter takes the sound the child has been taught. Book 4 is
-full of tempting words where it does not: *these, rose, nose, wise, choose* all
-have an s saying /z/, which is a sound option the program does not teach until
-Book 6. The checker cannot see this. Authors must reject those words; use
-*theme, eve, Pete, Steve* for e–e and *hope, stone, woke, globe* for o–e.
+One trap that applies to the whole program, not only Book 4: **a card has exactly
+one recorded sound, and the app plays it every time that card is tapped.** So a
+word is only usable in a lesson, a sentence or a story if every letter takes the
+sound the child has been taught.
+
+Two places this bites, both found by review rather than by any automated check:
+
+- **s saying /z/.** *these, rose, nose, wise, chose, those, close, doze, prize,
+  confuse, refuse, surprise* are all banned in Book 4; the s sound option is not
+  taught until Book 6. Use *theme, eve, Pete, Steve* for e–e and *hope, stone,
+  woke, globe* for o–e.
+- **The three sounds of `ed`.** *landed* says /ed/, *jumped* says /t/, *filled*
+  says /d/. The `ed` card carries the single sound /ed/, so the app says
+  "jump-ed" for *jumped*. Only bases ending in **t** or **d** may appear in a
+  lesson, a sentence or a story. Other bases may sit in a word bank, where the
+  child reads them rather than hearing the app say them. The same reasoning
+  bans plural *s* after anything but k, p, t or f in section 4.6.
+
+This rule is invisible to `src/content/check.ts` and always will be — it is
+about sound, not spelling. It belongs in every content brief.
 
 ## Part three: the code change
 
