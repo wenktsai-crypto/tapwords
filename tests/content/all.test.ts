@@ -4,11 +4,12 @@ import { checkContent, MIN } from '../../src/content/check';
 import { usableSentences, usableStories } from '../../src/engine/session';
 
 describe('the whole program', () => {
-  it('has the sixteen substeps in teaching order', () => {
+  it('has the twenty-two substeps in teaching order', () => {
     expect(CONTENT.substeps.map((s) => s.id)).toEqual([
       '1.1', '1.2', '1.3', '1.4', '1.5', '1.6',
       '2.1', '2.2', '2.3', '2.4', '2.5',
       '3.1', '3.2', '3.3', '3.4', '3.5',
+      '4.1', '4.2', '4.3', '4.4', '4.5', '4.6',
     ]);
   });
 
@@ -19,9 +20,7 @@ describe('the whole program', () => {
   it('introduces every card in exactly one substep group', () => {
     const seen = new Map<string, number>();
     for (const s of CONTENT.substeps) for (const g of s.groups) for (const c of g.cards) seen.set(c, (seen.get(c) ?? 0) + 1);
-    // A card that no section introduces yet is pending content, not a duplicate. Task 14
-    // re-tightens this to require exactly one for every card.
-    for (const card of CONTENT.cards) expect(seen.get(card.id) ?? 1, `card ${card.id}`).toBe(1);
+    for (const card of CONTENT.cards) expect(seen.get(card.id), `card ${card.id}`).toBe(1);
   });
 
   it('gives every substep and group a story of its own that the child can already read', () => {
