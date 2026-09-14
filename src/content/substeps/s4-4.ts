@@ -185,7 +185,7 @@ export const SUBSTEP_4_4: Substep = {
     'Dan hit the ball with one big stroke.',
     'Do not choke on that grape.',
     'Sam can not scale the wall.',
-    'Dan can not bend his spine that much.',
+    'The big fish has a long spine.',
     'Sam hit the spike into the log.',
     'Pam will shake the box to find out what is in it.',
     'The slime on the rock was thick.',
@@ -216,7 +216,7 @@ export const SUBSTEP_4_4: Substep = {
         },
         {
           prompt: 'What did Dan say they should not do?',
-          choices: ['shake the snake', 'sat on a rock', 'run up the path'],
+          choices: ['shake the snake', 'sit on a rock', 'run up the path'],
           answer: 0,
         },
         {
@@ -229,7 +229,7 @@ export const SUBSTEP_4_4: Substep = {
     {
       title: 'The Plane Sam Made',
       sentences: [
-        'Sam had a box of scrap and tape, and Nan sat in the shed with the cat.',
+        'Sam and Nan had a box of scrap and tape in the shed.',
         'He did want to make a plane that can glide.',
         'Nan said he should cut it thin, or it will not glide.',
         'Sam did not want to do that, and he cut a big one.',
