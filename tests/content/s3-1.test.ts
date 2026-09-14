@@ -6,12 +6,22 @@ import { SUBSTEP_1_2 } from '../../src/content/substeps/s1-2';
 import { SUBSTEP_1_3 } from '../../src/content/substeps/s1-3';
 import { SUBSTEP_1_4 } from '../../src/content/substeps/s1-4';
 import { SUBSTEP_1_5 } from '../../src/content/substeps/s1-5';
+import { SUBSTEP_1_6 } from '../../src/content/substeps/s1-6';
+import { SUBSTEP_2_1 } from '../../src/content/substeps/s2-1';
+import { SUBSTEP_2_2 } from '../../src/content/substeps/s2-2';
+import { SUBSTEP_2_3 } from '../../src/content/substeps/s2-3';
+import { SUBSTEP_2_4 } from '../../src/content/substeps/s2-4';
+import { SUBSTEP_2_5 } from '../../src/content/substeps/s2-5';
 import { SUBSTEP_3_1 } from '../../src/content/substeps/s3-1';
 import type { Content } from '../../src/content/types';
 
 const content: Content = {
   cards: CARDS,
-  substeps: [SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_3_1],
+  substeps: [
+    SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_1_6,
+    SUBSTEP_2_1, SUBSTEP_2_2, SUBSTEP_2_3, SUBSTEP_2_4, SUBSTEP_2_5,
+    SUBSTEP_3_1,
+  ],
 };
 
 describe('substep 3.1 content', () => {
