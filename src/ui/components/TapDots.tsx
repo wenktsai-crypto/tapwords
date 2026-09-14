@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Word } from '../../content/types';
 import { useServices, wait } from '../services';
-import { cardTypeFor } from '../tiles';
-import { Tile } from './Tile';
+import { cardMap, soundingIndexes } from '../../content/parts';
+import { SoundTiles } from './SoundTiles';
 import { BigButton } from './BigButton';
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 
 export function TapDots({ word, mode, onResult }: Props) {
   const { audio, content, timing } = useServices();
+  const sounding = soundingIndexes(word, cardMap(content.cards));
   const [tapped, setTapped] = useState(0);
   const [wrong, setWrong] = useState(false);
   const [blending, setBlending] = useState(false);
@@ -43,10 +44,10 @@ export function TapDots({ word, mode, onResult }: Props) {
     if (mode !== 'demo') return;
     let cancelled = false;
     (async () => {
-      for (let i = 0; i < word.parts.length; i++) {
+      for (let i = 0; i < sounding.length; i++) {
         if (cancelled) return;
         setTapped(i + 1);
-        await audio.playCard(word.parts[i].card);
+        await audio.playCard(word.parts[sounding[i]].card);
         await wait(timing.demoDelayMs);
       }
       if (cancelled) return;
@@ -60,7 +61,7 @@ export function TapDots({ word, mode, onResult }: Props) {
   }, [word, mode, audio, timing.demoDelayMs]);
 
   const tapDot = async (i: number) => {
-    if (mode !== 'try' || tappedRef.current >= word.parts.length) return;
+    if (mode !== 'try' || tappedRef.current >= sounding.length) return;
     const next = tappedRef.current + 1;
     if (i !== tappedRef.current) {
       wrongRef.current = true;
@@ -68,7 +69,7 @@ export function TapDots({ word, mode, onResult }: Props) {
     }
     tappedRef.current = next;
     setTapped(next);
-    await audio.playCard(word.parts[i].card);
+    await audio.playCard(word.parts[sounding[i]].card);
   };
 
   const blend = async () => {
@@ -80,34 +81,24 @@ export function TapDots({ word, mode, onResult }: Props) {
     onResultRef.current(!wrongRef.current);
   };
 
-  const done = tapped >= word.parts.length;
+  const done = tapped >= sounding.length;
   const starts = new Set(word.syllables ?? []);
   const long = word.parts.length > 6;
   return (
     <div className={['tapdots', long ? 'tapdots-long' : ''].filter(Boolean).join(' ')}>
-      <div className="row row-tight">
-        {word.parts.map((p, i) => (
-          <Tile
-            key={i}
-            grapheme={p.grapheme}
-            type={cardTypeFor(content.cards, p.grapheme)}
-            selected={i < tapped}
-            className={starts.has(i) ? 'tile-syllable-start' : ''}
-          />
-        ))}
-      </div>
+      <SoundTiles word={word} tapped={tapped} />
       <div className="dots">
-        {word.parts.map((_, i) =>
+        {sounding.map((partIndex, i) =>
           mode === 'try' ? (
             <button
               key={i}
               type="button"
-              className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(i) ? 'dot-syllable-start' : ''}`}
+              className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(partIndex) ? 'dot-syllable-start' : ''}`}
               aria-label={`Sound ${i + 1}`}
               onClick={() => tapDot(i)}
             />
           ) : (
-            <span key={i} className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(i) ? 'dot-syllable-start' : ''}`} aria-hidden="true" />
+            <span key={i} className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(partIndex) ? 'dot-syllable-start' : ''}`} aria-hidden="true" />
           ),
         )}
       </div>

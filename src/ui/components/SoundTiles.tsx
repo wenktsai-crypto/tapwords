@@ -93,7 +93,7 @@ export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Pro
               type={type}
               size={size}
               selected={isLit(i)}
-              dim={type === 'silent'}
+              dim={type === 'silent' && !isLit(i)}
               className={starts.has(i) ? 'tile-syllable-start' : ''}
             />
           );
