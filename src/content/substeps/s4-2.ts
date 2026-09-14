@@ -95,9 +95,13 @@ export const SUBSTEP_4_2: Substep = {
     // lofe, kope and gole were dropped as sound-alikes of foam, loaf, cope and goal, and bofe
     // because it is how "both" gets written in some dialects. The bar is not English-only:
     // jode and fode had to go as well, being everyday obscenities in Spanish and Portuguese,
-    // the same reason pute was never a candidate.
+    // the same reason pute was never a candidate. zode was dropped in a later pass: it is one
+    // letter from "gode", French vulgar slang. Every word ending -ode shares that same flaw
+    // (only the first letter differs from "gode"), so its replacement, vobe, uses a different
+    // ending on purpose. nobe was rejected too: deleting its e leaves "nob", mild vulgar British
+    // slang.
     nonsense('vode', 'v,o:o_e,d,e:e_silent'),
-    nonsense('zode', 'z,o:o_e,d,e:e_silent'),
+    nonsense('vobe', 'v,o:o_e,b,e:e_silent'),
     nonsense('pode', 'p,o:o_e,d,e:e_silent'),
     nonsense('nole', 'n,o:o_e,l,e:e_silent'),
     nonsense('jole', 'j,o:o_e,l,e:e_silent'),
