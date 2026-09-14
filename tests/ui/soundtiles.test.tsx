@@ -226,3 +226,55 @@ describe('SoundTiles anchors the arc to the tiles it measured', () => {
     }
   });
 });
+
+/**
+ * The tile row wraps (`flex-wrap: wrap`), so a long word at size="large" on a narrow screen can
+ * put a vowel tile and its silent e on different lines. Drawing the arc anyway would scoop
+ * straight across the gap between the two lines. These stub rectangles the same way the
+ * anchoring tests above do, but move one tile's `top` to a second row.
+ */
+describe('SoundTiles skips the arc when a pair wraps onto different rows', () => {
+  const TILE_H = 80;
+  const layout = { eTop: 0 };
+
+  function rect(left: number, top: number, width: number, height: number): DOMRect {
+    return { x: left, y: top, left, top, width, height, right: left + width, bottom: top + height, toJSON: () => ({}) } as DOMRect;
+  }
+
+  let restore: (() => void) | undefined;
+
+  beforeEach(() => {
+    layout.eTop = 0;
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const el = this as HTMLElement;
+      if (el.classList?.contains('tilerow')) return rect(0, 0, 600, 204);
+      if (el.classList?.contains('tile')) {
+        const i = Array.prototype.indexOf.call(el.parentElement?.children ?? [], el);
+        // Tile 3 (the silent e in "cake") is the one that wraps to a second row.
+        const top = i === 3 ? layout.eTop : 0;
+        return rect(i * 90, top, 80, TILE_H);
+      }
+      return rect(0, 0, 0, 0);
+    };
+    restore = () => { Element.prototype.getBoundingClientRect = original; };
+  });
+
+  afterEach(() => { restore?.(); restore = undefined; });
+
+  it('draws no path for a pair whose two tiles measured on different rows', () => {
+    layout.eTop = 200; // wrapped to a second line
+    const { container } = renderWithServices(<SoundTiles word={word('cake', 'c,a:a_e,k,e:e_silent')} tapped={0} />);
+    // The pair is still recognised as a silent-e pair (the data-pairs attribute is unaffected
+    // by measurement)...
+    expect(container.querySelector('[data-testid="vce-bridge"]')?.getAttribute('data-pairs')).toBe('1-3');
+    // ...but no arc is drawn across the wrap.
+    expect(container.querySelectorAll('.vce-bridge path').length).toBe(0);
+  });
+
+  it('still draws one path for the same pair when both tiles share a row', () => {
+    layout.eTop = 0; // the normal, unwrapped case
+    const { container } = renderWithServices(<SoundTiles word={word('cake', 'c,a:a_e,k,e:e_silent')} tapped={0} />);
+    expect(container.querySelectorAll('.vce-bridge path').length).toBe(1);
+  });
+});

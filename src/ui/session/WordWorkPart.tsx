@@ -3,8 +3,7 @@ import type { WordWorkItem } from '../../engine/session';
 import { wordKey, type ScoredResponse } from '../../engine/types';
 import { useServices, wait } from '../services';
 import { Caption, useSay } from '../speech';
-import { cardTypeFor } from '../tiles';
-import { Tile } from '../components/Tile';
+import { SoundTiles } from '../components/SoundTiles';
 import { BigButton } from '../components/BigButton';
 import { TapDots } from '../components/TapDots';
 import { TileBuilder } from '../components/TileBuilder';
@@ -116,9 +115,7 @@ export function WordWorkPart({ items, onComplete, onProgress }: Props) {
         </>
       )}
       {item.type === 'build' && preview && (
-        <div className="row">
-          {item.word.parts.map((p, k) => <Tile key={k} grapheme={p.grapheme} type={cardTypeFor(content.cards, p.grapheme)} size="large" />)}
-        </div>
+        <SoundTiles word={item.word} tapped={item.word.parts.length} size="large" />
       )}
       {item.type === 'build' && !preview && (
         <>
