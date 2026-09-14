@@ -1,9 +1,9 @@
-import type { Substep } from '../types';
+import type { Substep, Word } from '../types';
 import { word, nonsense } from '../build';
 
 /** The shared nonsense() builder takes no extras, and every word in this section needs its
  * syllable split marked, so the split is added here rather than by changing a shared file. */
-function longNonsense(text: string, spec: string, syllables: number[]) {
+function longNonsense(text: string, spec: string, syllables: number[]): Word {
   return { ...nonsense(text, spec), syllables };
 }
 
@@ -21,7 +21,7 @@ export const SUBSTEP_4_5: Substep = {
         { say: 'There is no new card today. You have all five silent-e vowels, and today the words simply get longer.' },
         { say: 'A long word is read one part at a time. Each part has one vowel sound in it, and you read the front part, then the back part, then the whole word.' },
         { tap: 'cupcake' },
-        { say: 'Cupcake is two parts. Cup, which you have read since the very first book, and cake, which you read last week. Cup. Cake. Cupcake.' },
+        { say: 'Cupcake is two parts. Cup, which you have read since the very first book, and cake, which you read when you met the silent e. Cup. Cake. Cupcake.' },
         { say: 'Look at where the silent e is. It sits at the end, and it works on the vowel in its own part of the word. It cannot reach the u in cup, so the u stays short.' },
         { tap: 'invite' },
         { say: 'Invite is in, and vite. The e at the end is a long way from the first i, so that first i says its short sound. In. Vite. Invite.' },
@@ -54,8 +54,9 @@ export const SUBSTEP_4_5: Substep = {
     // (es-cape, ig-nite) and where it cannot be, the word is left out.
     //
     // Struck from the brief's candidate list: homemade and lifetime, which have a silent-e
-    // syllable on BOTH sides and so teach two patterns at once; and bedtime, struck on the same
-    // instruction although in fact only its second syllable is silent-e. (Recorded in the report.)
+    // syllable on BOTH sides and so teach two patterns at once. bedtime was struck on the same
+    // instruction in the first pass, but it in fact has only one silent-e syllable (bed is
+    // closed, time is silent-e); fix round 1 corrected the ruling (R38) and added it back below.
     // Also left out: confuse, refuse, surprise, advise (s says /z/); decide, invoice (c says
     // /s/); entire, admire (r-controlled); daytime (ay is not taught); welcome and become (the
     // o_e card says /oh/ and those words say /uh/).
@@ -101,6 +102,7 @@ export const SUBSTEP_4_5: Substep = {
     word('handmade', 'h,a,n,d,m,a:a_e,d,e:e_silent', { syllables: [4] }),
     word('hillside', 'h,i,ll:l,s,i:i_e,d,e:e_silent', { syllables: [3] }),
     word('bedside', 'b,e,d,s,i:i_e,d,e:e_silent', { syllables: [3] }),
+    word('bedtime', 'b,e,d,t,i:i_e,m,e:e_silent', { syllables: [3] }),
     word('landslide', 'l,a,n,d,s,l,i:i_e,d,e:e_silent', { syllables: [4] }),
     word('backbone', 'b,a,ck,b,o:o_e,n,e:e_silent', { syllables: [3] }),
     word('wishbone', 'w,i,sh,b,o:o_e,n,e:e_silent', { syllables: [3] }),
@@ -137,21 +139,27 @@ export const SUBSTEP_4_5: Substep = {
     //   any -ape chunk (mape, dape) - one letter from rape
     //   tupvide  - "tup" is itself British slang
     //   -ede, -ene, -ebe chunks - French and Spanish obscenity, and hebe, as 4.3 found
+    //
+    // Fix round 1: a second reviewer found four words the first walk missed, each carrying a
+    // displayed chunk one letter from a slur or strong obscenity: thodvide (thod -> thot),
+    // tibjome (tib -> tit; jome -> Spanish jode), hesvame (hes -> hos/hoes), nudjome
+    // (jome -> Spanish jode). They are replaced below with shelvide, lubzome, velbade and
+    // nudvipe, walked the same way (see the fix-round report for the full walk).
     // ---------------------------------------------------------------------------------------
     longNonsense('linvide', 'l,i,n,v,i:i_e,d,e:e_silent', [3]),
     longNonsense('lobzide', 'l,o,b,z,i:i_e,d,e:e_silent', [3]),
     longNonsense('bodzide', 'b,o,d,z,i:i_e,d,e:e_silent', [3]),
-    longNonsense('thodvide', 'th,o,d,v,i:i_e,d,e:e_silent', [3]),
+    longNonsense('shelvide', 'sh,e,l,v,i:i_e,d,e:e_silent', [3]),
     longNonsense('beltife', 'b,e,l,t,i:i_e,f,e:e_silent', [3]),
     longNonsense('jubtife', 'j,u,b,t,i:i_e,f,e:e_silent', [3]),
     longNonsense('zimvope', 'z,i,m,v,o:o_e,p,e:e_silent', [3]),
     longNonsense('welvope', 'w,e,l,v,o:o_e,p,e:e_silent', [3]),
     longNonsense('thubvope', 'th,u,b,v,o:o_e,p,e:e_silent', [3]),
-    longNonsense('nudjome', 'n,u,d,j,o:o_e,m,e:e_silent', [3]),
-    longNonsense('tibjome', 't,i,b,j,o:o_e,m,e:e_silent', [3]),
+    longNonsense('nudvipe', 'n,u,d,v,i:i_e,p,e:e_silent', [3]),
+    longNonsense('lubzome', 'l,u,b,z,o:o_e,m,e:e_silent', [3]),
     longNonsense('tesdofe', 't,e,s,d,o:o_e,f,e:e_silent', [3]),
     longNonsense('tasvame', 't,a,s,v,a:a_e,m,e:e_silent', [3]),
-    longNonsense('hesvame', 'h,e,s,v,a:a_e,m,e:e_silent', [3]),
+    longNonsense('velbade', 'v,e,l,b,a:a_e,d,e:e_silent', [3]),
     longNonsense('pinzade', 'p,i,n,z,a:a_e,d,e:e_silent', [3]),
     longNonsense('shepzafe', 'sh,e,p,z,a:a_e,f,e:e_silent', [3]),
   ],
@@ -191,7 +199,7 @@ export const SUBSTEP_4_5: Substep = {
         'Then he put the tadpole back in the mud.',
         'Every day, Sam and Jan went to check on it.',
         'In the sunshine, the tadpole was big and fat.',
-        'Now it can hop up on the rock at the side of the pond.',
+        'Now it is a frog, and it can hop up on the rock at the side of the pond.',
         'Sam is glad he did not take it home.',
       ],
       questions: [
@@ -241,7 +249,7 @@ export const SUBSTEP_4_5: Substep = {
         },
         {
           prompt: 'What did Sam do after the contest?',
-          choices: ['he did the song every day', 'he did not compete again', 'he gave the spot to the band'],
+          choices: ['he did the song every day', 'he sat in the sunshine', 'he gave the spot to the band'],
           answer: 0,
         },
       ],
