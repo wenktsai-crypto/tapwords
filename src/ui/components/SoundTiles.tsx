@@ -16,6 +16,15 @@ interface Props {
 
 interface Arc { x1: number; x2: number; y: number }
 
+/** How far the curve's control point is pulled below the tiles.
+ *
+ * A quadratic Bezier only reaches HALF its control offset: the midpoint is (P0 + 2*P1 + P2) / 4,
+ * so the dip the child actually sees is ARC_PULL / 2. At 52 that is a 26px scoop under a 180px
+ * span, which reads as a curve joining two letters rather than a flat underline.
+ * `.tilerow`'s padding-bottom must stay above the visible dip or the arc runs into whatever
+ * sits below the word. */
+const ARC_PULL = 52;
+
 function sameArcs(a: Arc[], b: Arc[]): boolean {
   return a.length === b.length && a.every((x, i) => x.x1 === b[i].x1 && x.x2 === b[i].x2 && x.y === b[i].y);
 }
@@ -69,13 +78,29 @@ export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Pro
     if (pairs.length === 0) return;
     // ResizeObserver does not exist in jsdom, so guard rather than polyfill.
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
-    if (ro && rowRef.current) ro.observe(rowRef.current);
+    if (ro) {
+      // Watching the row alone is not enough: it is a full-width block, so when the tiles change
+      // width the row's own box does not, and the arc would stay pinned to stale positions.
+      // The tiles are what actually move.
+      if (rowRef.current) ro.observe(rowRef.current);
+      for (const tile of tileRefs.current) if (tile) ro.observe(tile);
+    }
     window.addEventListener('resize', measure);
     return () => {
       ro?.disconnect();
       window.removeEventListener('resize', measure);
     };
-  }, [measure, pairs]);
+  }, [measure]);
+
+  // The letter font is a real download. On a cold first load — a child's iPad, exactly when this
+  // matters — it can swap in after the first measurement, moving every tile centre. Remeasure
+  // once the fonts have settled. jsdom has no document.fonts, hence the guard.
+  useEffect(() => {
+    if (pairs.length === 0) return;
+    let live = true;
+    document.fonts?.ready.then(() => { if (live) measure(); });
+    return () => { live = false; };
+  }, [measure]);
 
   const litVowels = new Set(sounding.slice(0, tapped));
   const isLit = (i: number) => litVowels.has(i) || pairs.some((p) => p.silent === i && litVowels.has(p.vowel));
@@ -107,7 +132,7 @@ export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Pro
           aria-hidden="true"
         >
           {arcs.map((a, i) => (
-            <path key={i} d={`M ${a.x1} ${a.y} Q ${(a.x1 + a.x2) / 2} ${a.y + 26} ${a.x2} ${a.y}`} />
+            <path key={i} d={`M ${a.x1} ${a.y} Q ${(a.x1 + a.x2) / 2} ${a.y + ARC_PULL} ${a.x2} ${a.y}`} />
           ))}
         </svg>
       )}
