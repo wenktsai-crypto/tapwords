@@ -25,7 +25,7 @@ export const SUBSTEP_4_3: Substep = {
         { try: 'eve' },
         { try: 'Steve' },
         { try: 'Zeke' },
-        { say: 'Now something different. There is no new card to look at, and nothing new to spot in a word.' },
+        { say: 'Now something different. There is no new card here. The letters are ones you already know.' },
         { say: 'Think back to mule and cube. A u with a silent e says its name, yoo.' },
         { show: ['u_e'] },
         { say: 'Same letters, same silent e, and a second sound. This spelling can also say oo.' },
@@ -45,16 +45,20 @@ export const SUBSTEP_4_3: Substep = {
   // already in an earlier bank or sight list.
   sightWords: [],
   words: [
-    // e and silent e. This is the whole honest supply of one-syllable words, and it is five.
-    // Every other candidate breaks the one-sound rule or belongs to a later section:
+    // e and silent e. This was the whole honest supply of one-syllable words at five, one short
+    // of the checker's floor of 20 real words for the whole bank. Every other candidate breaks
+    // the one-sound rule or belongs to a later section:
     //   these (s says /z/), scene (c says /s/), gene (g says /j/), cede (c says /s/),
     //   here and mere (the r takes the vowel over), use and fuse (s says /z/),
     //   sure, cure and pure (r-controlled, and /yoo/ besides).
     // compete, complete, concrete, athlete and stampede are real and honest, but they are two
     // syllables and are 4.5's to teach. Nothing here is padded to reach a target.
+    // Ruling R42 approved one vetted spare, Crete: a proper noun (the island), one syllable,
+    // honest to the card. It is never a tap/try target, a find target, or a distractor.
     word('Pete', 'p,e:e_e,t,e:e_silent'),
     word('Steve', 's,t,e:e_e,v,e:e_silent'),
     word('Zeke', 'z,e:e_e,k,e:e_silent'),
+    word('Crete', 'c,r,e:e_e,t,e:e_silent'),
     word('theme', 'th,e:e_e,m,e:e_silent'),
     word('eve', 'e:e_e,v,e:e_silent'),
 
@@ -63,6 +67,9 @@ export const SUBSTEP_4_3: Substep = {
     // So tune, dune, duke and jute are all out — plenty of speakers say those with /yoo/ — as
     // are ruse, muse and fuse, where the s says /z/. The safest onsets are r, l, j and a blend,
     // which take no /yoo/ in any accent, and most of the list is built from them.
+    // Ruling R42 approved one vetted spare, Yule: the y onset carries the /y/, and after y no
+    // accent of English puts a /yoo/ reading on the u_e_oo card, so it reads /yool/, honest to
+    // the card. It is never a tap/try target, a find target, or a distractor.
     word('rule', 'r,u:u_e_oo,l,e:e_silent'),
     word('rude', 'r,u:u_e_oo,d,e:e_silent'),
     word('rune', 'r,u:u_e_oo,n,e:e_silent'),
@@ -70,6 +77,7 @@ export const SUBSTEP_4_3: Substep = {
     word('Luke', 'l,u:u_e_oo,k,e:e_silent'),
     word('June', 'j,u:u_e_oo,n,e:e_silent'),
     word('Jude', 'j,u:u_e_oo,d,e:e_silent'),
+    word('Yule', 'y,u:u_e_oo,l,e:e_silent'),
     word('juke', 'j,u:u_e_oo,k,e:e_silent'),
     word('dude', 'd,u:u_e_oo,d,e:e_silent'),
     word('flute', 'f,l,u:u_e_oo,t,e:e_silent'),
@@ -134,7 +142,7 @@ export const SUBSTEP_4_3: Substep = {
     'The big ox was a brute.',
     'Luke has a lute, and Pete has a flute.',
     'When Jan fell, a plume of sand went up.',
-    'Jude did a quick juke and went up the hill.',
+    'Jude hit the ball, and Luke got it.',
   ],
   stories: [
     {

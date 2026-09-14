@@ -77,8 +77,8 @@ describe('substep 4.3 content', () => {
     // sound, and the /oo/ sound of u-e only counts words no ordinary speaker says with /yoo/.
     // The report lists every candidate weighed and why it was kept or dropped.
     expect(real.length).toBeGreaterThanOrEqual(20);
-    expect(usingCard('e_e')).toBeGreaterThanOrEqual(5);
-    expect(usingCard('u_e_oo')).toBeGreaterThanOrEqual(14);
+    expect(usingCard('e_e')).toBeGreaterThanOrEqual(6);
+    expect(usingCard('u_e_oo')).toBeGreaterThanOrEqual(16);
     expect(SUBSTEP_4_3.words.filter((w) => w.kind === 'nonsense').length).toBeGreaterThanOrEqual(15);
     expect(SUBSTEP_4_3.sentences.length).toBeGreaterThanOrEqual(12);
     expect(SUBSTEP_4_3.stories.length).toBeGreaterThanOrEqual(2);
