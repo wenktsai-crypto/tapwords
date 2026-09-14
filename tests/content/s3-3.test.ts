@@ -6,12 +6,25 @@ import { SUBSTEP_1_2 } from '../../src/content/substeps/s1-2';
 import { SUBSTEP_1_3 } from '../../src/content/substeps/s1-3';
 import { SUBSTEP_1_4 } from '../../src/content/substeps/s1-4';
 import { SUBSTEP_1_5 } from '../../src/content/substeps/s1-5';
+import { SUBSTEP_1_6 } from '../../src/content/substeps/s1-6';
+import { SUBSTEP_2_1 } from '../../src/content/substeps/s2-1';
+import { SUBSTEP_2_2 } from '../../src/content/substeps/s2-2';
+import { SUBSTEP_2_3 } from '../../src/content/substeps/s2-3';
+import { SUBSTEP_2_4 } from '../../src/content/substeps/s2-4';
+import { SUBSTEP_2_5 } from '../../src/content/substeps/s2-5';
 import { SUBSTEP_3_3 } from '../../src/content/substeps/s3-3';
 import type { Content } from '../../src/content/types';
 
+// This fixture must mirror production order (src/content/index.ts): everything taught before
+// 3.3 has to be here too, or sentences get written against a vocabulary the child doesn't have
+// yet (1.6's plurals, 2.1's welded ing/ang family, every blend in 2.2-2.5, and ~24 sight words).
 const content: Content = {
   cards: CARDS,
-  substeps: [SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_3_3],
+  substeps: [
+    SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_1_6,
+    SUBSTEP_2_1, SUBSTEP_2_2, SUBSTEP_2_3, SUBSTEP_2_4, SUBSTEP_2_5,
+    SUBSTEP_3_3,
+  ],
 };
 
 describe('substep 3.3 content', () => {
