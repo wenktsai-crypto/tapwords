@@ -28,14 +28,14 @@ export const SUBSTEP_1_1: Substep = {
     cvc('fat'), cvc('fad'), cvc('fig'), cvc('fit'), cvc('fog'),
     cvc('lap'), cvc('lad'), cvc('lag'), cvc('lid'), cvc('lip'), cvc('lit'), cvc('log'), cvc('lot'), cvc('lop'),
     cvc('map'), cvc('mat'), cvc('mad'), cvc('mid'), cvc('mop'),
-    cvc('nap'), cvc('nag'), cvc('nip'), cvc('nit'), cvc('nod'), cvc('not'),
+    cvc('nap'), cvc('nag'), cvc('nit'), cvc('nod'), cvc('not'),
     cvc('rag'), cvc('rat'), cvc('rap'), cvc('rid'), cvc('rig'), cvc('rip'), cvc('rot'), cvc('rod'),
     cvc('sat'), cvc('sad'), cvc('sap'), cvc('sag'), cvc('sit'), cvc('sip'), cvc('sod'),
     word('at', 'a,t'), word('it', 'i,t'),
     // nonsense
-    cvcNonsense('fip'), cvcNonsense('lod'), cvcNonsense('mip'), cvcNonsense('rop'), cvcNonsense('sig'),
-    cvcNonsense('fod'), cvcNonsense('lig'), cvcNonsense('nat'), cvcNonsense('rit'), cvcNonsense('sog'),
-    cvcNonsense('mig'), cvcNonsense('nid'), cvcNonsense('sot'),
+    cvcNonsense('fip'), cvcNonsense('lod'), cvcNonsense('rog'), cvcNonsense('rop'), cvcNonsense('mot'),
+    cvcNonsense('fod'), cvcNonsense('lig'), cvcNonsense('lat'), cvcNonsense('rit'), cvcNonsense('sog'),
+    cvcNonsense('mig'), cvcNonsense('fot'), cvcNonsense('mog'),
     nonsense('ip', 'i,p'), nonsense('og', 'o,g'),
   ],
   sentences: [
@@ -60,8 +60,8 @@ export const SUBSTEP_1_1: Substep = {
         'The fat rat is on the fig.',
       ],
       questions: [
-        { prompt: 'Where is the rat at the start of the story?', choices: ['on a log', 'on a mat', 'on a lid'], answer: 0 },
-        { prompt: 'What is on the log at the end?', choices: ['a fig', 'a mat', 'a mop'], answer: 0 },
+        { prompt: 'Where is the rat at the start of the story?', choices: ['on a log', 'in the fog', 'on a rat'], answer: 0 },
+        { prompt: 'What is on the log at the end?', choices: ['a fig', 'the fog', 'a log'], answer: 0 },
       ],
     },
     {
@@ -73,7 +73,7 @@ export const SUBSTEP_1_1: Substep = {
         'The map is on the lid.',
         'The lad is at the map.',
       ],
-      questions: [{ prompt: 'Where is the map?', choices: ['on the lid', 'on the log', 'on the rat'], answer: 0 }],
+      questions: [{ prompt: 'Where is the map?', choices: ['on the lid', 'on the mat', 'on the lad'], answer: 0 }],
     },
   ],
 };
