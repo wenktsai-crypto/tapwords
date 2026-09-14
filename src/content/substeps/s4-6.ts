@@ -112,8 +112,8 @@ export const SUBSTEP_4_6: Substep = {
     // of the alphabet, then against one-letter deletions and insertions, then against
     // /usr/share/dict/words and against obscenities and slurs in English, Spanish, Portuguese
     // and French. Whole families died in that walk and the report lists them:
-    //   -ape is gone entirely, because every single-onset _ape is one letter from a word for
-    //     rape, and a blend such as "brape" loses its first letter to the same word;
+    //   -ape is gone with a single onset, because every _ape is one letter from a word for
+    //     rape, and so is a blend whose second letter is r ("brape" loses its b to it);
     //   -ike is gone, because every single-onset _ike is one letter from a slur for a lesbian;
     //   -oke is gone, because "moke" is a racial slur and "coke" and "toke" are drug slang;
     //   -ite is gone, because every _ite is one letter from "bite", vulgar French;
