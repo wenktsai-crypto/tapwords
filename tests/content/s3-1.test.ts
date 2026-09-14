@@ -29,9 +29,12 @@ describe('substep 3.1 content', () => {
     expect(checkContent(content)).toEqual([]);
   });
 
-  it('splits every real word into two syllables with no blend inside a syllable', () => {
+  // Nonsense words are checked exactly like real ones: this is the section that teaches
+  // syllable division, so a word with no syllable break shows no break on the tiles or the
+  // tap dots, and the child is asked to "find the two parts" of a word that has none.
+  it('splits every word into two syllables with no blend inside a syllable', () => {
     const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
-    for (const w of SUBSTEP_3_1.words.filter((w) => w.kind === 'real')) {
+    for (const w of SUBSTEP_3_1.words) {
       expect(w.syllables, w.text).toHaveLength(1);
       const [cut] = w.syllables!;
       for (const syl of [w.parts.slice(0, cut), w.parts.slice(cut)]) {
