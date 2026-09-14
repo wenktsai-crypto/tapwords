@@ -152,6 +152,19 @@ describe('TapDots with a silent letter', () => {
     expect(marked.length).toBe(1);
     expect(marked[0].getAttribute('aria-label')).toBe('Sound 3');
   });
+
+  it('marks the syllable start on the right dot when a silent letter comes before it', () => {
+    // "homemade": h,o:o_e,m,e:e_silent,m,a:a_e,d,e:e_silent -> sounding = [0,1,2,4,5,6],
+    // the second syllable starts at part index 4, which is sounding position 3 (the fourth dot).
+    // A buggy implementation that tests the sounding position instead of the part index would
+    // mark the fifth dot ("Sound 5") instead.
+    const w = word('homemade', 'h,o:o_e,m,e:e_silent,m,a:a_e,d,e:e_silent', { syllables: [4] });
+    const { container } = renderWithServices(<TapDots word={w} mode="try" onResult={() => {}} />);
+    expect(container.querySelectorAll('button.dot').length).toBe(6);
+    const marked = container.querySelectorAll('button.dot.dot-syllable-start');
+    expect(marked.length).toBe(1);
+    expect(marked[0].getAttribute('aria-label')).toBe('Sound 4');
+  });
 });
 
 describe('MissReview', () => {
