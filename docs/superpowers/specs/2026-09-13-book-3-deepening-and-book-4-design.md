@@ -78,6 +78,28 @@ Rules for the added content, unchanged from the first build:
   both).
 - Nonsense words: pronounceable, follow the section's pattern, never a real
   word, name or slang, never one letter from a rude word.
+
+  **How to actually run that check**, because the obvious way misses things.
+  Section 4.1's author did the walk twice; the first pass shipped `wike`, which
+  is one letter from an ethnic slur, because it found a harmless neighbour
+  (`like`) and stopped. Running it properly the second time also killed `kide`
+  and `nipe`, each one letter from a different slur, and `mide` and `tade`,
+  both real dictionary words. So:
+
+  1. For **every position** in the word, substitute **every letter of the
+     alphabet**, and keep going after a harmless neighbour turns up. One safe
+     match proves nothing about the next substitution.
+  2. Check the result against slurs and profanity, not only against words you
+     happen to think of.
+  3. Actually run a dictionary — `grep -ix '<word>' /usr/share/dict/words` —
+     rather than relying on recall. Real but obscure words (`tave`, an archaic
+     dialect verb) slip through otherwise.
+  4. Read the word as a chunk as well as a whole: `distrunpock` ends on a
+     displayed chunk one letter from a rude word, and `blenmafrosh` ends on
+     real slang.
+  5. Watch for colloquial spellings of real words. `dabbin` and `blastin` are
+     not nonsense — they are real words with the g dropped, and a ten-year-old
+     reads them on sight.
 - Sentences and stories may use only taught words and declared sight words.
 - Story titles and answer choices must be decodable. Question prompts are spoken
   by the app and may use any words.
