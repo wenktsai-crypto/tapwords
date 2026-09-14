@@ -27,4 +27,17 @@ describe('substep 3.5 content', () => {
       expect(w.concepts, w.text).toContain(last === 'ed' ? 'suffix-ed' : 'suffix-ing');
     }
   });
+
+  it('has enough to read for a child who stays here a few weeks', () => {
+    expect(SUBSTEP_3_5.words.filter((w) => w.kind === 'real').length).toBeGreaterThanOrEqual(35);
+    expect(SUBSTEP_3_5.words.filter((w) => w.kind === 'nonsense').length).toBeGreaterThanOrEqual(20);
+    expect(SUBSTEP_3_5.sentences.length).toBeGreaterThanOrEqual(18);
+    expect(SUBSTEP_3_5.stories.length).toBeGreaterThanOrEqual(4);
+    for (const st of SUBSTEP_3_5.stories) expect(st.questions.length, st.title).toBeGreaterThanOrEqual(2);
+  });
+
+  it("has retired the words that are not worth a ten-year-old's time", () => {
+    const texts = new Set(SUBSTEP_3_5.words.map((w) => w.text.toLowerCase()));
+    for (const gone of ['vat', 'cam', 'sham', 'rind', 'volt']) expect(texts.has(gone), gone).toBe(false);
+  });
 });
