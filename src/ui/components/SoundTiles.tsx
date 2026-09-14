@@ -59,6 +59,11 @@ export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Pro
       const a = tileRefs.current[vowel]?.getBoundingClientRect();
       const b = tileRefs.current[silent]?.getBoundingClientRect();
       if (!a || !b) continue;
+      // The row wraps on a narrow screen. If the pair landed on different lines, a curve between
+      // them would scoop flat across the gap instead of joining two letters, so draw nothing.
+      // A tolerance (half a tile's height) rather than strict equality survives fractional
+      // rects from real layout, where two tiles on the same line are rarely pixel-identical.
+      if (Math.abs(a.top - b.top) > a.height / 2) continue;
       next.push({
         x1: a.left - base.left + a.width / 2,
         x2: b.left - base.left + b.width / 2,

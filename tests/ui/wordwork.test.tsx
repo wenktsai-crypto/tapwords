@@ -5,7 +5,7 @@ import { screen, waitFor, within, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { WordWorkPart } from '../../src/ui/session/WordWorkPart';
 import type { WordWorkItem } from '../../src/engine/session';
-import { cvc } from '../../src/content/build';
+import { cvc, word } from '../../src/content/build';
 import { FakeAudio } from '../../src/audio/fake';
 import { renderWithServices } from './helpers';
 
@@ -102,6 +102,13 @@ describe('WordWorkPart', () => {
     );
     await waitFor(() => expect(onComplete).toHaveBeenCalled());
     expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a silent-e word with its bridge line when the word is displayed', () => {
+    const buildItem: WordWorkItem = { type: 'build', word: word('cake', 'c,a:a_e,k,e:e_silent'), substep: '4.1', isReview: false };
+    const { container } = renderWithServices(<WordWorkPart items={[buildItem]} onComplete={vi.fn()} />);
+    expect(container.querySelector('[data-testid="vce-bridge"]')?.getAttribute('data-pairs')).toBe('1-3');
+    expect(container.querySelectorAll('.tile').length).toBe(4);
   });
 
   it('completes two tap items for the same word with two responses', async () => {
