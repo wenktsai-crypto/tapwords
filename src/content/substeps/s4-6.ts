@@ -122,6 +122,13 @@ export const SUBSTEP_4_6: Substep = {
     // Also struck: nake, yate, blate and dite, all real dictionary words; zite, an Italian
     // pasta; tipe and nite, colloquial spellings of type and night; and lafes, which a child
     // could take for a misspelling of laughs.
+    //
+    // Fix round 1 added zope(s) and glote(s), the section's first -o_e nonsense pair, walked the
+    // same way. zope neighbors only ordinary -ope words (cope, dope, hope, lope, mope, nope,
+    // pope, rope, sope, tope, zone); glote neighbors only obscure real words (globe, glove,
+    // gloze, glome, glore, gote, lote, clote, plote, slote). Nothing obscene or slurring turned
+    // up in either walk. "glote" is also the nonsense base taught in 4.4 (not this substep's
+    // fixture); "glotes" is a different word text, so the two do not collide in the bank.
     nonsensePlural('vakes', 'v,a:a_e,k,e:e_silent,s'),
     nonsensePlural('zakes', 'z,a:a_e,k,e:e_silent,s'),
     nonsensePlural('glakes', 'g,l,a:a_e,k,e:e_silent,s'),
@@ -137,6 +144,8 @@ export const SUBSTEP_4_6: Substep = {
     nonsensePlural('jafes', 'j,a:a_e,f,e:e_silent,s'),
     nonsensePlural('zifes', 'z,i:i_e,f,e:e_silent,s'),
     nonsensePlural('hifes', 'h,i:i_e,f,e:e_silent,s'),
+    nonsensePlural('zopes', 'z,o:o_e,p,e:e_silent,s'),
+    nonsensePlural('glotes', 'g,l,o:o_e,t,e:e_silent,s'),
   ],
   sentences: [
     'Pam makes two cakes for the contest.',
@@ -175,7 +184,7 @@ export const SUBSTEP_4_6: Substep = {
         'This time the cupcakes came out well.',
         'Pam put them on the plates and went to the contest.',
         'The man at the contest did not give Pam the gold cup.',
-        'He said the cupcakes were the best he had.',
+        'But he said that the cupcakes were the best he had.',
         'Now Pam makes cupcakes for Nan, and she does not rush.',
       ],
       questions: [
@@ -191,7 +200,7 @@ export const SUBSTEP_4_6: Substep = {
         },
         {
           prompt: 'What did the man at the contest say about the cupcakes?',
-          choices: ['they were the best he had', 'Pam had to make them', 'Nan gave Pam two plates'],
+          choices: ['they were the best he had', 'they came out like a rock', 'she had to make them'],
           answer: 0,
         },
       ],
@@ -205,7 +214,7 @@ export const SUBSTEP_4_6: Substep = {
         'Then the two ropes got in a twist.',
         'Sam did not stop, and the ropes got to be a big mess.',
         'Dan said that they had to stop and sit.',
-        'They sat on the sand and did it hand over hand.',
+        'They sat on the path and did it hand over hand.',
         'It was a long time, and Sam did want to give up.',
         'Then the ropes were not in a twist.',
         'The kites went back up over the pond.',
@@ -215,7 +224,7 @@ export const SUBSTEP_4_6: Substep = {
       questions: [
         {
           prompt: 'What went wrong with the kites?',
-          choices: ['the ropes got in a twist', 'the kites had red stripes', 'they sat on the sand'],
+          choices: ['the ropes got in a twist', 'the kites had red stripes', 'they sat on the path'],
           answer: 0,
         },
         {
@@ -225,7 +234,7 @@ export const SUBSTEP_4_6: Substep = {
         },
         {
           prompt: 'What do they do now before they run up the hill?',
-          choices: ['they check the ropes', 'they give up', 'they sit on the sand'],
+          choices: ['they check the ropes', 'they give up', 'they sit on the path'],
           answer: 0,
         },
       ],
