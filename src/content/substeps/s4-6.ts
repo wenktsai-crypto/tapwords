@@ -33,7 +33,7 @@ export const SUBSTEP_4_6: Substep = {
         { try: 'ropes' },
         { try: 'grapes' },
         { try: 'mistakes' },
-        { say: 'Listen to the end of each one. The s says sss every time, because the sound in front of it is a k, a p or a t.' },
+        { say: 'Listen to the end of each one. The s says sss every time, because the sound in front of it is a k, a p, a t or an f.' },
         { say: 'Now something else. Three words look like silent e words, and they are not.' },
         { tap: 'have' },
         { say: 'Have ends in an e, and the a does not say its name. It stays short, the way it sounds in hat.' },
@@ -120,7 +120,8 @@ export const SUBSTEP_4_6: Substep = {
     //   -ipe keeps only onsets that do not reach a slur: "dipe" reaches the same slur as -ike
     //     by one letter, and "nipe" loses its e to an ethnic slur.
     // Also struck: nake, yate, blate and dite, all real dictionary words; zite, an Italian
-    // pasta; tipe and nite, colloquial spellings of type and night.
+    // pasta; tipe and nite, colloquial spellings of type and night; and lafes, which a child
+    // could take for a misspelling of laughs.
     nonsensePlural('vakes', 'v,a:a_e,k,e:e_silent,s'),
     nonsensePlural('zakes', 'z,a:a_e,k,e:e_silent,s'),
     nonsensePlural('glakes', 'g,l,a:a_e,k,e:e_silent,s'),
@@ -133,7 +134,7 @@ export const SUBSTEP_4_6: Substep = {
     nonsensePlural('fipes', 'f,i:i_e,p,e:e_silent,s'),
     nonsensePlural('zafes', 'z,a:a_e,f,e:e_silent,s'),
     nonsensePlural('mafes', 'm,a:a_e,f,e:e_silent,s'),
-    nonsensePlural('lafes', 'l,a:a_e,f,e:e_silent,s'),
+    nonsensePlural('jafes', 'j,a:a_e,f,e:e_silent,s'),
     nonsensePlural('zifes', 'z,i:i_e,f,e:e_silent,s'),
     nonsensePlural('hifes', 'h,i:i_e,f,e:e_silent,s'),
   ],
