@@ -166,7 +166,7 @@ export const SUBSTEP_4_4: Substep = {
     'Dan has a red stripe on his bike.',
     'The globe on the desk is quite big.',
     'The pan on the stove is hot.',
-    'The plane went up over the hills.',
+    'The plane went up over the hill.',
     'Dan stole a grape, and Pam was mad.',
     'Sam saw a bat glide from the shed.',
     'The flame from the lamp was hot.',
