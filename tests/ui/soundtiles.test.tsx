@@ -45,6 +45,14 @@ describe('SoundTiles', () => {
     expect(tiles[2].classList.contains('tile-selected')).toBe(false); // the k is not yet
   });
 
+  it('stops dimming a silent letter once it lights up with its vowel', () => {
+    const w = word('cake', 'c,a:a_e,k,e:e_silent');
+    const { container } = renderWithServices(<SoundTiles word={w} tapped={2} />);
+    const tiles = container.querySelectorAll('.tile');
+    expect(tiles[3].classList.contains('tile-selected')).toBe(true);
+    expect(tiles[3].classList.contains('tile-dim')).toBe(false);
+  });
+
   it('marks syllable starts', () => {
     const w = word('invite', 'i,n,v,i:i_e,t,e:e_silent', { syllables: [2] });
     const { container } = renderWithServices(<SoundTiles word={w} tapped={0} />);

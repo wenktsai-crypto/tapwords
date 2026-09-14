@@ -5,7 +5,7 @@ import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TapDots } from '../../src/ui/components/TapDots';
 import { MissReview } from '../../src/ui/components/MissReview';
-import { cvc } from '../../src/content/build';
+import { cvc, word } from '../../src/content/build';
 import { FakeAudio } from '../../src/audio/fake';
 import { renderWithServices } from './helpers';
 
@@ -109,6 +109,48 @@ describe('TapDots', () => {
     const { container } = renderWithServices(<TapDots word={word} mode="try" onResult={() => {}} />);
     expect(container.querySelector('.tapdots')?.classList.contains('tapdots-long')).toBe(false);
     expect(container.querySelectorAll('.tile-syllable-start').length).toBe(0);
+  });
+});
+
+describe('TapDots with a silent letter', () => {
+  const cake = () => word('cake', 'c,a:a_e,k,e:e_silent');
+
+  it('gives a four-letter word three dots and four tiles', () => {
+    const { container } = renderWithServices(<TapDots word={cake()} mode="try" onResult={() => {}} />);
+    expect(container.querySelectorAll('button.dot').length).toBe(3);
+    expect(container.querySelectorAll('.tile').length).toBe(4);
+    expect(screen.queryByRole('button', { name: 'Sound 4' })).toBeNull();
+  });
+
+  it('plays the three sounds it has, not the silent one', async () => {
+    const user = userEvent.setup();
+    const audio = new FakeAudio();
+    const onResult = vi.fn();
+    renderWithServices(<TapDots word={cake()} mode="try" onResult={onResult} />, { audio });
+    await user.click(screen.getByRole('button', { name: 'Sound 1' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 2' }));
+    await user.click(screen.getByRole('button', { name: 'Sound 3' }));
+    expect(audio.played).toEqual(['c', 'a_e', 'k']);
+    await user.click(await screen.findByRole('button', { name: 'Blend' }));
+    await waitFor(() => expect(onResult).toHaveBeenCalledWith(true));
+    expect(audio.spoken).toContain('cake');
+  });
+
+  it('in demo mode, steps through the sounds only', async () => {
+    const audio = new FakeAudio();
+    const onResult = vi.fn();
+    renderWithServices(<TapDots word={cake()} mode="demo" onResult={onResult} />, { audio });
+    await waitFor(() => expect(onResult).toHaveBeenCalledWith(true));
+    expect(audio.played).toEqual(['c', 'a_e', 'k']);
+  });
+
+  it('marks the syllable start on the dot that belongs to it', () => {
+    const w = word('invite', 'i,n,v,i:i_e,t,e:e_silent', { syllables: [2] });
+    const { container } = renderWithServices(<TapDots word={w} mode="try" onResult={() => {}} />);
+    expect(container.querySelectorAll('button.dot').length).toBe(5);
+    const marked = container.querySelectorAll('button.dot.dot-syllable-start');
+    expect(marked.length).toBe(1);
+    expect(marked[0].getAttribute('aria-label')).toBe('Sound 3');
   });
 });
 
