@@ -29,7 +29,7 @@ export const SUBSTEP_1_5: Substep = {
     word('am', 'am'),
     word('ham', 'h,am'), word('jam', 'j,am'), word('ram', 'r,am'), word('yam', 'y,am'),
     word('dam', 'd,am'), word('bam', 'b,am'),
-    word('wham', 'wh,am'), word('swam', 's,w,am'), word('clam', 'c,l,am'),
+    word('wham', 'wh,am'),
     word('Sam', 's,am'), word('Pam', 'p,am'),
 
     // Real words ending in the welded an.
