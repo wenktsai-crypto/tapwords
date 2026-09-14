@@ -77,7 +77,7 @@ export const SUBSTEP_1_2: Substep = {
   sightWords: ['to', 'has', 'his', 'was', 'I', 'you', 'as'],
   words: [
     // Group 1: b, sh, u
-    cvc('bat'), cvc('big'), cvc('bud'), cvc('bug'),
+    cvc('bat'), cvc('big'), cvc('bud'), cvc('bug'), cvc('but'),
     cvc('tub'), cvc('rub'), cvc('mud'), cvc('mug'), cvc('rug'),
     cvc('sun'), cvc('run'), cvc('fun'),
     word('up', 'u,p'), word('us', 'u,s'),
@@ -86,7 +86,7 @@ export const SUBSTEP_1_2: Substep = {
     cvcNonsense('bup'), nonsense('shob', 'sh,o,b'), cvcNonsense('lup'), cvcNonsense('mup'),
 
     // Group 2: h, j, c, k, ck
-    cvc('hat'), cvc('hit'), cvc('hop'), cvc('hug'), cvc('hut'),
+    cvc('hat'), cvc('hit'), cvc('hop'), cvc('hug'), cvc('hut'), cvc('had'), cvc('hot'),
     cvc('jog'), cvc('jug'),
     cvc('cat'), cvc('cup'), cvc('cut'),
     cvc('kid'), cvc('kit'),
@@ -96,8 +96,8 @@ export const SUBSTEP_1_2: Substep = {
     // Group 3: e, v, w
     cvc('bed'), cvc('red'), cvc('web'), cvc('wet'),
     cvc('pet'), cvc('pen'), cvc('ten'), cvc('hen'), cvc('jet'), cvc('net'),
-    cvc('vet'), cvc('vat'),
-    cvc('leg'), cvc('wig'), cvc('wag'),
+    cvc('vet'), cvc('fed'),
+    cvc('leg'), cvc('wig'), cvc('wag'), cvc('let'),
     word('wish', 'w,i,sh'), word('shed', 'sh,e,d'),
     cvcNonsense('veb'), cvcNonsense('wug'), nonsense('vish', 'v,i,sh'), cvcNonsense('wep'),
 
@@ -115,6 +115,10 @@ export const SUBSTEP_1_2: Substep = {
     word('quit', 'qu,i,t'), word('quiz', 'qu,i,z'), word('quick', 'qu,i,ck'),
     word('whip', 'wh,i,p'), word('when', 'wh,e,n'), word('which', 'wh,i,ch'),
     nonsense('chob', 'ch,o,b'), nonsense('thup', 'th,u,p'), nonsense('quib', 'qu,i,b'), nonsense('whep', 'wh,e,p'),
+
+    // Common words already decodable with cards taught by now, but not tied to any one group
+    // above (1.1's own list keeps d and g as codas only, so "did" and "got" wait until here).
+    cvc('did'), cvc('got'),
   ],
   sentences: [
     'The bug is in the tub.',

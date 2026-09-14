@@ -6,12 +6,28 @@ import { SUBSTEP_1_2 } from '../../src/content/substeps/s1-2';
 import { SUBSTEP_1_3 } from '../../src/content/substeps/s1-3';
 import { SUBSTEP_1_4 } from '../../src/content/substeps/s1-4';
 import { SUBSTEP_1_5 } from '../../src/content/substeps/s1-5';
+import { SUBSTEP_1_6 } from '../../src/content/substeps/s1-6';
+import { SUBSTEP_2_1 } from '../../src/content/substeps/s2-1';
+import { SUBSTEP_2_2 } from '../../src/content/substeps/s2-2';
+import { SUBSTEP_2_3 } from '../../src/content/substeps/s2-3';
+import { SUBSTEP_2_4 } from '../../src/content/substeps/s2-4';
+import { SUBSTEP_2_5 } from '../../src/content/substeps/s2-5';
+import { SUBSTEP_3_1 } from '../../src/content/substeps/s3-1';
+import { SUBSTEP_3_2 } from '../../src/content/substeps/s3-2';
+import { SUBSTEP_3_3 } from '../../src/content/substeps/s3-3';
 import { SUBSTEP_3_4 } from '../../src/content/substeps/s3-4';
 import type { Content } from '../../src/content/types';
 
+// The full chain up to and including 3.4, matching production order (src/content/index.ts),
+// so the checker sees every card and word a child actually has by the time she reaches this
+// section instead of the much smaller set this fixture used to load.
 const content: Content = {
   cards: CARDS,
-  substeps: [SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_3_4],
+  substeps: [
+    SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_1_6,
+    SUBSTEP_2_1, SUBSTEP_2_2, SUBSTEP_2_3, SUBSTEP_2_4, SUBSTEP_2_5,
+    SUBSTEP_3_1, SUBSTEP_3_2, SUBSTEP_3_3, SUBSTEP_3_4,
+  ],
 };
 
 describe('substep 3.4 content', () => {
@@ -44,5 +60,12 @@ describe('substep 3.4 content', () => {
   it("has retired the words that are not worth a ten-year-old's time", () => {
     const texts = new Set(SUBSTEP_3_4.words.map((w) => w.text.toLowerCase()));
     for (const gone of ['misconduct', 'combatant', 'enlistment', 'investment', 'commitment', 'consultant', 'vat', 'cam', 'sham', 'rind', 'volt']) expect(texts.has(gone), gone).toBe(false);
+  });
+
+  it('can reach the welded sounds the child has already been taught', () => {
+    const taught = new Set(content.substeps.flatMap((s) => s.groups.flatMap((g) => g.cards)));
+    for (const card of ['ing', 'ank', 'ind', 'old', 'ost', 'olt']) {
+      expect(taught.has(card), `fixture is missing ${card}`).toBe(true);
+    }
   });
 });

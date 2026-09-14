@@ -56,4 +56,11 @@ describe('substep 3.5 content', () => {
     const texts = new Set(SUBSTEP_3_5.words.map((w) => w.text.toLowerCase()));
     for (const gone of ['vat', 'cam', 'sham', 'rind', 'volt']) expect(texts.has(gone), gone).toBe(false);
   });
+
+  it('can reach the welded sounds the child has already been taught', () => {
+    const taught = new Set(content.substeps.flatMap((s) => s.groups.flatMap((g) => g.cards)));
+    for (const card of ['ing', 'ank', 'ind', 'old', 'ost', 'olt']) {
+      expect(taught.has(card), `fixture is missing ${card}`).toBe(true);
+    }
+  });
 });
