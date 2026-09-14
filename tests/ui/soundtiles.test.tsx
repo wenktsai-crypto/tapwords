@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Profiler, StrictMode, useState, type ReactElement } from 'react';
 import { act } from '@testing-library/react';
 import { SoundTiles } from '../../src/ui/components/SoundTiles';
@@ -86,13 +86,15 @@ describe('SoundTiles settles instead of re-rendering forever', () => {
   }
 
   it('stops committing once the first measurement lands', () => {
-    const { commits } = countingRender(<SoundTiles word={cake} tapped={0} />);
-    // One mount commit, plus at most one more for the measured geometry.
-    expect(commits()).toBeLessThanOrEqual(2);
-    const settled = commits();
+    const { commits, container } = countingRender(<SoundTiles word={cake} tapped={0} />);
+    // Pin the precondition first. Bounded commits prove nothing on their own - an effect that
+    // did no work at all would satisfy that just as well. The arc must actually have been
+    // measured and drawn, and it must have cost exactly one extra commit to do it.
+    expect(container.querySelectorAll('.vce-bridge path').length).toBe(1);
+    expect(commits()).toBe(2); // the mount, plus one for the measured geometry
     // Nothing further is scheduled: flushing again changes nothing.
     act(() => {});
-    expect(commits()).toBe(settled);
+    expect(commits()).toBe(2);
   });
 
   it('ignores a storm of resizes that measure the same geometry', () => {
@@ -129,13 +131,98 @@ describe('SoundTiles settles instead of re-rendering forever', () => {
 
   it('settles under StrictMode double-invocation too', () => {
     let commits = 0;
-    renderWithServices(
+    const { container } = renderWithServices(
       <StrictMode>
         <Profiler id="strict" onRender={() => { commits += 1; }}>
           <SoundTiles word={cake} tapped={0} />
         </Profiler>
       </StrictMode>,
     );
-    expect(commits).toBeLessThanOrEqual(4);
+    // Exact, so a regression to 3 cannot hide under a loose bound.
+    expect(commits).toBe(2);
+    expect(container.querySelectorAll('.vce-bridge path').length).toBe(1);
+  });
+});
+
+/**
+ * jsdom reports every rectangle as zero, which hides whether the arc is anchored to anything at
+ * all. Standing in fake but real-shaped rectangles lets the arithmetic be checked: an effect that
+ * quietly did nothing would leave the path sitting at the origin.
+ */
+describe('SoundTiles anchors the arc to the tiles it measured', () => {
+  const GAP = 10;
+  const TILE_H = 80;
+  const layout = { tileW: 80 };
+  /** Every rectangle measure asks for. Counting these catches an effect that re-runs per render. */
+  let rectCalls = 0;
+  let restore: (() => void) | undefined;
+
+  function rect(left: number, top: number, width: number, height: number): DOMRect {
+    return { x: left, y: top, left, top, width, height, right: left + width, bottom: top + height, toJSON: () => ({}) } as DOMRect;
+  }
+
+  beforeEach(() => {
+    layout.tileW = 80;
+    rectCalls = 0;
+    const original = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const el = this as HTMLElement;
+      if (el.classList?.contains('tilerow')) {
+        rectCalls += 1;
+        return rect(0, 0, 600, 124);
+      }
+      if (el.classList?.contains('tile')) {
+        rectCalls += 1;
+        const i = Array.prototype.indexOf.call(el.parentElement?.children ?? [], el);
+        return rect(i * (layout.tileW + GAP), 0, layout.tileW, TILE_H);
+      }
+      return rect(0, 0, 0, 0);
+    };
+    restore = () => { Element.prototype.getBoundingClientRect = original; };
+  });
+
+  afterEach(() => { restore?.(); restore = undefined; });
+
+  /** A quadratic Bezier's midpoint, which is the deepest point of a symmetric arc. */
+  const midY = (y0: number, cy: number, y2: number) => (y0 + 2 * cy + y2) / 4;
+
+  it('puts the arc ends on the two tile centres, and scoops far enough to be seen', () => {
+    const { container } = renderWithServices(<SoundTiles word={word('cake', 'c,a:a_e,k,e:e_silent')} tapped={0} />);
+    const d = container.querySelector('.vce-bridge path')?.getAttribute('d');
+    // Tile i sits at left i*90 and is 80 wide, so the a's centre is 130, the e's is 310, both
+    // hanging off the bottom of the tiles at y 80.
+    expect(d).toBe('M 130 80 Q 220 132 310 80');
+
+    const dip = midY(80, 132, 80) - 80;
+    // A quadratic curve only reaches half its control offset, and that half is all the child
+    // sees. Across a 180px span anything under about 20px reads as a straight underline.
+    expect(dip).toBe(26);
+    expect(dip).toBeGreaterThan(20);
+  });
+
+  it('measures once on mount, not once per render', () => {
+    renderWithServices(<SoundTiles word={word('cake', 'c,a:a_e,k,e:e_silent')} tapped={0} />);
+    // The row, the a, and the e: one measuring pass. Mounting settles over two renders, so if
+    // the memoised inputs stopped holding `measure`'s identity steady this would read 6.
+    expect(rectCalls).toBe(3);
+  });
+
+  it('re-anchors the arc when the letter font swaps in and moves every tile', async () => {
+    let letFontsLoad!: () => void;
+    const ready = new Promise<void>((resolve) => { letFontsLoad = resolve; });
+    Object.defineProperty(document, 'fonts', { value: { ready }, configurable: true });
+    try {
+      const { container } = renderWithServices(<SoundTiles word={word('cake', 'c,a:a_e,k,e:e_silent')} tapped={0} />);
+      expect(container.querySelector('.vce-bridge path')?.getAttribute('d')).toBe('M 130 80 Q 220 132 310 80');
+
+      // Lexend finishes downloading and the letters get wider, shifting every tile centre.
+      layout.tileW = 100;
+      await act(async () => { letFontsLoad(); await ready; });
+
+      // Centres are now 160 and 380. An arc left pinned to the old layout would still read 130/310.
+      expect(container.querySelector('.vce-bridge path')?.getAttribute('d')).toBe('M 160 80 Q 270 132 380 80');
+    } finally {
+      delete (document as unknown as Record<string, unknown>).fonts;
+    }
   });
 });
