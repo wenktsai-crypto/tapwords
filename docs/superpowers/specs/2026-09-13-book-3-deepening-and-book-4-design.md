@@ -123,11 +123,11 @@ Numbering matches the program so "she's on 4.2" means the same thing in both.
 | Section | Title | Teaches | Example words |
 |---|---|---|---|
 | 4.1 | Silent e with a and i | cards `a_e`, `i_e` | cake, made, name, ride, smile, time |
-| 4.2 | Silent e with o and u | cards `o_e`, `u_e` | hope, stone, woke, mule, cube, huge |
+| 4.2 | Silent e with o and u | cards `o_e`, `u_e` | hope, stone, woke, mule, cube, note |
 | 4.3 | Silent e with e, and u–e's second sound | cards `e_e`, `u_e_oo` | eve, Pete, theme, June, flute, rule |
 | 4.4 | Silent e after blends and digraphs | no new cards | stride, flame, globe, chose, while, shape |
 | 4.5 | Long words with a silent-e syllable | no new cards | invite, reptile, stampede, compete, inside |
-| 4.6 | Adding s, and words that break the rule | no new cards | cakes, rides, hopes — have, give, live |
+| 4.6 | Adding s, and words that break the rule | no new cards | cakes, kites, hopes — have, give, live |
 
 Each section carries the same minimum the checker enforces on every existing
 section (20 real words, 10 nonsense, 6 sentences, 1 story with 1 question), and

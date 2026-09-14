@@ -26,6 +26,10 @@ Progress lives on that iPad. Each child's profile and history are saved there.
 
 When you add a child you can either pick a starting point from the list (each entry shows example words) or tap **Find the starting point with a short check**. Sit with your child: words appear one at a time, your child reads each out loud, and you tap **Got it** or **Missed it**. The check stops on its own when the words get too hard and suggests where to begin. You can change the suggestion before saving, and re-run the check any time from the grown-up area (hold the **Grown-ups** button next to the child's name).
 
+## The silent e (Book 4)
+
+Starting in Book 4, a word can have more letters than your child taps out loud — "cake" has four letters but only three taps, because the last e makes no sound at all. On screen that e is shown faded, with no dot under it, and a curved line runs from it back to the vowel earlier in the word. The line means "this e makes the vowel say its own name."
+
 ## Recording the sounds in your own voice
 
 The app speaks with the device's built-in voice. If you would rather your child hear a person, open the grown-up area, tap **Record sounds**, and record each sound card once: tap **Record**, say the sound (the sound, not the letter name), tap **Stop**. Recordings are kept on the device and included in backups.
@@ -68,7 +72,7 @@ The first time, run `npx playwright install chromium` once to download the test 
 
 ## Where things live
 
-- `src/content` — sound cards and sixteen substep files, one per substep. Every file must pass the content checker (`tests/content`).
+- `src/content` — sound cards and twenty-two substep files, one per substep. Every file must pass the content checker (`tests/content`).
 - `src/engine` — session assembly, scoring, review, advancement. No React, no browser.
 - `src/store`, `src/audio` — device storage and voice, behind interfaces with test fakes.
 - `src/ui` — screens and session parts.
