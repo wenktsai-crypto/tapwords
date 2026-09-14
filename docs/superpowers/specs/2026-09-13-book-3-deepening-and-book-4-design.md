@@ -12,9 +12,9 @@ this was built for is now ten and working inside Book 3, so she is close to the
 end of the material. Two things follow: she needs more to read at the level she
 is on, and she needs the book after it.
 
-Books 1 to 3 are entirely closed syllables — every vowel is short, every letter
-makes one sound, and the child taps one dot per letter. Book 4 is the first
-place that breaks. "cake" has four letters and three sounds, and the final e
+Books 1 to 3 are entirely closed syllables — every vowel is short, and every
+letter is part of a sound the child taps (two letters can share one sound and one
+tap, as in "ship"). Book 4 is the first place a letter is part of no sound at all. "cake" has four letters and three sounds, and the final e
 makes no sound at all; its job is to make the a say its name. So Book 4 is not
 just new word lists. It needs a change to how a word is tapped.
 
