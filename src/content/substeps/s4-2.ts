@@ -93,9 +93,11 @@ export const SUBSTEP_4_2: Substep = {
     // against rude words. The whole -oke family was dropped: noke and voke are one letter from
     // moke, coke and toke. wope was dropped because deleting its e leaves an ethnic slur. fome,
     // lofe, kope and gole were dropped as sound-alikes of foam, loaf, cope and goal, and bofe
-    // because it is how "both" gets written in some dialects.
-    nonsense('jode', 'j,o:o_e,d,e:e_silent'),
-    nonsense('fode', 'f,o:o_e,d,e:e_silent'),
+    // because it is how "both" gets written in some dialects. The bar is not English-only:
+    // jode and fode had to go as well, being everyday obscenities in Spanish and Portuguese,
+    // the same reason pute was never a candidate.
+    nonsense('vode', 'v,o:o_e,d,e:e_silent'),
+    nonsense('zode', 'z,o:o_e,d,e:e_silent'),
     nonsense('pode', 'p,o:o_e,d,e:e_silent'),
     nonsense('nole', 'n,o:o_e,l,e:e_silent'),
     nonsense('jole', 'j,o:o_e,l,e:e_silent'),
@@ -180,7 +182,7 @@ export const SUBSTEP_4_2: Substep = {
         'Dan did not want to run back down the long hill.',
         'He got a long rope out of the pack.',
         'Dan put the rope on the stone, and then on the mule.',
-        'The mule went back down the path, and the stone went with it.',
+        'The mule went back down the path, and the big stone went too.',
         'The stone fell off the path and into the pond.',
         'Then Dan and the mule went on up the hill.',
         'At sunset they got to the camp.',
@@ -188,7 +190,7 @@ export const SUBSTEP_4_2: Substep = {
       ],
       questions: [
         {
-          prompt: 'What was in the path on the way up the hill?',
+          prompt: 'What blocked the path up the hill?',
           choices: ['a big stone', 'a long rope', 'a red pack'],
           answer: 0,
         },
