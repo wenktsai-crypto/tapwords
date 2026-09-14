@@ -241,7 +241,7 @@ export const SUBSTEP_4_5: Substep = {
         },
         {
           prompt: 'What did Sam do after the contest?',
-          choices: ['he did the song every day', 'he did not compete again', 'he gave the trombone to Jan'],
+          choices: ['he did the song every day', 'he did not compete again', 'he gave the spot to the band'],
           answer: 0,
         },
       ],
