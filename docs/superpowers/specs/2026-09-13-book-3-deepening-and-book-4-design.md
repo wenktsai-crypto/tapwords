@@ -157,10 +157,13 @@ Two places this bites, both found by review rather than by any automated check:
   woke, globe* for o–e.
 - **The three sounds of `ed`.** *landed* says /ed/, *jumped* says /t/, *filled*
   says /d/. The `ed` card carries the single sound /ed/, so the app says
-  "jump-ed" for *jumped*. Only bases ending in **t** or **d** may appear in a
-  lesson, a sentence or a story. Other bases may sit in a word bank, where the
-  child reads them rather than hearing the app say them. The same reasoning
-  bans plural *s* after anything but k, p, t or f in section 4.6.
+  "jump-ed" for *jumped*. Only bases ending in **t** or **d** may appear
+  anywhere in the section — the word bank included. (An earlier draft of this
+  spec allowed other bases to sit in the bank "where the child reads them rather
+  than hearing the app say them". That was wrong about the engine: word work
+  draws its tap items from the bank and plays each card's sound as she taps it,
+  so a bank word is heard card by card too.) The same reasoning bans plural *s*
+  after anything but k, p, t or f in section 4.6.
 
 This rule is invisible to `src/content/check.ts` and always will be — it is
 about sound, not spelling. It belongs in every content brief.
