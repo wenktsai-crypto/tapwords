@@ -40,7 +40,7 @@ export const SUBSTEP_2_3: Substep = {
     // ost
     word('most', 'm,ost'), word('host', 'h,ost'), word('post', 'p,ost'),
     // olt
-    word('bolt', 'b,olt'), word('colt', 'c,olt'), word('jolt', 'j,olt'), word('molt', 'm,olt'), word('holt', 'h,olt'),
+    word('bolt', 'b,olt'), word('colt', 'c,olt'), word('jolt', 'j,olt'), word('molt', 'm,olt'),
     // nonsense, same five patterns
     nonsense('pild', 'p,ild'), nonsense('vild', 'v,ild'),
     nonsense('zind', 'z,ind'), nonsense('shind', 'sh,ind'),
