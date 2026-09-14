@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export async function addChild(page: Page, name: string, substep = '1.1') {
   await page.goto('/');
@@ -73,8 +73,13 @@ async function tapOut(page: Page, n: number) {
   });
 }
 
-/** Plays the current session to the end screen, answering everything correctly. adult=false declines the read-aloud. */
-export async function autoPlay(page: Page, opts: { adult?: boolean; stopAfterParts?: number } = {}) {
+/** Plays the current session to the end screen, answering everything correctly. adult=false declines the read-aloud.
+ * `onItem`, if given, runs on every part just before it's answered — a chance to inspect the
+ * screen (tiles, dots, the vce bridge, ...) while it's still showing its unanswered state. */
+export async function autoPlay(
+  page: Page,
+  opts: { adult?: boolean; stopAfterParts?: number; onItem?: (part: Locator, kind: string) => Promise<void> } = {},
+) {
   const adult = opts.adult ?? true;
   const partsSeen: string[] = [];
   for (let guard = 0; guard < 400; guard++) {
@@ -97,6 +102,7 @@ export async function autoPlay(page: Page, opts: { adult?: boolean; stopAfterPar
       await expect(page.getByText(/nice work today/i)).toBeVisible();
       return { partsSeen };
     }
+    if (opts.onItem) await opts.onItem(part, kind);
     const answer = (await part.getAttribute('data-answer')) ?? '';
     switch (kind) {
       case 'sound-forward':
@@ -113,14 +119,28 @@ export async function autoPlay(page: Page, opts: { adult?: boolean; stopAfterPar
       }
       case 'word-work': {
         const item = await part.getAttribute('data-item');
-        if (item === 'tap') await tapOut(page, Number(answer));
+        // NOT Number(answer): for a 'tap' item data-answer is the word's *tile* count
+        // (word.parts.length), which over-counts a silent-e word by one (its silent letter gets
+        // a tile but no dot — see SoundTiles/TapDots). Count the actual dot buttons instead.
+        if (item === 'tap') await tapOut(page, await part.locator('button.dot').count());
         else if (item === 'find') await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
         else await buildFrom(page, answer.split(','));
         break;
       }
       case 'spelling': {
         const item = await part.getAttribute('data-item');
-        if (item === 'sound') await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
+        if (item === 'sound') {
+          // SpellingPart renders a silent-e sound card ("a_e", "i_e", ...) by its bare vowel
+          // grapheme ("a"), the same text the plain vowel card it's built on would show, instead
+          // of its own drill face the way SoundCardsPart does (see cardDisplay in
+          // content/parts.ts) — so match on the extra "tile-vce" class too, or a same-letter
+          // plain-vowel distractor could be the one that gets clicked.
+          const vce = /^([aeiou])_e$/.exec(answer);
+          const locator = vce
+            ? part.locator('button.tile-vce').filter({ hasText: new RegExp(`^${escapeRegex(vce[1])}$`) })
+            : part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) });
+          await locator.click();
+        }
         else if (item === 'word') await buildFrom(page, answer.split(','));
         else await buildFrom(page, answer.split('|'));
         break;
