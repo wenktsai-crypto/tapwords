@@ -5,7 +5,7 @@ export const SUBSTEP_4_4: Substep = {
   id: '4.4',
   title: 'Silent e after blends and digraphs',
   parentSummary:
-    'Nothing new is taught here. Your child has already met the silent e with every vowel, and she has been reading blends like "st" and "fl" and letter pairs like "sh" and "ch" since the first book. This section puts the two together, so the front of the word gets longer while the end of it behaves exactly as before.',
+    'Nothing new is taught here. Your child has already met the silent e with every vowel, and she has been reading blends like "st" and "fl" and letter pairs like "sh" and "ch" since Book 2. This section puts the two together, so the front of the word gets longer while the end of it behaves exactly as before.',
   groups: [
     // No cards. A section with nothing new to introduce uses its own word bank as the stand-in
     // set for the sound drill, exactly as 3.1 to 3.4 already do.
@@ -126,6 +126,9 @@ export const SUBSTEP_4_4: Substep = {
     // plote, slote. Killed by hand: thame, an English place name; plame and glame, which carry
     // the chunk "lame"; snafe, one letter from snafu; smike, a character in Dickens; and the
     // four the previous attempt had already rejected - shime, shide, slape and thape.
+    // Fix round 1: chibe was cut because deleting the b gives "chie", a conjugated form of
+    // French "chier" (a strong vulgarity). smibe replaced it and was walked clean - see the
+    // task report for the full walk.
 
     // a and silent e.
     nonsense('blape', 'b,l,a:a_e,p,e:e_silent'),
@@ -143,7 +146,7 @@ export const SUBSTEP_4_4: Substep = {
     nonsense('plime', 'p,l,i:i_e,m,e:e_silent'),
     nonsense('clibe', 'c,l,i:i_e,b,e:e_silent'),
     nonsense('spibe', 's,p,i:i_e,b,e:e_silent'),
-    nonsense('chibe', 'ch,i:i_e,b,e:e_silent'),
+    nonsense('smibe', 's,m,i:i_e,b,e:e_silent'),
     nonsense('thike', 'th,i:i_e,k,e:e_silent'),
 
     // o and silent e.
@@ -184,11 +187,12 @@ export const SUBSTEP_4_4: Substep = {
     'Pam will not blame Sam for the mess.',
     'Dan hit the ball with one big stroke.',
     'Do not choke on that grape.',
-    'Sam can not scale the wall.',
+    'Nan put the fish on the scale.',
     'The big fish has a long spine.',
     'Sam hit the spike into the log.',
     'Pam will shake the box to find out what is in it.',
     'The slime on the rock was thick.',
+    'Dan will slide down the slope.',
   ],
   stories: [
     {

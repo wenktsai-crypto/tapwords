@@ -122,7 +122,7 @@ describe('substep 4.4 content', () => {
   it('never puts a schwa on a consonant in a spoken lesson line', () => {
     for (const g of SUBSTEP_4_4.groups) {
       for (const step of g.lesson) {
-        if ('say' in step) expect(step.say).not.toMatch(/\b[bcdfgjkpt]uh\b/i);
+        if ('say' in step) expect(step.say).not.toMatch(/\b[a-z]uh\b/i);
       }
     }
   });
