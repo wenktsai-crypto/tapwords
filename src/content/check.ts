@@ -7,6 +7,10 @@ export const SPELLING_RULES: Record<string, string> = {
   ll: 'doubling',
   ss: 'doubling',
   zz: 'doubling',
+  // English never ends a word in a bare v, so "have", "give" and "live" carry an e that is part
+  // of how the v is spelled rather than a silent letter doing a job. The part is tapped as one
+  // sound on the v card, exactly as "ff" is tapped on the f card.
+  ve: 'silent-e-exception',
 };
 
 export const MIN = { real: 20, nonsense: 10, sentences: 6, stories: 1, questions: 1 };
