@@ -45,10 +45,10 @@ export const SUBSTEP_1_3: Substep = {
 
     // nonsense: same three-sound shape, always with a pair
     nonsense('shom', 'sh,o,m'), nonsense('shup', 'sh,u,p'),
-    nonsense('chet', 'ch,e,t'), nonsense('chog', 'ch,o,g'),
+    nonsense('chep', 'ch,e,p'), nonsense('chog', 'ch,o,g'),
     nonsense('thip', 'th,i,p'), nonsense('thock', 'th,o,ck'),
     nonsense('whud', 'wh,u,d'), nonsense('quen', 'qu,e,n'), nonsense('quab', 'qu,a,b'),
-    nonsense('zish', 'z,i,sh'), nonsense('yeth', 'y,e,th'), nonsense('wush', 'w,u,sh'),
+    nonsense('zish', 'z,i,sh'), nonsense('yeth', 'y,e,th'), nonsense('wosh', 'w,o,sh'),
   ],
   sentences: [
     'The chick is on the deck.',
@@ -75,7 +75,7 @@ export const SUBSTEP_1_3: Substep = {
       ],
       questions: [
         { prompt: 'Who gets wet?', choices: ['the chick', 'the rock', 'the sun'], answer: 0 },
-        { prompt: 'Where do the chick and the duck nap?', choices: ['on the deck', 'in the mud', 'in the shed'], answer: 0 },
+        { prompt: 'Where do the chick and the duck nap?', choices: ['on the deck', 'in the mud', 'on the rock'], answer: 0 },
       ],
     },
     {
