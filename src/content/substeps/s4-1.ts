@@ -117,7 +117,7 @@ export const SUBSTEP_4_1: Substep = {
     nonsense('jite', 'j,i:i_e,t,e:e_silent'),
     nonsense('nive', 'n,i:i_e,v,e:e_silent'),
     nonsense('zide', 'z,i:i_e,d,e:e_silent'),
-    nonsense('pite', 'p,i:i_e,t,e:e_silent'),
+    nonsense('hime', 'h,i:i_e,m,e:e_silent'),
   ],
   sentences: [
     // Readable at group 1: not one i_e word among them.
@@ -190,7 +190,7 @@ export const SUBSTEP_4_1: Substep = {
       questions: [
         {
           prompt: 'What did Nan and Dan find in the thick vine?',
-          choices: ['a red kite', 'a long path', 'a big hill'],
+          choices: ['a red kite', 'a long path', 'a wide hill'],
           answer: 0,
         },
         {

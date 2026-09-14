@@ -39,7 +39,7 @@ export const SUBSTEP_3_3: Substep = {
     word('collect', 'c,o,l,l,e,c,t', { syllables: [3] }),
     word('correct', 'c,o,r,r,e,c,t', { syllables: [3] }),
     word('expect', 'e,x,p,e,c,t', { syllables: [2] }),
-    word('exact', 'e,x,a,c,t', { syllables: [2] }),
+    word('infect', 'i,n,f,e,c,t', { syllables: [2] }),
     word('impact', 'i,m,p,a,c,t', { syllables: [2] }),
     word('compact', 'c,o,m,p,a,c,t', { syllables: [3] }),
     word('contact', 'c,o,n,t,a,c,t', { syllables: [3] }),
@@ -95,7 +95,7 @@ export const SUBSTEP_3_3: Substep = {
     'Sam can act as a duck and quack.',
     'We collect an insect in the sun.',
     'I expect Sam to collect the insect.',
-    'She has the exact map.',
+    'She has the correct map.',
     'They connect the ball to the net.',
     'One duck can inspect the shell.',
     'Water can fill a red cup.',
@@ -181,19 +181,19 @@ export const SUBSTEP_3_3: Substep = {
       ],
     },
     {
-      title: 'Nan Has the Exact Map',
+      title: 'Nan Has the Correct Map',
       sentences: [
         'Nan has a map to the shed.',
         'The map is not correct, and Nan is sad.',
         'Nan can inspect the map and fix it.',
-        'The map is exact.',
+        'The map is correct.',
         'Nan can run to the log, then to the shed.',
-        'Nan is at the shed with the exact map.',
+        'Nan is at the shed with the correct map.',
       ],
       questions: [
         {
           prompt: 'What is wrong with the map at the start of the story?',
-          choices: ['it is not correct', 'it is exact', 'it is at the shed'],
+          choices: ['it is not correct', 'it is at the shed', 'Nan can fix it'],
           answer: 0,
         },
         {
