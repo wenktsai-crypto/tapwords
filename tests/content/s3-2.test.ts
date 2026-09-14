@@ -39,4 +39,17 @@ describe('substep 3.2 content', () => {
       expect(w.text.endsWith('ct'), w.text).toBe(false);
     }
   });
+
+  it('has enough to read for a child who stays here a few weeks', () => {
+    expect(SUBSTEP_3_2.words.filter((w) => w.kind === 'real').length).toBeGreaterThanOrEqual(35);
+    expect(SUBSTEP_3_2.words.filter((w) => w.kind === 'nonsense').length).toBeGreaterThanOrEqual(20);
+    expect(SUBSTEP_3_2.sentences.length).toBeGreaterThanOrEqual(18);
+    expect(SUBSTEP_3_2.stories.length).toBeGreaterThanOrEqual(4);
+    for (const st of SUBSTEP_3_2.stories) expect(st.questions.length, st.title).toBeGreaterThanOrEqual(2);
+  });
+
+  it("has retired the words that are not worth a ten-year-old's time", () => {
+    const texts = new Set(SUBSTEP_3_2.words.map((w) => w.text.toLowerCase()));
+    for (const gone of ['complex', 'insult', 'husband', 'absent', 'vat', 'cam', 'sham', 'rind', 'volt']) expect(texts.has(gone), gone).toBe(false);
+  });
 });
