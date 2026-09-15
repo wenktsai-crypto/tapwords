@@ -36,11 +36,16 @@ describe('substep 3.5 content', () => {
     expect(checkContent(content)).toEqual([]);
   });
 
-  it('ends every real word in ed or ing, tagged with the matching suffix concept', () => {
-    for (const w of SUBSTEP_3_5.words.filter((w) => w.kind === 'real')) {
+  it('ends every word in ed or ing and breaks the syllable right in front of it', () => {
+    for (const w of SUBSTEP_3_5.words) {
       const last = w.parts[w.parts.length - 1].grapheme;
       expect(['ed', 'ing'], w.text).toContain(last);
-      expect(w.concepts, w.text).toContain(last === 'ed' ? 'suffix-ed' : 'suffix-ing');
+      // The gap is what shows the child where the base word stops and the suffix starts, and a
+      // nonsense word needs it at least as much as a real one. All 22 of this section's shipped
+      // without it, so the gap appeared and vanished inside one word list.
+      expect(w.syllables, w.text).toBeDefined();
+      expect(w.syllables![w.syllables!.length - 1], w.text).toBe(w.parts.length - 1);
+      if (w.kind === 'real') expect(w.concepts, w.text).toContain(last === 'ed' ? 'suffix-ed' : 'suffix-ing');
     }
   });
 

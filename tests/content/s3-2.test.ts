@@ -30,13 +30,23 @@ describe('substep 3.2 content', () => {
     expect(checkContent(content)).toEqual([]);
   });
 
-  it('splits every real word into two closed syllables with a blend, and never ends in "ct"', () => {
-    for (const w of SUBSTEP_3_2.words.filter((word) => word.kind === 'real')) {
+  it('splits every word, made-up ones included, into two closed syllables with a blend, and never ends in "ct"', () => {
+    // Nonsense words are the purest decoding test, so they need the syllable gap at least as
+    // much as the real words beside them. All 20 of this section's shipped without one.
+    const byId = new Map(CARDS.map((c) => [c.id, c]));
+    for (const w of SUBSTEP_3_2.words) {
       expect(w.syllables, w.text).toBeDefined();
       expect(w.syllables!.length, w.text).toBe(1);
 
       const boundary = w.syllables![0];
       const syllables = [w.parts.slice(0, boundary), w.parts.slice(boundary)];
+
+      // Closed, both halves: Book 3 pulls a consonant left rather than leave a first syllable
+      // open, because an open syllable would make the vowel say its name (R21).
+      for (const syllable of syllables) {
+        const last = syllable[syllable.length - 1];
+        expect(byId.get(last.card)?.type, `${w.text}: syllable ending "${last.grapheme}"`).not.toBe('vowel');
+      }
 
       const hasBlend = syllables.some((syllable) => {
         const vowelIndex = syllable.findIndex((p) => 'aeiou'.includes(p.grapheme[0]) || p.card === 'am' || p.card === 'an');
