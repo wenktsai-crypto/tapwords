@@ -120,7 +120,8 @@ export const SUBSTEP_3_2: Substep = {
         'It can not sit on the blanket.',
         'The little pumpkin is on the blanket.',
         'Sam can hold the fat pumpkin on his lap.',
-        'The fat pumpkin is the best, and the contest is over.',
+        'The fat pumpkin is the best, and the thin pumpkin is not.',
+        'The contest is over.',
       ],
       questions: [
         // Every wrong answer here is a pumpkin that is really in the story. "the blanket" and

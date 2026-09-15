@@ -130,9 +130,18 @@ export const SUBSTEP_4_2: Substep = {
     nonsense('zome', 'z,o:o_e,m,e:e_silent'),
     nonsense('nofe', 'n,o:o_e,f,e:e_silent'),
 
-    // Nonsense, group 2 pattern. The -ube, -ude and -uke families were all dropped: they sit one
-    // letter from lube, nude, rude, dude, nuke and puke. bume was dropped because deleting its e
-    // leaves "bum", and fule because it sounds like "fuel".
+    // Nonsense, group 2 pattern. The same two-level bar as group 1 above, applied here:
+    //   * -ude is out under the sound-alike rule, not the rude-word rule: rude and dude are real
+    //     words in 4.3's bank, and a nonsense word may not be a sound-alike of a real one. -ube
+    //     and -uke go the same way for lube and nuke, which are real words the child may meet.
+    //   * puke is mild vulgar slang, not a slur, so under R35 being one letter from it
+    //     disqualifies nothing - it is not why -uke is out.
+    //   * fule is out as a sound-alike of "fuel", the same rule as -ude.
+    //
+    // bume is absent for a reason that does not survive the bar: it was struck because deleting
+    // its e leaves "bum", mild slang rather than a slur. That is the identical case to nobe
+    // above, and like nobe its absence is an accident, not a rule. It has not been put back
+    // because the bank does not need it. Do not read its absence as a bar on -ume; vume is below.
     nonsense('hute', 'h,u:u_e,t,e:e_silent'),
     nonsense('vute', 'v,u:u_e,t,e:e_silent'),
     nonsense('vume', 'v,u:u_e,m,e:e_silent'),

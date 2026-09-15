@@ -20,7 +20,12 @@ Books 1 to 3 (Steps 1 to 3) were the first version and have been live for a whil
     npm test             # 375 unit tests: engine, content checker, screens, store, build output
     npm run typecheck
     npm run build
-    npm run e2e          # 8 Playwright tests at iPad size (first time: npx playwright install chromium)
+    npm run e2e          # 9 Playwright tests at iPad size (first time: npx playwright install chromium)
+
+Never mutation-test the browser suite with `npx playwright test` alone: it serves whatever is
+already in `dist/`, so a change to `src/` appears to have no effect and a broken guard looks
+like a passing one. Only `npm run e2e` rebuilds first. Two guards have shipped on this project
+whose authors believed false evidence; this is one of the ways to get it.
 
 All four commands were green on `main` at handoff. The README explains the parent-facing side (home-screen install, placement check, recording, backup).
 
