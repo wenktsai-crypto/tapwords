@@ -91,12 +91,14 @@ export const SUBSTEP_4_6: Substep = {
     plural('ropes', 'r,o:o_e,p,e:e_silent,s'),
 
     // Two syllables. The child is comfortable with these, and the s ending behaves no
-    // differently at the end of a long word than a short one.
+    // differently at the end of a long word than a short one. pan- and hand- are tapped as
+    // separate letters, never with the welded an card: the welded rule is word-final, and 4.5
+    // taps pancake, handshake and handmade the same way.
     plural('mistakes', 'm,i,s,t,a:a_e,k,e:e_silent,s', { syllables: [3] }),
     plural('cupcakes', 'c,u,p,c,a:a_e,k,e:e_silent,s', { syllables: [3] }),
-    plural('pancakes', 'p,an,c,a:a_e,k,e:e_silent,s', { syllables: [2] }),
+    plural('pancakes', 'p,a,n,c,a:a_e,k,e:e_silent,s', { syllables: [3] }),
     plural('milkshakes', 'm,i,l,k,sh,a:a_e,k,e:e_silent,s', { syllables: [4] }),
-    plural('handshakes', 'h,an,d,sh,a:a_e,k,e:e_silent,s', { syllables: [3] }),
+    plural('handshakes', 'h,a,n,d,sh,a:a_e,k,e:e_silent,s', { syllables: [4] }),
 
     // ---- The three words that break the rule ----------------------------------------------
     // Tapped as an ordinary closed syllable. The "ve" is one sound on the v card, because
@@ -171,36 +173,46 @@ export const SUBSTEP_4_6: Substep = {
   ],
   stories: [
     {
-      title: 'Pam and the Cupcakes',
+      // Rewritten in the final fix wave. "Pam and the Cupcakes" was the fifth of five Book 4
+      // stories on the same plot, and its closing line was 4.3's closing line with the nouns
+      // swapped. Here the problem comes from the weather rather than from anyone's mistake, and
+      // the resolution is that the day turns into a better one than the day that was planned.
+      // Nothing is learned and nobody is corrected, which is the point.
+      title: 'Flakes on the Gates',
       sentences: [
-        'Pam had to make cupcakes for the contest at the camp.',
-        'Nan gave Pam a big pan and two plates.',
-        'Pam did it fast, and she did not check on them.',
-        'The cupcakes came out like a rock.',
-        'Pam was upset, and she told Nan.',
-        'Nan said that people make mistakes.',
-        'She said it is best to check on them as they bake.',
-        'Pam did the mix again, and this time she did check.',
-        'This time the cupcakes came out well.',
-        'Pam put them on the plates and went to the contest.',
-        'The man at the contest did not give Pam the gold cup.',
-        'But he said that the cupcakes were the best he had.',
-        'Now Pam makes cupcakes for Nan, and she does not rush.',
+        'Sam woke up, and the hill was white.',
+        'Flakes had come down on the camp, thick and fast.',
+        'The flakes were up over the gates, and the path to the pond was not there.',
+        'Nan said that the van could not come down the hill.',
+        'The trip to the lakes was off.',
+        'Sam was upset, as he had his skates in his pack.',
+        'Then Jan said to come and check what was in the shed.',
+        'In the shed were the big plastic plates from the picnic.',
+        'Sam and Jan went up the slope with them.',
+        'Sam sat on a plate and went down fast.',
+        'Then Jan went down, and she went into a big bank of flakes.',
+        'They did it again and again, up the slope and down.',
+        'Then Nan came out with cupcakes and pancakes.',
+        'Sam did not think about the lakes again.',
       ],
       questions: [
         {
-          prompt: 'What did Pam have to make for the contest?',
-          choices: ['cupcakes', 'plates', 'a pan'],
+          prompt: 'Why was the trip to the lakes off?',
+          choices: [
+            'the van could not come down the hill',
+            'the plates were in the shed',
+            'Sam had his skates in his pack',
+          ],
           answer: 0,
         },
         {
-          prompt: 'Why did the first cupcakes come out like a rock?',
-          choices: ['Pam did not check on them', 'Nan gave Pam a big pan', 'Pam put them on the plates'],
+          prompt: 'What did Sam and Jan use to go down the slope?',
+          choices: ['the plates', 'the skates', 'the gates'],
           answer: 0,
         },
         {
-          prompt: 'What did the man at the contest say about the cupcakes?',
-          choices: ['they were the best he had', 'they came out like a rock', 'she had to make them'],
+          prompt: 'What did Nan come out with at the end?',
+          choices: ['cupcakes and pancakes', 'plates from the picnic', 'skates in a pack'],
           answer: 0,
         },
       ],
@@ -218,8 +230,8 @@ export const SUBSTEP_4_6: Substep = {
         'It was a long time, and Sam did want to give up.',
         'Then the ropes were not in a twist.',
         'The kites went back up over the pond.',
-        'Sam said that Dan was right to sit and not rush.',
-        'Now they check the ropes before they run up the hill.',
+        'Dan said it was the best day on the hill yet.',
+        'They had grapes on the hill while the two kites went up and up.',
       ],
       questions: [
         {
@@ -233,8 +245,8 @@ export const SUBSTEP_4_6: Substep = {
           answer: 0,
         },
         {
-          prompt: 'What do they do now before they run up the hill?',
-          choices: ['they check the ropes', 'they give up', 'they sit on the path'],
+          prompt: 'What did Dan say at the end?',
+          choices: ['it was the best day on the hill yet', 'they had to stop and sit', 'the ropes got in a twist'],
           answer: 0,
         },
       ],

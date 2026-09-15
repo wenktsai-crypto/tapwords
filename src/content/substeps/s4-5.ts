@@ -87,13 +87,16 @@ export const SUBSTEP_4_5: Substep = {
     word('costume', 'c,o,s,t,u:u_e_oo,m,e:e_silent', { syllables: [3] }),
     word('reptile', 'r,e,p,t,i:i_e,l,e:e_silent', { syllables: [3] }),
     word('athlete', 'a,th,l,e:e_e,t,e:e_silent', { syllables: [2] }),
-    // stam- ends on the welded am she taps as one sound, exactly as in ham and pan.
-    word('stampede', 's,t,am:am,p,e:e_e,d,e:e_silent', { syllables: [3] }),
+    // stam- is tapped s,t,a,m, not with the welded am card. The welded rule is word-final (see
+    // check.ts and docs/HANDOFF.md), and every mid-word an/am in Books 1-3 is tapped as separate
+    // letters: cannot, blanket, frantic, fantastic, Atlantic, Manhattan, cannonball. Welding it
+    // here would change the motor routine for a syllable she already taps the other way.
+    word('stampede', 's,t,a,m,p,e:e_e,d,e:e_silent', { syllables: [4] }),
 
     // Compound words: two words she can already read, joined. These are the easiest long words
     // in the section and the best place to start.
     word('cupcake', 'c,u,p,c,a:a_e,k,e:e_silent', { syllables: [3] }),
-    word('pancake', 'p,an:an,c,a:a_e,k,e:e_silent', { syllables: [2] }),
+    word('pancake', 'p,a,n,c,a:a_e,k,e:e_silent', { syllables: [3] }),
     word('mistake', 'm,i,s,t,a:a_e,k,e:e_silent', { syllables: [3] }),
     word('sunshine', 's,u,n,sh,i:i_e,n,e:e_silent', { syllables: [3] }),
     word('handshake', 'h,a,n,d,sh,a:a_e,k,e:e_silent', { syllables: [4] }),
@@ -110,7 +113,7 @@ export const SUBSTEP_4_5: Substep = {
     word('tadpole', 't,a,d,p,o:o_e,l,e:e_silent', { syllables: [3] }),
     word('flagpole', 'f,l,a,g,p,o:o_e,l,e:e_silent', { syllables: [4] }),
     word('pothole', 'p,o,t,h,o:o_e,l,e:e_silent', { syllables: [3] }),
-    word('manhole', 'm,an:an,h,o:o_e,l,e:e_silent', { syllables: [2] }),
+    word('manhole', 'm,a,n,h,o:o_e,l,e:e_silent', { syllables: [3] }),
     word('bathrobe', 'b,a,th,r,o:o_e,b,e:e_silent', { syllables: [3] }),
     word('backstroke', 'b,a,ck,s,t,r,o:o_e,k,e:e_silent', { syllables: [3] }),
     word('bagpipe', 'b,a,g,p,i:i_e,p,e:e_silent', { syllables: [3] }),
@@ -210,7 +213,9 @@ export const SUBSTEP_4_5: Substep = {
         },
         {
           prompt: 'Why did Jan say that taking it home would be a mistake?',
-          choices: ['the pond was best for it', 'the cup was not big', 'the rock was in the mud'],
+          // Both wrong answers are things the story states outright, not recombinations of its
+          // nouns: "It was in the mud at the side of the pond" and "Sam did want to take it home".
+          choices: ['the pond was best for it', 'the tadpole was in the mud', 'Sam did want to take it home'],
           answer: 0,
         },
         {
@@ -221,35 +226,51 @@ export const SUBSTEP_4_5: Substep = {
       ],
     },
     {
+      // Rewritten in the final fix wave. The version that stood here was the third of five
+      // Book 4 stories on one plot (rush, fail, slow down, succeed) and shared two phrases word
+      // for word with 4.3's - "his song was a mess", "did not rush, and the song came out well".
+      // The instruments, the contest and the one spot are kept, because the section's showcase
+      // words live in them; the problem and the resolution are new. Nobody is at fault, nobody
+      // rushes, and the answer comes from Sam having an idea rather than from taking advice.
       title: 'The Trombone and the Bagpipe',
       sentences: [
         'Sam had a trombone, and his classmate Jan had a bagpipe.',
-        'The band at the camp had one spot.',
-        'The man said the two of them had to compete for it.',
+        'The band at the camp had one spot, and the two of them did want it.',
+        'The man said he would pick one of them at the contest.',
         'Sam went inside and did the song again and again.',
         'Jan sat on the hillside in the sunshine and did the same.',
-        'On the day of the contest, Sam went too fast.',
-        'His song was a mess.',
-        'Jan did not rush, and the song came out well.',
-        'The man said that Jan had the spot.',
-        'Sam was sad, but he gave Jan a handshake.',
-        'Then Sam went home and did the song every day, and he did not rush.',
-        'When the man came back, he said the band had a spot for the trombone as well.',
+        'On the day of the contest, Sam did the song on the trombone.',
+        'The man said it was the best trombone he had.',
+        'Then Jan did the song on the bagpipe, and the man did like that as well.',
+        'He sat and did think for a long time, and then he said he could not pick.',
+        'Sam said that the two of them could do the song at the same time.',
+        'Up on the hillside, they did it again and again.',
+        'The trombone went down where the bagpipe went up.',
+        'The man came back and said the band had a spot for the two of them.',
+        'When they did the song, the children did stamp and yell.',
       ],
       questions: [
         {
           prompt: 'Which instrument did Jan have?',
-          choices: ['a bagpipe', 'a trombone', 'a handshake'],
+          choices: ['a bagpipe', 'a trombone', 'a band'],
           answer: 0,
         },
         {
-          prompt: 'Why did Sam not get the spot at the contest?',
-          choices: ['he went too fast', 'the trombone was not in the band', 'he sat on the hillside'],
+          prompt: 'What did Sam say when the man could not pick?',
+          choices: [
+            'the two of them could do the song at the same time',
+            'the band had one spot',
+            'he did the song again and again',
+          ],
           answer: 0,
         },
         {
-          prompt: 'What did Sam do after the contest?',
-          choices: ['he did the song every day', 'he sat in the sunshine', 'he gave the spot to the band'],
+          prompt: 'What did the children do when Sam and Jan did the song?',
+          choices: [
+            'the children did stamp and yell',
+            'the man did pick one of them',
+            'the children sat on the hillside',
+          ],
           answer: 0,
         },
       ],

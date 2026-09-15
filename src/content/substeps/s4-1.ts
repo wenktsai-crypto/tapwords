@@ -34,7 +34,7 @@ export const SUBSTEP_4_1: Substep = {
         { say: 'Your turn. Look at the end of the word before you start tapping.' },
         { try: 'time' },
         { try: 'five' },
-        { try: 'smile' },
+        { try: 'mile' },
         { try: 'nine' },
       ],
     },
@@ -44,8 +44,11 @@ export const SUBSTEP_4_1: Substep = {
   // later, and "The Ride up the Hill" opens on a fine day.
   sightWords: ['day'],
   words: [
-    // Group 1: a and silent e. Simple consonant, vowel, consonant, e — blends and digraphs
-    // in front of the vowel wait for 4.4.
+    // Group 1: a and silent e. Every word here is a simple consonant, vowel, consonant, e, and
+    // so is every tap and try step in both lessons, so her first meeting with each new card is
+    // never tangled up with a blend. The bank itself is not that pure — "smile" sits in group 2
+    // below, and 4.2 and 4.3 carry a dozen more blend words their own word supply cannot do
+    // without. 4.4 is where a whole list of them is taught, not where the child first sees one.
     word('cake', 'c,a:a_e,k,e:e_silent'),
     word('bake', 'b,a:a_e,k,e:e_silent'),
     word('rake', 'r,a:a_e,k,e:e_silent'),
@@ -184,7 +187,8 @@ export const SUBSTEP_4_1: Substep = {
         'Then they saw a red kite in a thick vine.',
         'Nan lifted the kite out of the vine.',
         'It was time to ride back down the hill with the kite.',
-        'Dan came down fast. Nan was not quick.',
+        'Dan came down fast.',
+        'Nan was not quick.',
         '"Now you are the quick one," said Nan.',
       ],
       questions: [

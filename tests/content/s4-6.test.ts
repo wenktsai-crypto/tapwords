@@ -21,6 +21,8 @@ import { SUBSTEP_3_5 } from '../../src/content/substeps/s3-5';
 import { SUBSTEP_4_1 } from '../../src/content/substeps/s4-1';
 import { SUBSTEP_4_2 } from '../../src/content/substeps/s4-2';
 import { SUBSTEP_4_3 } from '../../src/content/substeps/s4-3';
+import { SUBSTEP_4_4 } from '../../src/content/substeps/s4-4';
+import { SUBSTEP_4_5 } from '../../src/content/substeps/s4-5';
 import { SUBSTEP_4_6 } from '../../src/content/substeps/s4-6';
 import type { Content } from '../../src/content/types';
 
@@ -29,16 +31,18 @@ const SUFFIX_S = 'suffix-s';
 /** The concept this section introduces, for have, give and live. */
 const EXCEPTION = 'silent-e-exception';
 
-// Sections 4.4 and 4.5 are being written at the same time as this one, so they are not in the
-// fixture. Everything 4.6 leans on is taught at or before 4.3, which makes this a strict subset
-// of the production order Task 14 assembles.
+// The full teaching order up to and including this section. 4.4 and 4.5 were being written at
+// the same time as 4.6 and so were left out of this fixture originally, which made it narrower
+// than the app: words this section may legitimately lean on (plate, slope, white, while) read as
+// untaught here while passing in production. Widened in the final fix wave, the same correction
+// ruling R14 made for the Book 3 fixtures.
 const content: Content = {
   cards: CARDS,
   substeps: [
     SUBSTEP_1_1, SUBSTEP_1_2, SUBSTEP_1_3, SUBSTEP_1_4, SUBSTEP_1_5, SUBSTEP_1_6,
     SUBSTEP_2_1, SUBSTEP_2_2, SUBSTEP_2_3, SUBSTEP_2_4, SUBSTEP_2_5,
     SUBSTEP_3_1, SUBSTEP_3_2, SUBSTEP_3_3, SUBSTEP_3_4, SUBSTEP_3_5,
-    SUBSTEP_4_1, SUBSTEP_4_2, SUBSTEP_4_3,
+    SUBSTEP_4_1, SUBSTEP_4_2, SUBSTEP_4_3, SUBSTEP_4_4, SUBSTEP_4_5,
     SUBSTEP_4_6,
   ],
 };
