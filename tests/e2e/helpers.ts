@@ -129,18 +129,7 @@ export async function autoPlay(
       }
       case 'spelling': {
         const item = await part.getAttribute('data-item');
-        if (item === 'sound') {
-          // SpellingPart renders a silent-e sound card ("a_e", "i_e", ...) by its bare vowel
-          // grapheme ("a"), the same text the plain vowel card it's built on would show, instead
-          // of its own drill face the way SoundCardsPart does (see cardDisplay in
-          // content/parts.ts) — so match on the extra "tile-vce" class too, or a same-letter
-          // plain-vowel distractor could be the one that gets clicked.
-          const vce = /^([aeiou])_e$/.exec(answer);
-          const locator = vce
-            ? part.locator('button.tile-vce').filter({ hasText: new RegExp(`^${escapeRegex(vce[1])}$`) })
-            : part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) });
-          await locator.click();
-        }
+        if (item === 'sound') await part.getByRole('button', { name: new RegExp(`^${escapeRegex(answer)}$`) }).click();
         else if (item === 'word') await buildFrom(page, answer.split(','));
         else await buildFrom(page, answer.split('|'));
         break;

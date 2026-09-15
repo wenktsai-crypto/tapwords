@@ -18,6 +18,20 @@ const twoSubsteps: Content = {
 };
 
 describe('ParentArea', () => {
+  it('names a weak silent-e card by its own face, not by its bare vowel', async () => {
+    // "a_e" and "a" are two different cards a child can be weak on, and the grown-up is being
+    // told which one to practise — so the list has to say which.
+    const store = new MemoryStore();
+    const profile = {
+      id: 'p2', name: 'Eve', color: 'sky',
+      createdAt: 'd',
+      state: { ...initialState('1.1'), sessionsCompleted: 1, strengths: { 'card:a_e': { value: 0.1, lastSeen: 1 }, 'card:a': { value: 0.2, lastSeen: 1 } } },
+    };
+    await store.saveProfile(profile);
+    renderWithServices(<ParentArea profile={profile} onBack={() => {}} />, { store, content: twoSubsteps });
+    expect(await screen.findByText('a_e, a')).toBeInTheDocument();
+  });
+
   it('shows progress and moves the child to another substep', async () => {
     const user = userEvent.setup();
     const store = new MemoryStore();

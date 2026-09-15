@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SpellingItem } from '../../engine/session';
 import { cardKey, sentenceKey, wordKey, type ScoredResponse } from '../../engine/types';
 import { getCard } from '../../engine/availability';
+import { cardDisplay } from '../../content/parts';
 import { useServices } from '../services';
 import { Caption, useSay } from '../speech';
 import { Tile } from '../components/Tile';
@@ -108,7 +109,10 @@ export function SpellingPart({ items, onComplete, onProgress }: Props) {
         <div className="row">
           {item.choices.map((c) => {
             const card = getCard(content, c);
-            return <Tile key={c} grapheme={card.grapheme} type={card.type} size="large" selected={feedback === 'sound' && c === item.card} dim={feedback === 'sound' && c !== item.card} onClick={() => record(c === item.card)} />;
+            // The card's own drill face, as SoundCardsPart shows it: a_e, not a. A silent-e card
+            // and the plain vowel it is built on share a grapheme, and both can be choices in the
+            // same row, so the grapheme would put two identical tiles on screen.
+            return <Tile key={c} grapheme={cardDisplay(card)} type={card.type} size="large" selected={feedback === 'sound' && c === item.card} dim={feedback === 'sound' && c !== item.card} onClick={() => record(c === item.card)} />;
           })}
         </div>
       )}
