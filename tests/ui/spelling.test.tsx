@@ -49,6 +49,18 @@ describe('SpellingPart', () => {
     ]);
   });
 
+  it('tells a silent-e sound card apart from the plain vowel it is built on', async () => {
+    // The a_e card and the plain a card can sit in the same choice row, and a_e's grapheme IS
+    // "a" — so rendering the grapheme puts two identical tiles on screen, one scored right and
+    // one wrong, with nothing to choose between them. Drill faces must be distinct.
+    const onComplete = vi.fn();
+    const row: SpellingItem[] = [{ type: 'sound', card: 'a_e', choices: ['a_e', 'a', 'm', 's'], isReview: false }];
+    renderWithServices(<SpellingPart items={row} onComplete={onComplete} />);
+    const faces = (await screen.findAllByRole('button')).map((b) => b.textContent).filter((t) => t && t !== 'Hear it again');
+    expect(faces).toContain('a_e');
+    expect(new Set(faces).size, `two choices render the same face: ${faces.join(', ')}`).toBe(faces.length);
+  });
+
   it('runs the miss review after a misspelled word', async () => {
     const user = userEvent.setup();
     const onComplete = vi.fn();

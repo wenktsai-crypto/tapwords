@@ -3,6 +3,7 @@ import type { Profile } from '../../store/types';
 import type { SessionLog } from '../../engine/types';
 import { accuracy, moveTo } from '../../engine/progression';
 import { getSubstep } from '../../engine/availability';
+import { cardDisplay } from '../../content/parts';
 import { useServices } from '../services';
 import { BigButton } from '../components/BigButton';
 import { Path } from '../components/Path';
@@ -45,7 +46,8 @@ export function ParentArea({ profile: initial, onBack }: Props) {
       .flatMap(([k]) => {
         if (k.startsWith('card:')) {
           const card = content.cards.find((c) => c.id === k.slice('card:'.length));
-          return card ? [card.grapheme] : [];
+          // The card's drill face, so a weak a_e is not reported as an indistinguishable "a".
+          return card ? [cardDisplay(card)] : [];
         }
         if (k.startsWith('word:')) return [k.split(':').slice(2).join(':')];
         return [];
