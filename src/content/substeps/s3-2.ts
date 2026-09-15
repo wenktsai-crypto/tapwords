@@ -113,6 +113,7 @@ export const SUBSTEP_3_2: Substep = {
       sentences: [
         'Sam has a fat pumpkin.',
         'Pam has a little pumpkin.',
+        'Dan has a thin pumpkin in his basket.',
         'The children have a contest.',
         'Sam and Pam sit on a big blanket.',
         'Sam has a problem with his fat pumpkin.',
@@ -122,15 +123,20 @@ export const SUBSTEP_3_2: Substep = {
         'The fat pumpkin is the best, and the contest is over.',
       ],
       questions: [
-        { prompt: 'Who has a fat pumpkin?', choices: ['Sam', 'Pam', 'the children'], answer: 0 },
+        // Every wrong answer here is a pumpkin that is really in the story. "the blanket" and
+        // "the big blanket" used to stand in the third slot of the last two questions, and a
+        // blanket is not a pumpkin, so a child could strike them out without reading a word.
+        // The story had only two pumpkins, so there was nothing to swap them for; Dan's thin
+        // one, in his basket rather than on the blanket, is the third real candidate.
+        { prompt: 'Who has a fat pumpkin?', choices: ['Sam', 'Pam', 'Dan'], answer: 0 },
         {
           prompt: 'Which pumpkin sits on the blanket?',
-          choices: ['the little pumpkin', 'the fat pumpkin', 'the blanket'],
+          choices: ['the little pumpkin', 'the fat pumpkin', 'the thin pumpkin'],
           answer: 0,
         },
         {
           prompt: 'At the end, which pumpkin is the best?',
-          choices: ['the fat pumpkin', 'the little pumpkin', 'the big blanket'],
+          choices: ['the fat pumpkin', 'the little pumpkin', 'the thin pumpkin'],
           answer: 0,
         },
       ],
@@ -200,7 +206,10 @@ export const SUBSTEP_3_2: Substep = {
       questions: [
         {
           prompt: 'Where did the drumstick fall?',
-          choices: ['in the mud', 'in the shed', 'on the trumpet'],
+          // "on the trumpet" was the odd one out: the trumpet is in the story but the word "on"
+          // is not, so the choice was phrased out of words the story never uses. A drumstick
+          // could plausibly fall in the bell of a trumpet, so the wrong answer still bites.
+          choices: ['in the mud', 'in the shed', 'in the trumpet'],
           answer: 0,
         },
         { prompt: 'What did Pam use to get the mud off?', choices: ['the rag', 'the trumpet', 'the song'], answer: 0 },

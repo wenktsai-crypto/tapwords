@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CARDS } from '../../src/content/cards';
-import { checkContent } from '../../src/content/check';
+import { checkContent, tokenize } from '../../src/content/check';
 import { SUBSTEP_1_1 } from '../../src/content/substeps/s1-1';
 import { SUBSTEP_1_2 } from '../../src/content/substeps/s1-2';
 import { SUBSTEP_1_3 } from '../../src/content/substeps/s1-3';
@@ -66,6 +66,21 @@ describe('substep 3.2 content', () => {
     expect(SUBSTEP_3_2.sentences.length).toBeGreaterThanOrEqual(18);
     expect(SUBSTEP_3_2.stories.length).toBeGreaterThanOrEqual(4);
     for (const st of SUBSTEP_3_2.stories) expect(st.questions.length, st.title).toBeGreaterThanOrEqual(2);
+  });
+
+  it('draws every answer choice from its own story', () => {
+    // A wrong answer chosen because it is absent from the story teaches the child that skimming
+    // works. Two of story 1's used to offer a blanket where the question asked about a pumpkin.
+    for (const st of SUBSTEP_3_2.stories) {
+      const inStory = new Set(st.sentences.flatMap((s) => tokenize(s)));
+      for (const q of st.questions) {
+        for (const choice of q.choices) {
+          for (const token of tokenize(choice)) {
+            expect(inStory.has(token), `${st.title}: choice "${choice}" uses "${token}", absent from the story`).toBe(true);
+          }
+        }
+      }
+    }
   });
 
   it("has retired the words that are not worth a ten-year-old's time", () => {
