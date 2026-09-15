@@ -17,7 +17,7 @@ Books 1 to 3 (Steps 1 to 3) were the first version and have been live for a whil
 
     npm install
     npm run dev          # local, prints a Network address for the iPad
-    npm test             # 363 unit tests: engine, content checker, screens, store, build output
+    npm test             # 375 unit tests: engine, content checker, screens, store, build output
     npm run typecheck
     npm run build
     npm run e2e          # 8 Playwright tests at iPad size (first time: npx playwright install chromium)
