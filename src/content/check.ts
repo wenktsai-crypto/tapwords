@@ -1,4 +1,5 @@
 import type { Content } from './types';
+import { cardMap, silentPartners } from './parts';
 
 /** Graphemes that are spellings of an existing card and need a rule taught first. */
 export const SPELLING_RULES: Record<string, string> = {
@@ -6,6 +7,10 @@ export const SPELLING_RULES: Record<string, string> = {
   ll: 'doubling',
   ss: 'doubling',
   zz: 'doubling',
+  // English never ends a word in a bare v, so "have", "give" and "live" carry an e that is part
+  // of how the v is spelled rather than a silent letter doing a job. The part is tapped as one
+  // sound on the v card, exactly as "ff" is tapped on the f card.
+  ve: 'silent-e-exception',
 };
 
 export const MIN = { real: 20, nonsense: 10, sentences: 6, stories: 1, questions: 1 };
@@ -25,6 +30,7 @@ export function tokenize(sentence: string): string[] {
 export function checkContent(content: Content, min: typeof MIN = MIN): string[] {
   const errors: string[] = [];
   const cardById = new Map(content.cards.map((c) => [c.id, c]));
+  const cards = cardMap(content.cards);
   const introducedCards = new Set<string>();
   const introducedGraphemes = new Set<string>();
   const introducedConcepts = new Set<string>();
@@ -56,7 +62,11 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
         if (introducedCards.has(c)) errors.push(`${s.id}: card "${c}" was already introduced`);
         introducedCards.add(c);
         const card = cardById.get(c);
-        if (card) introducedGraphemes.add(card.grapheme);
+        if (card) {
+          introducedGraphemes.add(card.grapheme);
+          // A lesson may show "a_e", the face of the card, as well as the bare letter a word uses.
+          if (card.display) introducedGraphemes.add(card.display);
+        }
       }
       for (const step of g.lesson) {
         if ('show' in step) {
@@ -83,9 +93,21 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
       }
     }
 
+    // The syllable gap is the scaffold for reading a long word, and a nonsense word is the purest
+    // decoding test — the place the scaffold is needed most. So within one section, if the real
+    // words of a given length are split into syllables, the nonsense words of that length must be
+    // split too. Otherwise the gap appears and vanishes inside one word list and the only pattern
+    // left for the child is "real versus made-up", which is exactly the wrong lesson.
+    // Matching on part count is what keeps this honest: a section like 3.3, whose one-syllable
+    // real words carry no split, does not demand one from its one-syllable nonsense words.
+    const splitLengths = new Set(s.words.filter((w) => w.kind === 'real' && w.syllables).map((w) => w.parts.length));
+
     let real = 0;
     let nonsenseCount = 0;
     for (const w of s.words) {
+      if (w.kind === 'nonsense' && !w.syllables && splitLengths.has(w.parts.length)) {
+        errors.push(`${s.id}: nonsense word "${w.text}" has no syllables, but the real words of the same length in this section do`);
+      }
       if (w.kind === 'real') real++;
       else nonsenseCount++;
       const joined = w.parts.map((p) => p.grapheme).join('');
@@ -95,6 +117,19 @@ export function checkContent(content: Content, min: typeof MIN = MIN): string[] 
       if (ending && lastPart && lastPart.grapheme !== ending) {
         errors.push(`${s.id}: "${w.text}" ends in "${ending}" which must be tapped as the welded card "${ending}"`);
       }
+      // A silent letter only makes sense as the partner of a vowel earlier in its syllable, and
+      // such a vowel is silent-e only if it has exactly one partner. Either half alone is a typo.
+      const pairs = silentPartners(w, cards);
+      w.parts.forEach((p, i) => {
+        const type = cards.get(p.card)?.type;
+        if (type === 'silent' && !pairs.some((pair) => pair.silent === i)) {
+          errors.push(`${s.id}: "${w.text}" has a silent "${p.grapheme}" with no silent-e vowel before it in the same syllable`);
+        }
+        if (type === 'vce') {
+          const n = pairs.filter((pair) => pair.vowel === i).length;
+          if (n !== 1) errors.push(`${s.id}: "${w.text}" has a silent-e vowel with ${n} silent partners in its syllable (need exactly 1)`);
+        }
+      });
       if (w.syllables) {
         const ok = w.syllables.every((x, i) => Number.isInteger(x) && x > 0 && x < w.parts.length && (i === 0 || x > w.syllables![i - 1]));
         if (!ok) errors.push(`${s.id}: "${w.text}" has invalid syllables [${w.syllables}]`);

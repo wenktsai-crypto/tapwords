@@ -30,11 +30,11 @@ export const SUBSTEP_2_2: Substep = {
     cvc('grab'), cvc('trip'), cvc('swim'), cvc('snap'), cvc('plug'), cvc('glad'), cvc('club'),
     cvc('crab'), cvc('frog'), cvc('milk'), cvc('help'), cvc('jump'), cvc('lamp'), cvc('camp'),
     cvc('hand'), cvc('sand'), cvc('band'), cvc('land'), cvc('bend'), cvc('best'), cvc('fast'),
-    cvc('must'), cvc('lift'), cvc('desk'), cvc('raft'), cvc('pond'),
+    cvc('must'), cvc('lift'), cvc('desk'), cvc('raft'), cvc('pond'), cvc('went'),
     word('brush', 'b,r,u,sh'),
 
     // Nonsense words, same four-sound shape.
-    cvcNonsense('flib'), cvcNonsense('stog'), cvcNonsense('plim'), cvcNonsense('trup'),
+    cvcNonsense('flib'), cvcNonsense('steb'), cvcNonsense('plim'), cvcNonsense('trup'),
     cvcNonsense('drep'), cvcNonsense('snup'), cvcNonsense('glup'), cvcNonsense('tesk'),
     cvcNonsense('mulp'), cvcNonsense('vand'), cvcNonsense('brop'),
     nonsense('clesh', 'c,l,e,sh'),

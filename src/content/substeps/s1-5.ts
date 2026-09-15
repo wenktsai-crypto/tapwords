@@ -28,8 +28,8 @@ export const SUBSTEP_1_5: Substep = {
     // row or a read-aloud line shows "Sam", not "sam"; their parts stay lower case.
     word('am', 'am'),
     word('ham', 'h,am'), word('jam', 'j,am'), word('ram', 'r,am'), word('yam', 'y,am'),
-    word('dam', 'd,am'), word('cam', 'c,am'), word('bam', 'b,am'),
-    word('wham', 'wh,am'), word('sham', 'sh,am'),
+    word('dam', 'd,am'), word('bam', 'b,am'),
+    word('wham', 'wh,am'),
     word('Sam', 's,am'), word('Pam', 'p,am'),
 
     // Real words ending in the welded an.
@@ -40,11 +40,10 @@ export const SUBSTEP_1_5: Substep = {
     word('Dan', 'd,an'), word('Jan', 'j,an'), word('Nan', 'n,an'),
 
     // Nonsense words, same two patterns.
-    nonsense('zam', 'z,am'), nonsense('vam', 'v,am'), nonsense('quam', 'qu,am'),
+    nonsense('zam', 'z,am'), nonsense('vam', 'v,am'), nonsense('wam', 'w,am'),
     nonsense('tham', 'th,am'), nonsense('cham', 'ch,am'),
     nonsense('lan', 'l,an'), nonsense('gan', 'g,an'), nonsense('zan', 'z,an'),
-    nonsense('shan', 'sh,an'), nonsense('yan', 'y,an'), nonsense('whan', 'wh,an'),
-    nonsense('quan', 'qu,an'),
+    nonsense('yan', 'y,an'), nonsense('whan', 'wh,an'),
   ],
   sentences: [
     'Sam has jam in a pan.',
@@ -72,7 +71,7 @@ export const SUBSTEP_1_5: Substep = {
       ],
       questions: [
         { prompt: 'What is the hen in?', choices: ['the jam', 'the sun', 'the ham'], answer: 0 },
-        { prompt: "What is on the hen's leg?", choices: ['jam', 'ham', 'a pan'], answer: 0 },
+        { prompt: 'What is on the leg of the hen?', choices: ['jam', 'ham', 'a pan'], answer: 0 },
       ],
     },
     {

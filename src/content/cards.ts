@@ -4,6 +4,12 @@ function card(id: string, keyword: string, type: CardType, phonemeLabel?: string
   return { id, grapheme: id, keyword, type, phonemeLabel: phonemeLabel ?? `${id}, ${keyword}` };
 }
 
+/** A long vowel that says its name because of a silent e later in the syllable. Inside a word the
+ * tile shows the bare vowel, because that is what the child sees; the sound card shows "a_e". */
+function vce(id: string, grapheme: string, keyword: string, phonemeLabel: string, extra: Partial<Card> = {}): Card {
+  return { id, grapheme, display: `${grapheme}_e`, keyword, phonemeLabel, type: 'vce', ...extra };
+}
+
 export const CARDS: Card[] = [
   // Substep 1.1
   card('f', 'fun', 'consonant', 'fff'),
@@ -57,4 +63,14 @@ export const CARDS: Card[] = [
   card('olt', 'bolt', 'welded'),
   // Suffix taught in 3.5; tapped as one unit like a welded sound
   card('ed', 'landed', 'welded', 'ed, as in landed'),
+  // Book 4: the silent-e syllable
+  vce('a_e', 'a', 'cake', 'a says its name, ay'),
+  vce('i_e', 'i', 'ride', 'i says its name, eye'),
+  vce('o_e', 'o', 'hope', 'o says its name, oh'),
+  vce('u_e', 'u', 'mule', 'u says its name, yoo'),
+  vce('e_e', 'e', 'Pete', 'e says its name, ee'),
+  // The second sound of the same spelling, as in rule. Never drilled as a card of its own,
+  // because it would be indistinguishable from u_e in the deck.
+  vce('u_e_oo', 'u', 'rule', 'u_e can also say oo', { drill: false }),
+  { id: 'e_silent', grapheme: 'e', display: 'e', keyword: 'silent e', phonemeLabel: 'silent e', type: 'silent', drill: false },
 ];

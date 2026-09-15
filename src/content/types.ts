@@ -1,11 +1,24 @@
-export type CardType = 'consonant' | 'vowel' | 'digraph' | 'welded';
+export type CardType =
+  | 'consonant'
+  | 'vowel'
+  | 'digraph'
+  | 'welded'
+  /** A long vowel that owes its sound to a silent letter later in the same syllable. */
+  | 'vce'
+  /** A letter that is shown but makes no sound, and is never tapped. */
+  | 'silent';
 
 export interface Card {
   id: string;            // e.g. "sh"
-  grapheme: string;      // shown on the tile, usually same as id
+  grapheme: string;      // the letters as they appear inside a word: "a" for the a_e card
+  /** What the sound card itself shows, when that differs from the letters in a word: "a_e". */
+  display?: string;
   keyword: string;       // e.g. "ship"
   phonemeLabel: string;  // spoken by the computer voice when no clip is recorded
   type: CardType;
+  /** False for a card that is never drilled on its own: a silent letter, or a second sound
+   * of a spelling that already has a card in the deck. Defaults to true. */
+  drill?: boolean;
 }
 
 export interface WordPart {

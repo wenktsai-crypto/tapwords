@@ -12,8 +12,8 @@ export function word(text: string, spec: string, extra: Partial<Word> = {}): Wor
   return { text, parts: parts(spec), kind: 'real', ...extra };
 }
 
-export function nonsense(text: string, spec: string): Word {
-  return { text, parts: parts(spec), kind: 'nonsense' };
+export function nonsense(text: string, spec: string, extra: Partial<Word> = {}): Word {
+  return { text, parts: parts(spec), kind: 'nonsense', ...extra };
 }
 
 /** One card per letter, e.g. cvc('map'). */

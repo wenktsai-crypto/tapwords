@@ -77,7 +77,7 @@ export const SUBSTEP_1_2: Substep = {
   sightWords: ['to', 'has', 'his', 'was', 'I', 'you', 'as'],
   words: [
     // Group 1: b, sh, u
-    cvc('bat'), cvc('big'), cvc('bud'), cvc('bug'),
+    cvc('bat'), cvc('big'), cvc('bud'), cvc('bug'), cvc('but'),
     cvc('tub'), cvc('rub'), cvc('mud'), cvc('mug'), cvc('rug'),
     cvc('sun'), cvc('run'), cvc('fun'),
     word('up', 'u,p'), word('us', 'u,s'),
@@ -86,20 +86,20 @@ export const SUBSTEP_1_2: Substep = {
     cvcNonsense('bup'), nonsense('shob', 'sh,o,b'), cvcNonsense('lup'), cvcNonsense('mup'),
 
     // Group 2: h, j, c, k, ck
-    cvc('hat'), cvc('hit'), cvc('hop'), cvc('hug'), cvc('hut'),
+    cvc('hat'), cvc('hit'), cvc('hop'), cvc('hug'), cvc('hut'), cvc('had'), cvc('hot'),
     cvc('jog'), cvc('jug'),
     cvc('cat'), cvc('cup'), cvc('cut'),
     cvc('kid'), cvc('kit'),
     word('kick', 'k,i,ck'), word('sock', 's,o,ck'), word('rock', 'r,o,ck'), word('duck', 'd,u,ck'),
-    cvcNonsense('jop'), cvcNonsense('kib'), cvcNonsense('cug'), nonsense('geck', 'g,e,ck'),
+    cvcNonsense('jub'), cvcNonsense('kib'), cvcNonsense('kod'), nonsense('sheck', 'sh,e,ck'),
 
     // Group 3: e, v, w
     cvc('bed'), cvc('red'), cvc('web'), cvc('wet'),
     cvc('pet'), cvc('pen'), cvc('ten'), cvc('hen'), cvc('jet'), cvc('net'),
-    cvc('vet'), cvc('vat'),
-    cvc('leg'), cvc('wig'), cvc('wag'),
+    cvc('vet'), cvc('fed'),
+    cvc('leg'), cvc('wig'), cvc('wag'), cvc('let'),
     word('wish', 'w,i,sh'), word('shed', 'sh,e,d'),
-    cvcNonsense('veb'), cvcNonsense('wug'), nonsense('vish', 'v,i,sh'), cvcNonsense('wep'),
+    cvcNonsense('veb'), cvcNonsense('wug'), nonsense('vish', 'v,i,sh'), cvcNonsense('wib'),
 
     // Group 4: x, y, z
     cvc('box'), cvc('fox'), cvc('six'), cvc('mix'), cvc('fix'), cvc('wax'), word('ox', 'o,x'),
@@ -114,7 +114,11 @@ export const SUBSTEP_1_2: Substep = {
     word('with', 'w,i,th'), word('bath', 'b,a,th'), word('path', 'p,a,th'),
     word('quit', 'qu,i,t'), word('quiz', 'qu,i,z'), word('quick', 'qu,i,ck'),
     word('whip', 'wh,i,p'), word('when', 'wh,e,n'), word('which', 'wh,i,ch'),
-    nonsense('chob', 'ch,o,b'), nonsense('thup', 'th,u,p'), nonsense('quib', 'qu,i,b'), nonsense('whep', 'wh,e,p'),
+    nonsense('chob', 'ch,o,b'), nonsense('thup', 'th,u,p'), nonsense('queb', 'qu,e,b'), nonsense('whep', 'wh,e,p'),
+
+    // Common words already decodable with cards taught by now, but not tied to any one group
+    // above (1.1's own list keeps d and g as codas only, so "did" and "got" wait until here).
+    cvc('did'), cvc('got'),
   ],
   sentences: [
     'The bug is in the tub.',
@@ -144,8 +148,8 @@ export const SUBSTEP_1_2: Substep = {
         'The rat and the bug nap in the sun.',
       ],
       questions: [
-        { prompt: 'What is in the tub?', choices: ['a bug', 'a rat', 'a fish'], answer: 0 },
-        { prompt: 'Where do the rat and the bug nap?', choices: ['in the sun', 'in the shop', 'on the mat'], answer: 0 },
+        { prompt: 'What is in the tub?', choices: ['a bug', 'a rat', 'the sun'], answer: 0 },
+        { prompt: 'Where do the rat and the bug nap?', choices: ['in the sun', 'in the mud', 'on the tub'], answer: 0 },
       ],
     },
     {
@@ -161,8 +165,8 @@ export const SUBSTEP_1_2: Substep = {
         'The cat and Chip nap on a big rug.',
       ],
       questions: [
-        { prompt: 'Who is on the hut?', choices: ['a thin cat', 'a big duck', 'a red hen'], answer: 0 },
-        { prompt: 'What do Chip and the cat do at the end?', choices: ['nap on a rug', 'run to the shop', 'sit in the tub'], answer: 0 },
+        { prompt: 'Who is on the hut?', choices: ['a thin cat', 'a big duck', 'a fish'], answer: 0 },
+        { prompt: 'What do Chip and the cat do at the end?', choices: ['nap on a rug', 'chat in the shop', 'nap in the hut'], answer: 0 },
       ],
     },
   ],

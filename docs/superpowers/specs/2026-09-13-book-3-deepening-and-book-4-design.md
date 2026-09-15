@@ -12,9 +12,9 @@ this was built for is now ten and working inside Book 3, so she is close to the
 end of the material. Two things follow: she needs more to read at the level she
 is on, and she needs the book after it.
 
-Books 1 to 3 are entirely closed syllables — every vowel is short, every letter
-makes one sound, and the child taps one dot per letter. Book 4 is the first
-place that breaks. "cake" has four letters and three sounds, and the final e
+Books 1 to 3 are entirely closed syllables — every vowel is short, and every
+letter is part of a sound the child taps (two letters can share one sound and one
+tap, as in "ship"). Book 4 is the first place a letter is part of no sound at all. "cake" has four letters and three sounds, and the final e
 makes no sound at all; its job is to make the a say its name. So Book 4 is not
 just new word lists. It needs a change to how a word is tapped.
 
@@ -78,6 +78,28 @@ Rules for the added content, unchanged from the first build:
   both).
 - Nonsense words: pronounceable, follow the section's pattern, never a real
   word, name or slang, never one letter from a rude word.
+
+  **How to actually run that check**, because the obvious way misses things.
+  Section 4.1's author did the walk twice; the first pass shipped `wike`, which
+  is one letter from an ethnic slur, because it found a harmless neighbour
+  (`like`) and stopped. Running it properly the second time also killed `kide`
+  and `nipe`, each one letter from a different slur, and `mide` and `tade`,
+  both real dictionary words. So:
+
+  1. For **every position** in the word, substitute **every letter of the
+     alphabet**, and keep going after a harmless neighbour turns up. One safe
+     match proves nothing about the next substitution.
+  2. Check the result against slurs and profanity, not only against words you
+     happen to think of.
+  3. Actually run a dictionary — `grep -ix '<word>' /usr/share/dict/words` —
+     rather than relying on recall. Real but obscure words (`tave`, an archaic
+     dialect verb) slip through otherwise.
+  4. Read the word as a chunk as well as a whole: `distrunpock` ends on a
+     displayed chunk one letter from a rude word, and `blenmafrosh` ends on
+     real slang.
+  5. Watch for colloquial spellings of real words. `dabbin` and `blastin` are
+     not nonsense — they are real words with the g dropped, and a ten-year-old
+     reads them on sight.
 - Sentences and stories may use only taught words and declared sight words.
 - Story titles and answer choices must be decodable. Question prompts are spoken
   by the app and may use any words.
@@ -101,11 +123,11 @@ Numbering matches the program so "she's on 4.2" means the same thing in both.
 | Section | Title | Teaches | Example words |
 |---|---|---|---|
 | 4.1 | Silent e with a and i | cards `a_e`, `i_e` | cake, made, name, ride, smile, time |
-| 4.2 | Silent e with o and u | cards `o_e`, `u_e` | hope, stone, woke, mule, cube, huge |
+| 4.2 | Silent e with o and u | cards `o_e`, `u_e` | hope, stone, woke, mule, cube, note |
 | 4.3 | Silent e with e, and u–e's second sound | cards `e_e`, `u_e_oo` | eve, Pete, theme, June, flute, rule |
 | 4.4 | Silent e after blends and digraphs | no new cards | stride, flame, globe, chose, while, shape |
 | 4.5 | Long words with a silent-e syllable | no new cards | invite, reptile, stampede, compete, inside |
-| 4.6 | Adding s, and words that break the rule | no new cards | cakes, rides, hopes — have, give, live |
+| 4.6 | Adding s, and words that break the rule | no new cards | cakes, kites, hopes — have, give, live |
 
 Each section carries the same minimum the checker enforces on every existing
 section (20 real words, 10 nonsense, 6 sentences, 1 story with 1 question), and
@@ -122,12 +144,29 @@ sight words the stories need; keep the list short and justify each one.
 Nonsense words in Book 4 follow the silent-e pattern — a consonant, a vowel, a
 consonant, a silent e — and are held to the same safety bar.
 
-One trap to avoid. The app plays a card's sound for every part, so a word is
-only usable if each letter takes the sound the child has been taught. Book 4 is
-full of tempting words where it does not: *these, rose, nose, wise, choose* all
-have an s saying /z/, which is a sound option the program does not teach until
-Book 6. The checker cannot see this. Authors must reject those words; use
-*theme, eve, Pete, Steve* for e–e and *hope, stone, woke, globe* for o–e.
+One trap that applies to the whole program, not only Book 4: **a card has exactly
+one recorded sound, and the app plays it every time that card is tapped.** So a
+word is only usable in a lesson, a sentence or a story if every letter takes the
+sound the child has been taught.
+
+Two places this bites, both found by review rather than by any automated check:
+
+- **s saying /z/.** *these, rose, nose, wise, chose, those, close, doze, prize,
+  confuse, refuse, surprise* are all banned in Book 4; the s sound option is not
+  taught until Book 6. Use *theme, eve, Pete, Steve* for e–e and *hope, stone,
+  woke, globe* for o–e.
+- **The three sounds of `ed`.** *landed* says /ed/, *jumped* says /t/, *filled*
+  says /d/. The `ed` card carries the single sound /ed/, so the app says
+  "jump-ed" for *jumped*. Only bases ending in **t** or **d** may appear
+  anywhere in the section — the word bank included. (An earlier draft of this
+  spec allowed other bases to sit in the bank "where the child reads them rather
+  than hearing the app say them". That was wrong about the engine: word work
+  draws its tap items from the bank and plays each card's sound as she taps it,
+  so a bank word is heard card by card too.) The same reasoning bans plural *s*
+  after anything but k, p, t or f in section 4.6.
+
+This rule is invisible to `src/content/check.ts` and always will be — it is
+about sound, not spelling. It belongs in every content brief.
 
 ## Part three: the code change
 

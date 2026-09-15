@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { checkContent, tokenize } from '../../src/content/check';
 import { CARDS } from '../../src/content/cards';
 import { cvc, cvcNonsense, word } from '../../src/content/build';
-import type { Content, Substep } from '../../src/content/types';
+import type { Content, Substep, Word } from '../../src/content/types';
 
 const tiny = { real: 1, nonsense: 1, sentences: 1, stories: 1, questions: 1 };
 const aQuestion = { prompt: 'q', choices: ['a', 'b', 'c'] as [string, string, string], answer: 0 as const };
@@ -183,5 +183,50 @@ describe('checkContent', () => {
     expect(errors.some((e) => e.includes('"mapmat"') && e.includes('invalid syllables'))).toBe(true);
     const good = sub({ words: [cvc('map'), cvcNonsense('tas'), word('mapmat', 'm,a,p,m,a,t', { syllables: [3] })] });
     expect(checkContent(content(good), tiny)).toEqual([]);
+  });
+});
+
+describe('silent-e rules', () => {
+  const cards = [
+    { id: 'c', grapheme: 'c', keyword: 'cat', phonemeLabel: 'c', type: 'consonant' as const },
+    { id: 'k', grapheme: 'k', keyword: 'kite', phonemeLabel: 'k', type: 'consonant' as const },
+    { id: 'a', grapheme: 'a', keyword: 'apple', phonemeLabel: 'a', type: 'vowel' as const },
+    { id: 'a_e', grapheme: 'a', display: 'a_e', keyword: 'cake', phonemeLabel: 'ay', type: 'vce' as const },
+    { id: 'e_silent', grapheme: 'e', display: 'e', keyword: 'silent e', phonemeLabel: 'silent e', type: 'silent' as const, drill: false },
+  ];
+  const min = { real: 0, nonsense: 0, sentences: 0, stories: 0, questions: 0 };
+  const substep = (words: Word[]): Substep => ({
+    id: '4.1', title: 'Silent e', parentSummary: 'x',
+    groups: [{ cards: ['c', 'k', 'a', 'a_e', 'e_silent'], lesson: [] }],
+    concepts: [], sightWords: [], words, sentences: [], stories: [],
+  });
+
+  it('accepts a silent e that follows the vowel it works on', () => {
+    const errors = checkContent({ cards, substeps: [substep([word('cake', 'c,a:a_e,k,e:e_silent')])] }, min);
+    expect(errors).toEqual([]);
+  });
+
+  it('rejects a silent e with no silent-e vowel before it', () => {
+    const errors = checkContent({ cards, substeps: [substep([word('cake', 'c,a,k,e:e_silent')])] }, min);
+    expect(errors.join('\n')).toMatch(/"cake".*silent .* no .* vowel/i);
+  });
+
+  it('rejects a silent-e vowel with no silent partner', () => {
+    const errors = checkContent({ cards, substeps: [substep([word('cak', 'c,a:a_e,k')])] }, min);
+    expect(errors.join('\n')).toMatch(/"cak".*0 silent partner/i);
+  });
+
+  it('rejects a silent-e vowel whose partner is in the next syllable', () => {
+    const errors = checkContent(
+      { cards, substeps: [substep([word('cakcake', 'c,a:a_e,k,c,a,k,e:e_silent', { syllables: [3] })])] },
+      min,
+    );
+    expect(errors.join('\n')).toMatch(/silent partner/i);
+  });
+
+  it('lets a lesson show a card by its sound-card face', () => {
+    const s = substep([word('cake', 'c,a:a_e,k,e:e_silent')]);
+    s.groups[0].lesson = [{ show: ['a_e'] }, { try: 'cake' }];
+    expect(checkContent({ cards, substeps: [s] }, min)).toEqual([]);
   });
 });

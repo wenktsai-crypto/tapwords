@@ -32,7 +32,7 @@ export const SUBSTEP_2_3: Substep = {
     word('wild', 'w,ild'), word('mild', 'm,ild'), word('child', 'ch,ild'),
     // ind
     word('find', 'f,ind'), word('kind', 'k,ind'), word('mind', 'm,ind'), word('bind', 'b,ind'),
-    word('blind', 'b,l,ind'), word('grind', 'g,r,ind'), word('rind', 'r,ind'),
+    word('blind', 'b,l,ind'), word('grind', 'g,r,ind'), word('hind', 'h,ind'),
     // old
     word('old', 'old'), word('bold', 'b,old'), word('cold', 'c,old'), word('fold', 'f,old'),
     word('gold', 'g,old'), word('hold', 'h,old'), word('mold', 'm,old'), word('sold', 's,old'),
@@ -40,7 +40,7 @@ export const SUBSTEP_2_3: Substep = {
     // ost
     word('most', 'm,ost'), word('host', 'h,ost'), word('post', 'p,ost'),
     // olt
-    word('bolt', 'b,olt'), word('colt', 'c,olt'), word('jolt', 'j,olt'), word('molt', 'm,olt'), word('volt', 'v,olt'),
+    word('bolt', 'b,olt'), word('colt', 'c,olt'), word('jolt', 'j,olt'), word('molt', 'm,olt'),
     // nonsense, same five patterns
     nonsense('pild', 'p,ild'), nonsense('vild', 'v,ild'),
     nonsense('zind', 'z,ind'), nonsense('shind', 'sh,ind'),

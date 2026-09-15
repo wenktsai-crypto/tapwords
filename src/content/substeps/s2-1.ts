@@ -43,15 +43,16 @@ export const SUBSTEP_2_1: Substep = {
     // unk
     word('junk', 'j,unk'), word('bunk', 'b,unk'), word('dunk', 'd,unk'),
 
-    // nonsense, same eight patterns
-    nonsense('zang', 'z,ang'), nonsense('quang', 'qu,ang'),
-    nonsense('ning', 'n,ing'), nonsense('shink', 'sh,ink'),
+    // Nonsense words, seven of the eight patterns. There is no made-up ink word on purpose: a
+    // single consonant in front of ink always lands one letter away from a slur, and the real
+    // words pink, sink, wink and think already give the child that chunk.
+    nonsense('zang', 'z,ang'),
+    nonsense('ving', 'v,ing'),
     nonsense('zong', 'z,ong'),
     nonsense('wung', 'w,ung'), nonsense('thung', 'th,ung'),
-    nonsense('vank', 'v,ank'),
-    nonsense('yink', 'y,ink'),
+    nonsense('quank', 'qu,ank'),
     nonsense('fonk', 'f,onk'), nonsense('thonk', 'th,onk'),
-    nonsense('zunk', 'z,unk'),
+    nonsense('zunk', 'z,unk'), nonsense('vunk', 'v,unk'),
   ],
   sentences: [
     'The king can sing a long song.',

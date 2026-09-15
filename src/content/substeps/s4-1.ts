@@ -1,0 +1,213 @@
+import type { Substep } from '../types';
+import { word, nonsense } from '../build';
+
+export const SUBSTEP_4_1: Substep = {
+  id: '4.1',
+  title: 'Silent e with a and i',
+  parentSummary:
+    'Until now every letter in a word was part of a sound your child tapped, even where two letters shared one sound, as in "ship". This section is where that changes: in "cake" the last e is part of no sound at all, and its only job is to make the a say its name. Your child meets the new pattern with a first and then with i.',
+  groups: [
+    {
+      cards: ['a_e', 'e_silent'],
+      lesson: [
+        { say: 'Something changes today. In every word so far, every letter has been part of a sound. Now you will meet a letter that is part of no sound at all.' },
+        { show: ['a_e'] },
+        { say: 'Here is the new card. It shows an a, then a gap, then an e. Inside a real word, a consonant sits in that gap.' },
+        { say: 'When a word ends this way, the e is silent. It says nothing. Its whole job is to reach back and make the a say its name, ay.' },
+        { tap: 'cake' },
+        { say: 'Cake has four letters and three sounds, and the e is part of none of them. It gets no dot, so you never tap it. The curved line shows the job it is doing.' },
+        { say: 'Your turn. Tap the sounds in order and leave the last e alone.' },
+        { try: 'made' },
+        { try: 'name' },
+        { try: 'late' },
+        { try: 'safe' },
+      ],
+    },
+    {
+      cards: ['i_e'],
+      lesson: [
+        { say: 'The silent e does the same job for other vowels. Today it is the turn of i.' },
+        { show: ['i_e'] },
+        { say: 'Same job, new vowel. The e at the end says nothing, and it makes the i say its name, eye.' },
+        { tap: 'ride' },
+        { say: 'Ride has four letters and three sounds, exactly like cake. Three dots, and the line running back from the e to the i.' },
+        { say: 'Your turn. Look at the end of the word before you start tapping.' },
+        { try: 'time' },
+        { try: 'five' },
+        { try: 'mile' },
+        { try: 'nine' },
+      ],
+    },
+  ],
+  concepts: ['silent-e'],
+  // "day" is the only word the stories need that no card yet spells: the ay team is taught much
+  // later, and "The Ride up the Hill" opens on a fine day.
+  sightWords: ['day'],
+  words: [
+    // Group 1: a and silent e. Every word here is a simple consonant, vowel, consonant, e, and
+    // so is every tap and try step in both lessons, so her first meeting with each new card is
+    // never tangled up with a blend. The bank itself is not that pure — "smile" sits in group 2
+    // below, and 4.2 and 4.3 carry a dozen more blend words their own word supply cannot do
+    // without. 4.4 is where a whole list of them is taught, not where the child first sees one.
+    word('cake', 'c,a:a_e,k,e:e_silent'),
+    word('bake', 'b,a:a_e,k,e:e_silent'),
+    word('rake', 'r,a:a_e,k,e:e_silent'),
+    word('make', 'm,a:a_e,k,e:e_silent'),
+    word('take', 't,a:a_e,k,e:e_silent'),
+    word('lake', 'l,a:a_e,k,e:e_silent'),
+    word('wake', 'w,a:a_e,k,e:e_silent'),
+    word('came', 'c,a:a_e,m,e:e_silent'),
+    word('game', 'g,a:a_e,m,e:e_silent'),
+    word('name', 'n,a:a_e,m,e:e_silent'),
+    word('same', 's,a:a_e,m,e:e_silent'),
+    word('made', 'm,a:a_e,d,e:e_silent'),
+    word('fade', 'f,a:a_e,d,e:e_silent'),
+    word('late', 'l,a:a_e,t,e:e_silent'),
+    word('gate', 'g,a:a_e,t,e:e_silent'),
+    word('tale', 't,a:a_e,l,e:e_silent'),
+    word('tape', 't,a:a_e,p,e:e_silent'),
+    word('safe', 's,a:a_e,f,e:e_silent'),
+    word('wave', 'w,a:a_e,v,e:e_silent'),
+    word('cave', 'c,a:a_e,v,e:e_silent'),
+    word('gave', 'g,a:a_e,v,e:e_silent'),
+    word('save', 's,a:a_e,v,e:e_silent'),
+    word('lane', 'l,a:a_e,n,e:e_silent'),
+    word('pale', 'p,a:a_e,l,e:e_silent'),
+
+    // Group 2: i and silent e.
+    word('ride', 'r,i:i_e,d,e:e_silent'),
+    word('side', 's,i:i_e,d,e:e_silent'),
+    word('wide', 'w,i:i_e,d,e:e_silent'),
+    word('hide', 'h,i:i_e,d,e:e_silent'),
+    word('tide', 't,i:i_e,d,e:e_silent'),
+    word('time', 't,i:i_e,m,e:e_silent'),
+    word('dime', 'd,i:i_e,m,e:e_silent'),
+    word('lime', 'l,i:i_e,m,e:e_silent'),
+    word('mile', 'm,i:i_e,l,e:e_silent'),
+    word('pile', 'p,i:i_e,l,e:e_silent'),
+    word('smile', 's,m,i:i_e,l,e:e_silent'),
+    word('life', 'l,i:i_e,f,e:e_silent'),
+    word('line', 'l,i:i_e,n,e:e_silent'),
+    word('mine', 'm,i:i_e,n,e:e_silent'),
+    word('fine', 'f,i:i_e,n,e:e_silent'),
+    word('nine', 'n,i:i_e,n,e:e_silent'),
+    word('vine', 'v,i:i_e,n,e:e_silent'),
+    word('five', 'f,i:i_e,v,e:e_silent'),
+    word('dive', 'd,i:i_e,v,e:e_silent'),
+    word('bite', 'b,i:i_e,t,e:e_silent'),
+    word('kite', 'k,i:i_e,t,e:e_silent'),
+    word('ripe', 'r,i:i_e,p,e:e_silent'),
+    word('wipe', 'w,i:i_e,p,e:e_silent'),
+    word('like', 'l,i:i_e,k,e:e_silent'),
+    word('bike', 'b,i:i_e,k,e:e_silent'),
+    word('hike', 'h,i:i_e,k,e:e_silent'),
+
+    // Nonsense, group 1 pattern
+    nonsense('jate', 'j,a:a_e,t,e:e_silent'),
+    nonsense('vafe', 'v,a:a_e,f,e:e_silent'),
+    nonsense('zame', 'z,a:a_e,m,e:e_silent'),
+    nonsense('pame', 'p,a:a_e,m,e:e_silent'),
+    nonsense('bave', 'b,a:a_e,v,e:e_silent'),
+    nonsense('vate', 'v,a:a_e,t,e:e_silent'),
+    nonsense('zave', 'z,a:a_e,v,e:e_silent'),
+    nonsense('yame', 'y,a:a_e,m,e:e_silent'),
+
+    // Nonsense, group 2 pattern
+    nonsense('mive', 'm,i:i_e,v,e:e_silent'),
+    nonsense('zile', 'z,i:i_e,l,e:e_silent'),
+    nonsense('lipe', 'l,i:i_e,p,e:e_silent'),
+    nonsense('bime', 'b,i:i_e,m,e:e_silent'),
+    nonsense('jite', 'j,i:i_e,t,e:e_silent'),
+    nonsense('nive', 'n,i:i_e,v,e:e_silent'),
+    nonsense('zide', 'z,i:i_e,d,e:e_silent'),
+    nonsense('hime', 'h,i:i_e,m,e:e_silent'),
+  ],
+  sentences: [
+    // Readable at group 1: not one i_e word among them.
+    'The lake was safe for a swim.',
+    'Jan came to the gate late.',
+    'We can bake a cake in the pan.',
+    'A big wave came up the sand.',
+    'Sam made a game with a box and a bell.',
+    'Dan put the tape back in his pack.',
+    'A rake and a net were in the shed.',
+    // Group 2 adds i_e.
+    'Dan can ride a bike up the hill.',
+    'The kite fell in the mud.',
+    'It is time to wake up.',
+    'Nan saw a fine vine on the wall.',
+    'Sam made me smile.',
+    'Do not hide the map from us.',
+  ],
+  stories: [
+    {
+      // Group 1 can read this one on its own: every silent-e word in it uses a, never i.
+      title: 'The Cake in the Shed',
+      sentences: [
+        'Pam made a cake for the camp.',
+        'She put it in the shed.',
+        'When Pam came back, the cake was not there.',
+        '"It was not me," said Sam.',
+        'Jan said the same.',
+        'Then Pam saw a path in the sand.',
+        'The path ran to the gate.',
+        'At the gate, a fat duck sat with the cake.',
+        'Pam was not mad.',
+        'She gave the duck a name.',
+        'They call the duck Cake.',
+      ],
+      questions: [
+        {
+          prompt: 'Where did Pam put the cake?',
+          choices: ['in the shed', 'at the gate', 'in the sand'],
+          answer: 0,
+        },
+        {
+          prompt: 'What did Pam see in the sand?',
+          choices: ['a path', 'a cake', 'a shed'],
+          answer: 0,
+        },
+        {
+          prompt: 'What did Pam do after she saw the duck with the cake?',
+          choices: ['she gave the duck a name', 'she put the cake in the shed', 'she made a cake for the camp'],
+          answer: 0,
+        },
+      ],
+    },
+    {
+      title: 'The Ride up the Hill',
+      sentences: [
+        'Nan and Dan came to the path at nine.',
+        'It was a fine day for a long ride.',
+        'The path up the hill was long and wide.',
+        'Nan is quick, and she made it up the hill fast.',
+        'Dan came up late.',
+        '"I am not as quick as you," said Dan.',
+        '"You are up the hill, and that is fine," said Nan.',
+        'Then they saw a red kite in a thick vine.',
+        'Nan lifted the kite out of the vine.',
+        'It was time to ride back down the hill with the kite.',
+        'Dan came down fast.',
+        'Nan was not quick.',
+        '"Now you are the quick one," said Nan.',
+      ],
+      questions: [
+        {
+          prompt: 'What did Nan and Dan find in the thick vine?',
+          choices: ['a red kite', 'a long path', 'a wide hill'],
+          answer: 0,
+        },
+        {
+          prompt: 'What did Dan say when he came up the hill late?',
+          choices: ['I am not as quick as you', 'you are up the hill and that is fine', 'now you are the quick one'],
+          answer: 0,
+        },
+        {
+          prompt: 'What was the path up the hill like?',
+          choices: ['long and wide', 'thick and red', 'quick and late'],
+          answer: 0,
+        },
+      ],
+    },
+  ],
+};

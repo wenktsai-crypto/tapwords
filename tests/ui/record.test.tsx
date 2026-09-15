@@ -50,4 +50,14 @@ describe('RecordScreen', () => {
     await user.click(await screen.findByRole('button', { name: /back/i }));
     expect(onBack).toHaveBeenCalled();
   });
+
+  it('offers a recording slot for each sound, and none for the silent e', async () => {
+    renderWithServices(<RecordScreen onBack={() => {}} />);
+    expect(await screen.findByTestId('card-row-a_e')).toBeInTheDocument();
+    expect(screen.queryByTestId('card-row-e_silent')).toBeNull();
+    // u_e_oo (the /oo/ in "rule") is never drilled as a card of its own, but the grown-up must
+    // still be able to record it — which is why this screen filters on type, not on isDrillable.
+    // Without this line, a tidy-up to isDrillable would drop the sound and no test would notice.
+    expect(screen.getByTestId('card-row-u_e_oo')).toBeInTheDocument();
+  });
 });
