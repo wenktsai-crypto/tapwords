@@ -156,11 +156,10 @@ describe('substep 4.4 content', () => {
     }
   });
 
-  it('keeps a proper noun spelled the way a child should see it', () => {
-    for (const w of SUBSTEP_4_4.words) {
-      if (w.text[0] === w.text[0].toUpperCase()) {
-        expect(w.parts.map((p) => p.grapheme).join(''), w.text).toBe(w.text.toLowerCase());
-      }
-    }
-  });
+  // Removed: "keeps a proper noun spelled the way a child should see it". Section 4.4 has no
+  // capitalised word, so that loop never entered its body and the test passed without asserting
+  // anything — it read like coverage and was not. Nothing is lost by dropping it: the content
+  // checker enforces the same rule for every word in every section (`check.ts` requires a word's
+  // parts to spell `text.toLowerCase()`), and `all.test.ts` runs the checker over the real
+  // content. The section-level version stays in `s4-5.test.ts`, which has proper nouns to bite on.
 });

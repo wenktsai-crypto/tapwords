@@ -15,7 +15,6 @@ export function TapDots({ word, mode, onResult }: Props) {
   const { audio, content, timing } = useServices();
   const sounding = soundingIndexes(word, cardMap(content.cards));
   const [tapped, setTapped] = useState(0);
-  const [wrong, setWrong] = useState(false);
   const [blending, setBlending] = useState(false);
   const onResultRef = useRef(onResult);
   onResultRef.current = onResult;
@@ -36,7 +35,6 @@ export function TapDots({ word, mode, onResult }: Props) {
 
   useEffect(() => {
     setTapped(0);
-    setWrong(false);
     setBlending(false);
     tappedRef.current = 0;
     wrongRef.current = false;
@@ -65,7 +63,6 @@ export function TapDots({ word, mode, onResult }: Props) {
     const next = tappedRef.current + 1;
     if (i !== tappedRef.current) {
       wrongRef.current = true;
-      setWrong(true);
     }
     tappedRef.current = next;
     setTapped(next);
