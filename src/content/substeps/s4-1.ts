@@ -187,7 +187,8 @@ export const SUBSTEP_4_1: Substep = {
         'Then they saw a red kite in a thick vine.',
         'Nan lifted the kite out of the vine.',
         'It was time to ride back down the hill with the kite.',
-        'Dan came down fast. Nan was not quick.',
+        'Dan came down fast.',
+        'Nan was not quick.',
         '"Now you are the quick one," said Nan.',
       ],
       questions: [

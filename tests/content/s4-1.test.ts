@@ -93,6 +93,43 @@ describe('substep 4.1 content', () => {
     }
   });
 
+  it('puts one sentence in each story element, so the story screen shows one at a time', () => {
+    for (const st of SUBSTEP_4_1.stories) {
+      for (const line of st.sentences) {
+        expect(line.replace(/[.!?]+["']?\s*$/, ''), `${st.title}: ${line}`).not.toMatch(/[.!?]["']?\s/);
+      }
+    }
+  });
+
+  it('draws every answer choice from its own story', () => {
+    for (const st of SUBSTEP_4_1.stories) {
+      const inStory = new Set(st.sentences.flatMap((s) => tokenize(s)));
+      for (const q of st.questions) {
+        for (const choice of q.choices) {
+          for (const token of tokenize(choice)) {
+            expect(inStory.has(token), `${st.title}: choice "${choice}" uses "${token}", absent from the story`).toBe(true);
+          }
+        }
+      }
+    }
+  });
+
+  it('writes every story title and answer choice out of taught words only', () => {
+    // The checker never looks at titles or choices, and the child reads both.
+    const taught = new Set<string>();
+    for (const s of content.substeps) {
+      for (const w of s.words) if (w.kind === 'real') taught.add(w.text.toLowerCase());
+      for (const sw of s.sightWords) taught.add(sw.toLowerCase());
+    }
+    for (const st of SUBSTEP_4_1.stories) {
+      for (const text of [st.title, ...st.questions.flatMap((q) => q.choices)]) {
+        for (const token of tokenize(text)) {
+          expect(taught.has(token), `"${text}" uses "${token}", which no section has taught`).toBe(true);
+        }
+      }
+    }
+  });
+
   it('keeps plurals and the program name out of the section', () => {
     const json = JSON.stringify(SUBSTEP_4_1);
     expect(json.toLowerCase()).not.toContain('wilson');
