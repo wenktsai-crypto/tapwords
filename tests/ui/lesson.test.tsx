@@ -30,6 +30,20 @@ describe('LessonPart', () => {
     await waitFor(() => expect(onComplete).toHaveBeenCalled());
   });
 
+  it('shows a silent-e card in vowel colour, not consonant colour', async () => {
+    // Vowel colour is a taught cue (see the comment at styles.css `.tile-vce`), and the lesson
+    // that introduces "a_e" is the first time the child ever sees it. A `show` step names the
+    // card by its drill face, so this is the render that a grapheme-only lookup got wrong.
+    const substep = CONTENT.substeps.find((s) => s.id === '4.1')!;
+    const { container } = renderWithServices(
+      <LessonPart steps={[{ show: ['a_e'] }]} substep={substep} onComplete={() => {}} />,
+    );
+    const tile = container.querySelector('.tile')!;
+    expect(tile.textContent).toBe('a_e');
+    expect(tile.className).toContain('tile-vce');
+    expect(tile.className).not.toContain('tile-consonant');
+  });
+
   it('completes immediately with no steps', async () => {
     const onComplete = vi.fn();
     renderWithServices(<LessonPart steps={[]} substep={CONTENT.substeps[0]} onComplete={onComplete} />);
