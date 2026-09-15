@@ -71,6 +71,29 @@ describe('the whole program', () => {
     expect(checkContent({ cards: CONTENT.cards, substeps: [substep([split, good])] }, min)).toEqual([]);
   });
 
+  it('writes every story title and answer choice out of words taught by the time it appears', () => {
+    // The checker never looks at Story.title or Question.choices, and the child reads both: the
+    // title fills the story-title screen, and the choices are the buttons she presses. Only
+    // sections 4.3 to 4.6 tested this, and only against the whole program's vocabulary; here it
+    // is every section, in teaching order, so a word cannot be borrowed from a later book.
+    //
+    // Question PROMPTS are deliberately left out. The app speaks them aloud rather than asking
+    // her to read them, so by long-standing convention they use ordinary English (docs/HANDOFF.md).
+    // Proper nouns are fine anywhere: tokenize lower-cases, and word texts are matched that way.
+    const taught = new Set<string>();
+    for (const s of CONTENT.substeps) {
+      for (const w of s.words) if (w.kind === 'real') taught.add(w.text.toLowerCase());
+      for (const sw of s.sightWords) taught.add(sw.toLowerCase());
+      for (const st of s.stories) {
+        for (const text of [st.title, ...st.questions.flatMap((q) => q.choices)]) {
+          for (const token of tokenize(text)) {
+            expect(taught.has(token), `${s.id} "${text}" uses "${token}", untaught by section ${s.id}`).toBe(true);
+          }
+        }
+      }
+    }
+  });
+
   it('never mentions the Wilson name', () => {
     const text = JSON.stringify(CONTENT).toLowerCase();
     expect(text.includes('wilson')).toBe(false);
