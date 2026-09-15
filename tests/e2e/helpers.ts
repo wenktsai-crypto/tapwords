@@ -36,27 +36,36 @@ const pieceName = (g: string) => new RegExp(`^${escapeRegex(g)}( \\d+)?$`);
 
 async function buildFrom(page: Page, pieces: string[]) {
   const tray = page.getByTestId('tray');
-  // A "build" word-work item shows a preview of the word first and only reveals the tray
-  // (this .count()-based search doesn't auto-wait like .click() does) after it speaks the
-  // word and a timing.previewMs pause, so wait for the tray to actually have pieces before
-  // hunting through it — otherwise this reads an empty tray and reports every piece missing.
-  await tray.locator('button').first().waitFor({ state: 'visible' });
   for (const g of pieces) {
     const candidates = tray.getByRole('button', { name: pieceName(g) });
+    // Wait for the tray THIS word needs, not just any tray. The build item shows a preview
+    // first and swaps in the tray after it speaks the word and pauses; a plain .count() does
+    // not auto-wait, so on a machine with no speech voices (every CI box) it reads the
+    // previous item's tray, finds nothing, and reports the first letter missing. Waiting on a
+    // matching piece makes the tray's arrival the thing we synchronise on.
+    await expect(candidates.first()).toBeVisible();
     const n = await candidates.count();
     let clicked = false;
     for (let i = 0; i < n; i++) {
       const c = candidates.nth(i);
       if (!((await c.getAttribute('class')) ?? '').includes('tile-dim')) {
         await c.click();
+        // Confirm the tap registered before hunting for the next piece: the dim class is how
+        // we tell a used piece from a free one, and reading it before React commits would make
+        // us click the same piece twice and silently drop a letter.
+        await expect(c).toHaveClass(/tile-dim/);
         clicked = true;
         break;
       }
     }
-    if (!clicked) throw new Error(`no free piece for ${g}`);
+    if (!clicked) {
+      const names = await tray.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')));
+      throw new Error(`no free piece for ${g} (wanted ${pieces.join(',')}; tray holds ${names.join(',')})`);
+    }
   }
   await page.getByRole('button', { name: /^done$/i }).click();
 }
+
 
 async function tapOut(page: Page, n: number) {
   for (let k = 1; k <= n; k++) await page.getByRole('button', { name: `Sound ${k}` }).click();
