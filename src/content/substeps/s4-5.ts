@@ -213,7 +213,9 @@ export const SUBSTEP_4_5: Substep = {
         },
         {
           prompt: 'Why did Jan say that taking it home would be a mistake?',
-          choices: ['the pond was best for it', 'the cup was not big', 'the rock was in the mud'],
+          // Both wrong answers are things the story states outright, not recombinations of its
+          // nouns: "It was in the mud at the side of the pond" and "Sam did want to take it home".
+          choices: ['the pond was best for it', 'the tadpole was in the mud', 'Sam did want to take it home'],
           answer: 0,
         },
         {
@@ -224,35 +226,47 @@ export const SUBSTEP_4_5: Substep = {
       ],
     },
     {
+      // Rewritten in the final fix wave. The version that stood here was the third of five
+      // Book 4 stories on one plot (rush, fail, slow down, succeed) and shared two phrases word
+      // for word with 4.3's - "his song was a mess", "did not rush, and the song came out well".
+      // The instruments, the contest and the one spot are kept, because the section's showcase
+      // words live in them; the problem and the resolution are new. Nobody is at fault, nobody
+      // rushes, and the answer comes from Sam having an idea rather than from taking advice.
       title: 'The Trombone and the Bagpipe',
       sentences: [
         'Sam had a trombone, and his classmate Jan had a bagpipe.',
-        'The band at the camp had one spot.',
-        'The man said the two of them had to compete for it.',
+        'The band at the camp had one spot, and the two of them did want it.',
+        'The man said he would pick one of them at the contest.',
         'Sam went inside and did the song again and again.',
         'Jan sat on the hillside in the sunshine and did the same.',
-        'On the day of the contest, Sam went too fast.',
-        'His song was a mess.',
-        'Jan did not rush, and the song came out well.',
-        'The man said that Jan had the spot.',
-        'Sam was sad, but he gave Jan a handshake.',
-        'Then Sam went home and did the song every day, and he did not rush.',
-        'When the man came back, he said the band had a spot for the trombone as well.',
+        'On the day of the contest, Sam did the song on the trombone.',
+        'The man said it was the best trombone he had.',
+        'Then Jan did the song on the bagpipe, and the man said the same of that.',
+        'He sat and did think for a long time, and then he said he could not pick.',
+        'Sam said that the two of them could do the song at the same time.',
+        'Up on the hillside, they did it again and again.',
+        'The trombone went down where the bagpipe went up.',
+        'The man came back and said the band had a spot for the two of them.',
+        'When they did the song, the camp did stamp and yell.',
       ],
       questions: [
         {
           prompt: 'Which instrument did Jan have?',
-          choices: ['a bagpipe', 'a trombone', 'a handshake'],
+          choices: ['a bagpipe', 'a trombone', 'a band'],
           answer: 0,
         },
         {
-          prompt: 'Why did Sam not get the spot at the contest?',
-          choices: ['he went too fast', 'the trombone was not in the band', 'he sat on the hillside'],
+          prompt: 'What did Sam say when the man could not pick?',
+          choices: [
+            'the two of them could do the song at the same time',
+            'the band had one spot',
+            'he did the song again and again',
+          ],
           answer: 0,
         },
         {
-          prompt: 'What did Sam do after the contest?',
-          choices: ['he did the song every day', 'he sat in the sunshine', 'he gave the spot to the band'],
+          prompt: 'What did the camp do when Sam and Jan did the song?',
+          choices: ['the camp did stamp and yell', 'the camp did pick one of them', 'the camp sat on the hillside'],
           answer: 0,
         },
       ],

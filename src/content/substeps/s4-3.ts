@@ -159,7 +159,7 @@ export const SUBSTEP_4_3: Substep = {
         'He did not rush, and the song came out well.',
         'At sunset, Pete did the song for Nan at the camp.',
         'Nan said it was the best song in the camp.',
-        'Now Pete does the song every day, and he does not rush.',
+        'Then the cat came back down the hill and sat with them.',
       ],
       questions: [
         {
@@ -174,7 +174,7 @@ export const SUBSTEP_4_3: Substep = {
         },
         {
           prompt: 'Why did the song come out well at the end?',
-          choices: ['Pete did not rush', 'the cat ran up the hill', 'Nan did the song'],
+          choices: ['Pete did not rush', 'the cat ran up the hill', 'Nan gave Pete the flute'],
           answer: 0,
         },
       ],
@@ -193,7 +193,7 @@ export const SUBSTEP_4_3: Substep = {
         'Nan said it was a rune, and it was very old.',
         'She said people did that a long time back.',
         'Luke was glad he was right, and Jude was glad to know.',
-        'Now they run up the hill every day to check on the rune.',
+        'Every day after that, Luke and Jude went up the hill to check on the rune.',
       ],
       questions: [
         {

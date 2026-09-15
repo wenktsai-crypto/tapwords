@@ -211,7 +211,7 @@ export const SUBSTEP_4_4: Substep = {
         'After that, the snake went into the shade of a shrub.',
         'Then the two went up the path to the camp.',
         'Nan said they were brave to sit and let the snake pass.',
-        'Now Sam can tell the tale of the snake on the slope.',
+        'Sam will tell the tale of the snake on the slope for a long time.',
       ],
       questions: [
         {
@@ -232,36 +232,42 @@ export const SUBSTEP_4_4: Substep = {
       ],
     },
     {
-      title: 'The Plane Sam Made',
+      // Rewritten in the final fix wave. The story that stood here, "The Plane Sam Made", was
+      // the fourth of five Book 4 stories running the same plot - ignore the advice, fail, take
+      // the advice, succeed - with the same mentor (Nan) and the same learner (Sam) as 4.3's.
+      // This one has no mentor and no advice: an accident, a chase, and a resolution that turns
+      // on the child noticing something (a globe floats), so its middle question cannot be
+      // answered by guessing "the one about not rushing".
+      title: 'The Globe on the Slope',
       sentences: [
-        'Sam and Nan had a box of scrap and tape in the shed.',
-        'He did want to make a plane that can glide.',
-        'Nan said he should cut it thin, or it will not glide.',
-        'Sam did not want to do that, and he cut a big one.',
-        'He put tape on it to hold the scrap.',
-        'Then Sam went up the slope with it.',
-        'He let the plane drop, and it went into the mud.',
-        'Sam was sad, and he did want to quit.',
-        'Nan said the plane was too big, as she had said before.',
-        'This time Sam made a thin one from the scrap.',
-        'It did glide, from the slope down to the pond.',
-        'Nan said it was the best plane Sam had made.',
-        'Now Sam will cut every plane thin, and every plane does glide.',
+        'Nan gave Dan a globe with every land on it.',
+        'Dan did like it a lot, and he put it in his pack and went up the hill to Sam.',
+        'Up at the camp, the two of them put the globe down on a rock.',
+        'The rock was on a slope, and the globe did not sit on it for long.',
+        'It went down the slope, fast.',
+        'Sam and Dan ran after it, but it went too fast for them.',
+        'It hit a stump, went up, and came down in the mud.',
+        'Then it went into the pond with a big splash.',
+        'Dan was sad, and he did not want to tell Nan.',
+        'Then Sam said to check the pond, as the globe did not sink.',
+        'It was there on the water, and the sun did shine on it.',
+        'Dan went into the pond and got it back.',
+        'They did wipe the mud off it, and every land on it was there, as before.',
       ],
       questions: [
         {
-          prompt: 'What did Sam want to make?',
-          choices: ['a plane', 'a box', 'a slope'],
+          prompt: 'What did Nan give Dan?',
+          choices: ['a globe', 'a rock', 'a stump'],
           answer: 0,
         },
         {
-          prompt: 'Why did the first plane go into the mud?',
-          choices: ['it was too big', 'it was too thin', 'it was in a box'],
+          prompt: 'What did the globe hit on the way down the slope?',
+          choices: ['a stump', 'a rock', 'the camp'],
           answer: 0,
         },
         {
-          prompt: 'What did Nan say about the plane at the end?',
-          choices: ['it was the best plane', 'it was too big', 'it did not glide'],
+          prompt: 'How did Sam know the globe was not at the bottom of the pond?',
+          choices: ['it did not sink', 'it hit a stump', 'it was on a rock'],
           answer: 0,
         },
       ],
