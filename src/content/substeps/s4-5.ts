@@ -87,13 +87,16 @@ export const SUBSTEP_4_5: Substep = {
     word('costume', 'c,o,s,t,u:u_e_oo,m,e:e_silent', { syllables: [3] }),
     word('reptile', 'r,e,p,t,i:i_e,l,e:e_silent', { syllables: [3] }),
     word('athlete', 'a,th,l,e:e_e,t,e:e_silent', { syllables: [2] }),
-    // stam- ends on the welded am she taps as one sound, exactly as in ham and pan.
-    word('stampede', 's,t,am:am,p,e:e_e,d,e:e_silent', { syllables: [3] }),
+    // stam- is tapped s,t,a,m, not with the welded am card. The welded rule is word-final (see
+    // check.ts and docs/HANDOFF.md), and every mid-word an/am in Books 1-3 is tapped as separate
+    // letters: cannot, blanket, frantic, fantastic, Atlantic, Manhattan, cannonball. Welding it
+    // here would change the motor routine for a syllable she already taps the other way.
+    word('stampede', 's,t,a,m,p,e:e_e,d,e:e_silent', { syllables: [4] }),
 
     // Compound words: two words she can already read, joined. These are the easiest long words
     // in the section and the best place to start.
     word('cupcake', 'c,u,p,c,a:a_e,k,e:e_silent', { syllables: [3] }),
-    word('pancake', 'p,an:an,c,a:a_e,k,e:e_silent', { syllables: [2] }),
+    word('pancake', 'p,a,n,c,a:a_e,k,e:e_silent', { syllables: [3] }),
     word('mistake', 'm,i,s,t,a:a_e,k,e:e_silent', { syllables: [3] }),
     word('sunshine', 's,u,n,sh,i:i_e,n,e:e_silent', { syllables: [3] }),
     word('handshake', 'h,a,n,d,sh,a:a_e,k,e:e_silent', { syllables: [4] }),
@@ -110,7 +113,7 @@ export const SUBSTEP_4_5: Substep = {
     word('tadpole', 't,a,d,p,o:o_e,l,e:e_silent', { syllables: [3] }),
     word('flagpole', 'f,l,a,g,p,o:o_e,l,e:e_silent', { syllables: [4] }),
     word('pothole', 'p,o,t,h,o:o_e,l,e:e_silent', { syllables: [3] }),
-    word('manhole', 'm,an:an,h,o:o_e,l,e:e_silent', { syllables: [2] }),
+    word('manhole', 'm,a,n,h,o:o_e,l,e:e_silent', { syllables: [3] }),
     word('bathrobe', 'b,a,th,r,o:o_e,b,e:e_silent', { syllables: [3] }),
     word('backstroke', 'b,a,ck,s,t,r,o:o_e,k,e:e_silent', { syllables: [3] }),
     word('bagpipe', 'b,a,g,p,i:i_e,p,e:e_silent', { syllables: [3] }),

@@ -91,12 +91,14 @@ export const SUBSTEP_4_6: Substep = {
     plural('ropes', 'r,o:o_e,p,e:e_silent,s'),
 
     // Two syllables. The child is comfortable with these, and the s ending behaves no
-    // differently at the end of a long word than a short one.
+    // differently at the end of a long word than a short one. pan- and hand- are tapped as
+    // separate letters, never with the welded an card: the welded rule is word-final, and 4.5
+    // taps pancake, handshake and handmade the same way.
     plural('mistakes', 'm,i,s,t,a:a_e,k,e:e_silent,s', { syllables: [3] }),
     plural('cupcakes', 'c,u,p,c,a:a_e,k,e:e_silent,s', { syllables: [3] }),
-    plural('pancakes', 'p,an,c,a:a_e,k,e:e_silent,s', { syllables: [2] }),
+    plural('pancakes', 'p,a,n,c,a:a_e,k,e:e_silent,s', { syllables: [3] }),
     plural('milkshakes', 'm,i,l,k,sh,a:a_e,k,e:e_silent,s', { syllables: [4] }),
-    plural('handshakes', 'h,an,d,sh,a:a_e,k,e:e_silent,s', { syllables: [3] }),
+    plural('handshakes', 'h,a,n,d,sh,a:a_e,k,e:e_silent,s', { syllables: [4] }),
 
     // ---- The three words that break the rule ----------------------------------------------
     // Tapped as an ordinary closed syllable. The "ve" is one sound on the v card, because
