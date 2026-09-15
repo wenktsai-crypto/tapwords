@@ -90,16 +90,34 @@ export const SUBSTEP_4_2: Substep = {
 
     // Nonsense, group 1 pattern. Each one was walked letter by letter, every position against
     // every letter of the alphabet and every single-letter deletion, against the dictionary and
-    // against rude words. The whole -oke family was dropped: noke and voke are one letter from
-    // moke, coke and toke. wope was dropped because deleting its e leaves an ethnic slur. fome,
-    // lofe, kope and gole were dropped as sound-alikes of foam, loaf, cope and goal, and bofe
-    // because it is how "both" gets written in some dialects. The bar is not English-only:
-    // jode and fode had to go as well, being everyday obscenities in Spanish and Portuguese,
-    // the same reason pute was never a candidate. zode was dropped in a later pass: it is one
-    // letter from "gode", French vulgar slang. Every word ending -ode shares that same flaw
-    // (only the first letter differs from "gode"), so its replacement, vobe, uses a different
-    // ending on purpose. nobe was rejected too: deleting its e leaves "nob", mild vulgar British
-    // slang.
+    // against rude words.
+    //
+    // The bar, as ruling R35 settles it and as the rest of Book 4 applies it, has two levels:
+    //   * a DIRECT hit is always a rejection - the word itself, or a chunk the screen shows on
+    //     its own, IS a rude word in English, Spanish, Portuguese or French;
+    //   * a ONE-LETTER NEIGHBOUR is a rejection only for slurs and the strongest obscenities.
+    //     Mild vulgar slang does not disqualify a whole rhyming family, and a chunk that is
+    //     itself an everyday English word the child knows is exempt (R36).
+    //
+    // Under that bar the -ode family STAYS, which is why vode and pode are below. jode and fode
+    // are direct hits (everyday obscenities in Spanish and Portuguese) and are out, the same
+    // reason pute was never a candidate; but being one letter from them does not carry, or every
+    // _ode shape in the language would fall and so would half of -ole and -ote. French "gode" is
+    // mild slang, not a slur, so it disqualifies nothing at all. pode is an ordinary Portuguese
+    // word meaning "can" - foreign, but not rude, and R34 keeps it on that ground.
+    //
+    // Two words are absent for reasons that no longer survive the bar above, and their absence
+    // is not a rule: zode, struck by an early pass as a one-letter neighbour of "gode" before
+    // R35 demoted gode to mild slang; and nobe, struck because deleting its e leaves "nob",
+    // mild British slang rather than a slur. Both would be admissible today. Neither has been
+    // put back because the bank does not need them. Do not read either absence as a bar on z,
+    // on -ode or on -obe.
+    //
+    // Out under the bar, and why: the whole -oke family, because noke and voke are one letter
+    // from the racial slur moke; and wope, because deleting its e leaves an ethnic slur.
+    // Out for a different reason entirely - a nonsense word may not be a sound-alike of a real
+    // one: fome, lofe, kope and gole (foam, loaf, cope, goal), and bofe, which is how "both"
+    // gets written in some dialects.
     nonsense('vode', 'v,o:o_e,d,e:e_silent'),
     nonsense('vobe', 'v,o:o_e,b,e:e_silent'),
     nonsense('pode', 'p,o:o_e,d,e:e_silent'),
