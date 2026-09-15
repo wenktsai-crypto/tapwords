@@ -111,6 +111,8 @@ Nonsense-word bar: pronounceable, follows the section's pattern, never a real wo
 - Section 1.6 was narrowed to only plurals where the added "s" sounds like "s" (not "z"), because the s sound card has only one recorded sound. The "z"-sounding plural (as in "dogs") is not taught until a later book.
 - The curved bridge line that connects a vowel to its silent e (Book 4) has been checked in a browser test but not yet tried on a real iPad.
 - The tutor should confirm the six Book 4 section titles and their teaching order against the app's own "Start at" menu.
+- Tile *colour* (the cue that says vowel, consonant or welded) sits at roughly 1.2:1 against the page. It is legible in good light on a good screen and the calm palette is deliberate, but it is the weakest signal in the app, and it is why a Book 4 bug that coloured a silent-e card as a consonant went unnoticed by eye through twenty reviews. Worth a tutor's opinion on a real iPad.
+- Welded "am" and "an" are tapped as one piece only at the END OF A WORD (pan, dustpan), never mid-word (blanket, pancake, Manhattan). That is what the checker enforces and what the whole program now does; four Book 4 words were corrected to match in September 2026.
 
 ## What comes next
 
