@@ -241,7 +241,7 @@ export const SUBSTEP_4_4: Substep = {
       title: 'The Globe on the Slope',
       sentences: [
         'Nan gave Dan a globe with every land on it.',
-        'Dan did like it a lot, and he put it in his pack and went up the hill to Sam.',
+        'Dan did like it a lot, and he put it in his pack to take up the hill to Sam.',
         'Up at the camp, the two of them put the globe down on a rock.',
         'The rock was on a slope, and the globe did not sit on it for long.',
         'It went down the slope, fast.',

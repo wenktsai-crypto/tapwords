@@ -231,7 +231,7 @@ export const SUBSTEP_4_6: Substep = {
         'Then the ropes were not in a twist.',
         'The kites went back up over the pond.',
         'Dan said it was the best day on the hill yet.',
-        'They sat on the path and had grapes while the two kites went up and up.',
+        'They had grapes on the hill while the two kites went up and up.',
       ],
       questions: [
         {

@@ -241,13 +241,13 @@ export const SUBSTEP_4_5: Substep = {
         'Jan sat on the hillside in the sunshine and did the same.',
         'On the day of the contest, Sam did the song on the trombone.',
         'The man said it was the best trombone he had.',
-        'Then Jan did the song on the bagpipe, and the man said the same of that.',
+        'Then Jan did the song on the bagpipe, and the man did like that as well.',
         'He sat and did think for a long time, and then he said he could not pick.',
         'Sam said that the two of them could do the song at the same time.',
         'Up on the hillside, they did it again and again.',
         'The trombone went down where the bagpipe went up.',
         'The man came back and said the band had a spot for the two of them.',
-        'When they did the song, the camp did stamp and yell.',
+        'When they did the song, the children did stamp and yell.',
       ],
       questions: [
         {
@@ -265,8 +265,12 @@ export const SUBSTEP_4_5: Substep = {
           answer: 0,
         },
         {
-          prompt: 'What did the camp do when Sam and Jan did the song?',
-          choices: ['the camp did stamp and yell', 'the camp did pick one of them', 'the camp sat on the hillside'],
+          prompt: 'What did the children do when Sam and Jan did the song?',
+          choices: [
+            'the children did stamp and yell',
+            'the man did pick one of them',
+            'the children sat on the hillside',
+          ],
           answer: 0,
         },
       ],
