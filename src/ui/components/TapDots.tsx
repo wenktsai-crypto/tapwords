@@ -83,22 +83,22 @@ export function TapDots({ word, mode, onResult }: Props) {
   const long = word.parts.length > 6;
   return (
     <div className={['tapdots', long ? 'tapdots-long' : ''].filter(Boolean).join(' ')}>
-      <SoundTiles word={word} tapped={tapped} />
-      <div className="dots">
-        {sounding.map((partIndex, i) =>
-          mode === 'try' ? (
-            <button
-              key={i}
-              type="button"
-              className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(partIndex) ? 'dot-syllable-start' : ''}`}
-              aria-label={`Sound ${i + 1}`}
-              onClick={() => tapDot(i)}
-            />
+      {/* Each dot is rendered in its letter's own column, so it sits under the letter it stands
+          for. A silent letter gets an empty slot: it still has no dot, which is the lesson. */}
+      <SoundTiles
+        word={word}
+        tapped={tapped}
+        under={(partIndex) => {
+          const i = sounding.indexOf(partIndex);
+          if (i === -1) return <span className="dot-slot" aria-hidden="true" />;
+          const cls = `dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(partIndex) ? 'dot-syllable-start' : ''}`;
+          return mode === 'try' ? (
+            <button type="button" className={cls} aria-label={`Sound ${i + 1}`} onClick={() => tapDot(i)} />
           ) : (
-            <span key={i} className={`dot ${i < tapped ? 'dot-lit' : ''} ${starts.has(partIndex) ? 'dot-syllable-start' : ''}`} aria-hidden="true" />
-          ),
-        )}
-      </div>
+            <span className={cls} aria-hidden="true" />
+          );
+        }}
+      />
       {mode === 'try' && done && !blending && <BigButton onClick={blend}>Blend</BigButton>}
       {blending && <p className="bigword">{word.text}</p>}
     </div>

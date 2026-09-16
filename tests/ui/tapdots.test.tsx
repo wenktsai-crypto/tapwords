@@ -115,6 +115,21 @@ describe('TapDots', () => {
 describe('TapDots with a silent letter', () => {
   const cake = () => word('cake', 'c,a:a_e,k,e:e_silent');
 
+  it('puts each dot in the same column as the letter it stands for, and leaves the silent letter none', () => {
+    const { container } = renderWithServices(<TapDots word={cake()} mode="try" onResult={() => {}} />);
+    const cols = [...container.querySelectorAll('.tilecol')];
+    // One column per LETTER, not per sound: c a k e.
+    expect(cols.map((c) => c.querySelector('.tile')?.textContent)).toEqual(['c', 'a', 'k', 'e']);
+    // The dot for sound N lives inside the column of the letter that makes it. Laid out as two
+    // separately centred rows, as it used to be, every dot drifted right of its own letter as
+    // soon as a silent letter made the counts differ.
+    expect(cols.map((c) => c.querySelector('button.dot')?.getAttribute('aria-label') ?? null))
+      .toEqual(['Sound 1', 'Sound 2', 'Sound 3', null]);
+    // The silent e keeps an empty slot, so the row stays square and it still has no dot.
+    expect(cols[3].querySelector('.dot-slot')).not.toBeNull();
+    expect(cols[3].querySelector('button.dot')).toBeNull();
+  });
+
   it('gives a four-letter word three dots and four tiles', () => {
     const { container } = renderWithServices(<TapDots word={cake()} mode="try" onResult={() => {}} />);
     expect(container.querySelectorAll('button.dot').length).toBe(3);

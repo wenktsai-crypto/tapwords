@@ -1,7 +1,7 @@
 :root {
   --bg: #f6f1e7;
   --ink: #2b2a26;
-  --muted: #6b675e;
+  --muted: #635f56;
   --tile: #ffffff;
   --tile-vowel: #ffe2c4;
   --tile-vowel-ink: #7a3d00;
@@ -10,6 +10,13 @@
   --accent-ink: #ffffff;
   --quiet: #e9e3d6;
   --radius: 18px;
+  /* Tile category is a TAUGHT signal: white = consonant, peach = vowel, blue = welded.
+     The fills sit 1.04-1.24:1 apart, far under the 3:1 WCAG asks of a meaningful shape, so
+     the category is carried on the EDGE instead, where 2px of colour costs no calm. Measured
+     against the page: stone 3.37, brown 3.50, slate 3.68. Fills and hues are unchanged. */
+  --edge: #8a8275;
+  --edge-vowel: #b4712a;
+  --edge-welded: #5f7fa6;
 }
 
 * { box-sizing: border-box; }
@@ -86,7 +93,46 @@ body {
   max-width: 800px;
 }
 
-.row { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; }
+.row { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; max-width: 100%; }
+
+/* `.tapdots`, `.builder` and `div.card` are all applied in the markup and, until now, matched
+   no rule at all — so "Done" sat on top of the tray it belonged under, "Blend" overlapped the
+   tap dots, and the backup panel was a bare stack. */
+.tapdots { display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%; }
+
+/* One column per letter: the tile on top, its dot underneath. The gap is wide enough for the
+   silent-e arc to dip into (26px of visible scoop) without touching the dots. */
+.tilecol { display: flex; flex-direction: column; align-items: center; gap: 34px; }
+.tilecol .dot-syllable-start { margin-left: 0; }
+.dot-slot { width: 64px; height: 64px; }
+/* The dots now live inside the row, so the row no longer needs a reserved band beneath it. */
+.tilerow-under { padding-bottom: 8px; }
+.builder { display: flex; flex-direction: column; align-items: center; gap: 28px; width: 100%; }
+
+/* The word she is building gets a home of its own, left-anchored. Centred, every letter she
+   had already placed slid sideways when she added the next one — the worst possible behaviour
+   for a child being taught to track a sequence. */
+.builder [data-testid='answer'] {
+  justify-content: flex-start;
+  align-content: center;
+  min-height: 96px;
+  width: 100%;
+  max-width: 640px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: var(--quiet);
+  box-shadow: inset 0 2px 5px rgba(43, 42, 38, 0.10);
+}
+.builder [data-testid='answer'] .caption { margin-left: 8px; }
+
+.card {
+  width: 100%;
+  max-width: 700px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--quiet);
+}
+form.card { padding: 20px; }
 
 .tile {
   display: inline-flex;
@@ -96,7 +142,7 @@ body {
   height: 80px;
   padding: 0 18px;
   border-radius: var(--radius);
-  border: 2px solid #d8d1c3;
+  border: 2px solid var(--edge);
   background: var(--tile);
   color: var(--ink);
   font: inherit;
@@ -105,14 +151,19 @@ body {
   letter-spacing: 0.06em;
 }
 .tile-large { min-width: 160px; height: 160px; font-size: 96px; }
-.tile-vowel { background: var(--tile-vowel); color: var(--tile-vowel-ink); }
+.tile-vowel { background: var(--tile-vowel); color: var(--tile-vowel-ink); border-color: var(--edge-vowel); }
 /* A silent-e vowel is still a vowel — same colour, so the child reads it as one. */
-.tile-vce { background: var(--tile-vowel); color: var(--tile-vowel-ink); }
+.tile-vce { background: var(--tile-vowel); color: var(--tile-vowel-ink); border-color: var(--edge-vowel); }
 /* A letter that makes no sound: present, readable, plainly not part of the tapping. */
-.tile-silent { background: var(--tile); color: var(--muted); border-style: dashed; }
-.tile-welded, .tile-digraph { background: var(--tile-welded); }
-.tile-selected { outline: 4px solid var(--accent); outline-offset: 2px; }
-.tile-dim { opacity: 0.35; }
+.tile-silent { background: var(--tile); color: var(--muted); border-style: dashed; border-color: var(--edge); }
+.tile-welded, .tile-digraph { background: var(--tile-welded); border-color: var(--edge-welded); }
+/* Inside the tile, not outside it. A 4px outline at 2px offset spans 12px into a 10px gap,
+   so two lit neighbours used to run together into one green blob — exactly when the child is
+   meant to read them as separate sounds. */
+.tile-selected { box-shadow: inset 0 0 0 4px var(--accent); border-color: var(--accent); }
+/* 0.35 leaves a spent tray tile's letter at 2.04:1 (1.79 on a vowel), under the 3:1 bar for
+   text this size. 0.65 gives 4.75 and 3.12 and still reads plainly as "already used". */
+.tile-dim { opacity: 0.65; }
 /* A silent letter is dimmed to say "no sound here", but the child still has to SEE it to
    learn it is there. At the shared 0.35 the ink lands at 1.67:1 against the tile, well under
    the 3:1 WCAG asks of large text; 0.7 gives 3.06:1. Scoped, because .tile-dim is also the
@@ -126,16 +177,18 @@ button.tile:active { transform: scale(0.97); }
   min-width: 64px;
   padding: 12px 28px;
   border-radius: 999px;
-  border: none;
+  /* A quiet button's surface is 1.14:1 against the page, so without an edge its shape is
+     invisible and only the text inside says "press me". box-sizing keeps the height at 64. */
+  border: 2px solid transparent;
   font: inherit;
   font-size: 24px;
   cursor: pointer;
 }
-.big-primary { background: var(--accent); color: var(--accent-ink); }
-.big-quiet { background: var(--quiet); color: var(--ink); }
+.big-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.big-quiet { background: var(--quiet); color: var(--ink); border-color: var(--edge); }
 .big:disabled { opacity: 0.4; cursor: default; }
 
-.dots { display: flex; gap: 28px; justify-content: center; }
+.dots { display: flex; gap: 28px; justify-content: center; max-width: 100%; flex-wrap: wrap; }
 .dot {
   width: 64px; height: 64px; border-radius: 50%;
   border: 3px solid var(--accent); background: transparent; cursor: pointer;
@@ -150,14 +203,37 @@ button.tile:active { transform: scale(0.97); }
 .profiles { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 600px; }
 .profile-row { display: flex; gap: 12px; align-items: center; }
 .profile-row .big-primary { flex: 1; text-align: left; }
-.swatch-sky { border-left: 12px solid #7cb7e6; }
-.swatch-moss { border-left: 12px solid #8fbf7f; }
-.swatch-sand { border-left: 12px solid #e4c17a; }
-.swatch-plum { border-left: 12px solid #b891c9; }
+/* An inset shadow follows the pill's own rounded edge. As a left BORDER on a 999px radius it
+   rendered as a crescent poking out of the button and read as a rendering fault. */
+.swatch-sky { box-shadow: inset 14px 0 0 #7cb7e6; }
+.swatch-moss { box-shadow: inset 14px 0 0 #8fbf7f; }
+.swatch-sand { box-shadow: inset 14px 0 0 #e4c17a; }
+.swatch-plum { box-shadow: inset 14px 0 0 #b891c9; }
+.profile-row .big-primary { padding-left: 40px; }
+
+/* At phone width this row refused to wrap, squeezing the child's own button to 74px and
+   clipping her name to "Ros" while the grown-ups' button kept 256px. */
+.profile-row { flex-wrap: wrap; }
+.profile-row .big-primary { min-width: 200px; }
+
+/* Four colours is exactly the count where a dropdown is the wrong control, and it is the one
+   place in the app the palette is allowed to be cheerful. */
+.swatchset { border: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.swatchset legend { padding: 0; font-size: 18px; color: var(--muted); }
+.swatches { display: flex; gap: 12px; flex-wrap: wrap; }
+.swatch-pick {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 3px solid var(--edge); cursor: pointer; padding: 0;
+}
+.swatch-pick[aria-pressed='true'] { border-color: var(--ink); box-shadow: inset 0 0 0 4px var(--bg); }
+.swatch-pick-sky { background: #7cb7e6; }
+.swatch-pick-moss { background: #8fbf7f; }
+.swatch-pick-sand { background: #e4c17a; }
+.swatch-pick-plum { background: #b891c9; }
 
 form.card { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 600px; }
 form.card label { display: flex; flex-direction: column; gap: 6px; font-size: 18px; color: var(--muted); }
-form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; min-height: 64px; border-radius: 12px; border: 2px solid #d8d1c3; }
+form.card input, form.card select { font: inherit; font-size: 22px; padding: 12px; min-height: 64px; border-radius: 12px; border: 2px solid var(--edge); background: var(--tile); }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 700px; font-size: 18px; }
 .stats dt { color: var(--muted); }
@@ -169,6 +245,13 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
   .bigtext { font-size: 30px; }
   .tile { min-width: 64px; height: 64px; font-size: 30px; }
   .tile-large { min-width: 120px; height: 120px; font-size: 72px; }
+  /* A long word has to fit the screen on one line or the arc that teaches silent e is
+     suppressed (SoundTiles refuses to draw across a wrap). These are read, not tapped —
+     the dots below are the touch targets — so they may go under 44px. */
+  .tapdots-long .tile { min-width: 40px; height: 56px; font-size: 24px; padding: 0 4px; }
+  .tapdots-long .dot, .tapdots-long .dot-slot { width: 44px; height: 44px; }
+  .tapdots-long .dot::after { width: 28px; height: 28px; }
+  .tapdots-long .tile-syllable-start, .tapdots-long .dot-syllable-start { margin-left: 10px; }
 }
 
 .row-tight { gap: 10px; }
@@ -176,7 +259,7 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
 .dot-syllable-start { margin-left: 22px; }
 .tapdots-long .tile { min-width: 60px; height: 76px; font-size: 40px; padding: 0 8px; }
 .tapdots-long .dots { gap: 4px; }
-.tapdots-long .dot {
+.tapdots-long .dot, .tapdots-long .dot-slot {
   width: 64px;
   height: 64px;
   border: none;
@@ -192,7 +275,10 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--quiet);
+  /* Was a flat --quiet fill at 1.12:1 against the page - all but invisible, and it made the
+     long-word dots a different object from the ones on every short word. Same ring as .dot. */
+  background: transparent;
+  border: 3px solid var(--accent);
 }
 .tapdots-long .dot-lit::after { background: var(--accent); }
 
@@ -200,7 +286,10 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
    The curve is decoration only: it is hidden from a screen reader and cannot be tapped. */
 /* Room for the arc to dip into. The visible dip is half the control offset in
    SoundTiles (ARC_PULL 52 -> 26px), so 44px keeps it clear of whatever sits below. */
-.tilerow { position: relative; padding-bottom: 44px; }
+/* Inside a centred flex column a child sizes to its max-content width, so a long word laid
+   the row out wider than the screen and the page scrolled sideways with the first letter
+   sliced off. Cap it and let the row wrap instead. */
+.tilerow { position: relative; padding-bottom: 44px; max-width: 100%; }
 .vce-bridge {
   position: absolute;
   inset: 0;
@@ -209,7 +298,9 @@ form.card input, form.card select { font: inherit; font-size: 22px; padding: 12p
   overflow: visible;
   pointer-events: none;
 }
-.vce-bridge path { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; opacity: 0.7; }
+/* At 0.7 the arc composites to 2.94:1 against the page, just under the 3:1 a meaningful
+   shape needs. 0.8 gives 3.55 and is still visibly lighter than the tiles it joins. */
+.vce-bridge path { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; opacity: 0.8; }
 
 .cardlist { list-style: none; padding: 0; margin: 0; width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 12px; }
 .cardrow { display: grid; grid-template-columns: auto 1fr auto auto; gap: 16px; align-items: center; padding: 8px 12px; background: var(--quiet); border-radius: var(--radius); }

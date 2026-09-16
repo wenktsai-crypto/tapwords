@@ -99,7 +99,9 @@ export function Home({ onStart, onParent }: Props) {
                 <HoldButton onHold={() => onParent(p)}>Grown-ups (hold)</HoldButton>
               </div>
             ))}
-            <BigButton variant="quiet" onClick={() => setAdding(true)}>Add a child</BigButton>
+            {/* On an empty device this is the only thing worth doing, so it leads. Once a child
+                exists the home screen belongs to her and this steps back. */}
+            <BigButton variant={profiles.length === 0 ? 'primary' : 'quiet'} onClick={() => setAdding(true)}>Add a child</BigButton>
             {/* Restoring is only needed on a device with nothing on it yet; once a child is
                 saved the home screen belongs to the child and the full panel lives in the
                 grown-up area. */}
@@ -112,12 +114,21 @@ export function Home({ onStart, onParent }: Props) {
               Name
               <input value={name} onChange={(e) => setName(e.target.value)} autoFocus />
             </label>
-            <label>
-              Color
-              <select value={color} onChange={(e) => setColor(e.target.value)}>
-                {COLORS.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </label>
+            <fieldset className="swatchset">
+              <legend>Colour</legend>
+              <div className="swatches">
+                {COLORS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`swatch-pick swatch-pick-${c}`}
+                    aria-label={c}
+                    aria-pressed={color === c}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </fieldset>
             <label>
               Start at
               <select value={start} onChange={(e) => setStart(e.target.value)}>

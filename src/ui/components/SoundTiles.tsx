@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Word } from '../../content/types';
 import { cardMap, silentPartners, soundingIndexes } from '../../content/parts';
 import { useServices } from '../services';
@@ -12,6 +12,12 @@ interface Props {
   tapped?: number;
   size?: 'normal' | 'large';
   className?: string;
+  /** Renders something directly beneath one letter, in the same column, so it lines up with
+   * that letter by construction. TapDots uses it for the tap dots: as two separately centred
+   * rows they drifted apart whenever a word had a silent letter, which is every word in Book 4
+   * — the dots ended up pointing between the letters they name. Omitted, the row renders
+   * exactly as before. */
+  under?: (partIndex: number) => ReactNode;
 }
 
 interface Arc { x1: number; x2: number; y: number }
@@ -29,7 +35,7 @@ function sameArcs(a: Arc[], b: Arc[]): boolean {
   return a.length === b.length && a.every((x, i) => x.x1 === b[i].x1 && x.x2 === b[i].x2 && x.y === b[i].y);
 }
 
-export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Props) {
+export function SoundTiles({ word, tapped = 0, size = 'normal', className, under }: Props) {
   const { content } = useServices();
 
   // Everything the measuring effect depends on has to keep the same identity between renders.
@@ -111,11 +117,11 @@ export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Pro
   const isLit = (i: number) => litVowels.has(i) || pairs.some((p) => p.silent === i && litVowels.has(p.vowel));
 
   return (
-    <div className={['tilerow', className].filter(Boolean).join(' ')} ref={rowRef}>
+    <div className={['tilerow', under ? 'tilerow-under' : '', className].filter(Boolean).join(' ')} ref={rowRef}>
       <div className="row row-tight">
         {word.parts.map((p, i) => {
           const type = cardTypeById(content.cards, p.card);
-          return (
+          const tile = (
             <Tile
               key={i}
               ref={(el: HTMLElement | null) => { tileRefs.current[i] = el; }}
@@ -124,8 +130,17 @@ export function SoundTiles({ word, tapped = 0, size = 'normal', className }: Pro
               size={size}
               selected={isLit(i)}
               dim={type === 'silent' && !isLit(i)}
-              className={starts.has(i) ? 'tile-syllable-start' : ''}
+              className={!under && starts.has(i) ? 'tile-syllable-start' : ''}
             />
+          );
+          // Without `under` the row keeps exactly its old shape: tiles as direct children.
+          if (!under) return tile;
+          // The syllable gap belongs to the whole column, so the dot moves with its letter.
+          return (
+            <div key={i} className={['tilecol', starts.has(i) ? 'tile-syllable-start' : ''].filter(Boolean).join(' ')}>
+              {tile}
+              {under(i)}
+            </div>
           );
         })}
       </div>
